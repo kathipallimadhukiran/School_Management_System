@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Admission from "./components/Admissions/Admission"; // Make sure you import the Admission component
 import Navbar from "./components/Navbar/Navbar"; // Make sure you import the Navbar component
 import Sidebar from "./components/sidebar/Sidebar"; // Make sure you import the Sidebar component
 import "./App.css";
-import { useState } from 'react';
-import Dashboard from './components/Dashboard/Dashboard';
-import Feepayments from './components/Feepayments/Feepayments';
+import { useState } from "react";
+import Dashboard from "./components/Dashboard/Dashboard";
+import Feepayments from "./components/Feepayments/Feepayments";
 
 function App() {
   const [sidebarWidth, setSidebarWidth] = useState(250);
@@ -15,21 +15,24 @@ function App() {
   };
 
   return (
-    <Router> 
-      <div>
+    <Router>
+      <div className="main_app" >
+        <div className="nav-container">
         <Navbar />
-        <div className='main_container'>
+        </div>
+        <div className="main_container">
           <Sidebar style={{ width: `${sidebarWidth}px` }} />
-          <div className='content_area'>
+          <div className="content_area">
             <Routes>
               <Route path="/" element={<Dashboard/>} index />
+              <Route path="/Dashboard" element={<Dashboard />} index />
               <Route path="/admissions" element={<Admission />} />
-              <Route path="/Feepayments" element={<Feepayments/>} />
+              <Route path="/Feepayments" element={<Feepayments />} />
             </Routes>
           </div>
         </div>
       </div>
-    </Router> 
+    </Router>
   );
 }
 

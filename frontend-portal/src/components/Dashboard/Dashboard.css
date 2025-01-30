@@ -1,37 +1,82 @@
-/* Dashboard.css */
-.dashboard-container {
+/* General Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.dashboard-container, .dashboard {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
-  width: 95%;
+  justify-content: center;
   min-height: 100vh;
 }
 
-.dashboard {
+.Home-container {
   width: 100%;
-  display: flex;
-flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
+.marquee {
+  height: 30px;
+}
+
+/* Image Container */
+.image-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, black, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+
+.text-overlay {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 54px;
+  font-weight: bold;
+  padding: 10px;
+}
+
+/* Dashboard Blocks */
 .dashboard .block {
-  background-color:#333;
   width: 300px;
+  height: 150px;
   border-radius: 8px;
   margin: 20px 0;
-  padding: 20px;
+  overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
 }
 
+.block-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 50%;
+}
 .dashboard .block h2 {
   font-size: 1.5rem;
   font-weight: 600;
@@ -47,47 +92,65 @@ flex-direction: column;
 .dashboard .calendar-container {
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
-iframe {
-  border: none;
+.block-text {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s;
 }
 
-/* Specific block styles */
-.total-students {
-  background-color: #4caf50;
-  color: white;
+.block-text h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-.total-teachers {
-  background-color: #2196f3;
-  color: white;
+.block-text p {
+  font-size: 18px;
+  color: #007bff;
+  font-weight: 600;
 }
 
-.unpaid-students {
-  background-color: #ff9800;
-  color: white;
+.block-text:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.total-dues {
-  background-color: #f44336;
-  color: white;
-}
-.block-row{
-  width: 70%;
+/* View More Button */
+.view-more {
+  width: 120%;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  font-size: 16px;
+  height: 30px;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s;
+  background-color: rgba(15, 14, 14, 0.433);
 }
 
-/* StudentContainer.css */
+.view-more:hover {
+  scale: 1.1;
+  color: #023770;
+  transform: translateX(5px);
+}
 
+/* Block Categories */
+.total-students { background-color: #4caf50; }
+.total-teachers { background-color: #2196f3; }
+.unpaid-students { background-color: #ff9800; }
+.total-dues { background-color: #f44336; }
+
+/* Student Container */
 .student-container {
-background-color: black;
- width: 100%;
+  background-color: #5d341c;
+  width: 100%;
 }
 
 .student {
@@ -101,13 +164,14 @@ background-color: black;
 .student-heading {
   font-size: 24px;
   font-weight: bold;
-  color: #333333;
+  color: white;
   margin-bottom: 20px;
   text-align: center;
 }
 
+/* Student Table */
 .table-wrapper {
-  overflow-x: auto; /* Enables horizontal scrolling on smaller screens */
+  overflow-x: auto;
 }
 
 .student-table {
@@ -115,23 +179,19 @@ background-color: black;
   border-collapse: collapse;
 }
 
-.student-table th,
-.student-table td {
+.student-table th, .student-table td {
   text-align: left;
   padding: 12px;
-  border: 1px solid #dddddd;
-  font-size: 14px;
-}
-
-.student-table th {
-  background-color: #333;
+  border: 1px solid rgb(145, 137, 137);
   color: white;
 }
 
+.student-table th {
+  background-color: rgba(223, 110, 45, 0.31);
+  color: white;
+}
 
-
-
-
+/* Buttons */
 .btn {
   padding: 8px 12px;
   border: none;
@@ -140,43 +200,33 @@ background-color: black;
   font-size: 14px;
 }
 
-.update-btn {
-  background-color: #007bff;
-  color: white;
-}
+.update-btn { background-color: #007bff; color: white; }
+.update-btn:hover { background-color: #0056b3; }
 
-.update-btn:hover {
-  background-color: #0056b3;
-}
+.pay-btn { background-color: #28a745; color: white; }
+.pay-btn:hover { background-color: #1c7430; }
 
-.pay-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-.pay-btn:hover {
-  background-color: #1c7430;
-}
-
-.complaint-btn {
-  background-color: #dc3545;
-  color: white;
-}
-
-.complaint-btn:hover {
-  background-color: #a71d2a;
-}
+.complaint-btn { background-color: #dc3545; color: white; }
+.complaint-btn:hover { background-color: #a71d2a; }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .student-table th,
-  .student-table td {
-    font-size: 12px;
-    padding: 8px;
+  .dashboard, .student-container {
+    padding: 10px;
   }
 
-  .student-heading {
+  .dashboard .block {
+    margin: 15px 0;
+    padding: 15px;
+  }
+
+  .block-text h2, .student-heading {
     font-size: 20px;
+  }
+
+  .student-table th, .student-table td {
+    font-size: 12px;
+    padding: 8px;
   }
 
   .btn {
@@ -186,68 +236,25 @@ background-color: black;
 }
 
 @media (max-width: 480px) {
-  .student-container {
-    padding: 10px;
-  }
-
-  .btn {
-    width: 100%; /* Buttons span full width for smaller screens */
-    margin-bottom: 10px;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-/* Media queries for responsiveness */
-@media screen and (max-width: 768px) {
-  .dashboard {
-    padding: 10px;
-  }
-
-  .dashboard .block {
-    margin: 15px 0;
-    padding: 15px;
-  }
-
-  .dashboard .block h2 {
-    font-size: 1.2rem;
-  }
-
-  .dashboard .block p {
-    font-size: 1rem;
-  }
-
-  iframe {
-    width: 100%;
-    height: 250px;
-  }
-}
-
-@media screen and (max-width: 480px) {
   .dashboard .block {
     margin: 10px 0;
     padding: 10px;
   }
 
-  .dashboard .block h2 {
+  .block-text h2 {
     font-size: 1rem;
   }
 
-  .dashboard .block p {
+  .block-text p {
     font-size: 0.9rem;
   }
 
-  iframe {
+  .student-container {
+    padding: 10px;
+  }
+
+  .btn {
     width: 100%;
-    height: 200px;
+    margin-bottom: 10px;
   }
 }

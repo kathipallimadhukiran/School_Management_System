@@ -1,4 +1,134 @@
-.Feepayments{
-    width: 100px;
-    height: 100px;background-color: red;
+/* General container styling */
+.fee-payment-container {
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title styling */
+.fee-payment-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Input field styling */
+.fee-payment-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.fee-payment-input:focus {
+  border-color: #007bff;
+}
+
+/* Loading and error text styling */
+.loading-text,
+.error-text {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #ff6b6b;
+  margin-top: 10px;
+}
+/* Add smooth transition to dropdown visibility */
+.dropdown {
+  position: relative;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.dropdown-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  position: absolute;
+  top: 100%;
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Hide dropdown when filteredStudents is empty */
+.dropdown-list.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* No results message */
+.no-results {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Student details container styling */
+.student-details {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.student-details h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.student-details p {
+  font-size: 1rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+.student-details strong {
+  color: #333;
+}
+
+/* Responsive styling */
+@media screen and (max-width: 768px) {
+  .fee-payment-container {
+    width: 90%;
+  }
+
+  .fee-payment-title {
+    font-size: 1.8rem;
+  }
+
+  .fee-payment-input {
+    font-size: 1rem;
+  }
+
+  .dropdown-item {
+    font-size: 1rem;
+  }
 }
