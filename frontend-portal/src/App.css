@@ -1,21 +1,20 @@
 
-body{
-  background-color:#C84C05;
-
-}
 .main_app{
   width: 100svw;
   height: 100svh;
   display: flex;
   align-items: start;
   justify-content: center;
+  /* background-color:#C84C05; */
 
 }
 
 .main_container {
+  margin-top: 60px;
+
     display: flex;
     width: 100vw; 
-    height: 100svh;
+    height: 91.35%;
     overflow:hidden;
   }
   
@@ -28,21 +27,21 @@ body{
   }
   
   .content_area {
-    margin-top: 60px;
     flex-grow: 1; /* Allows content to take remaining space */
     overflow-y: scroll;
     display: flex;
-    border-top-left-radius: 30px;
     align-items: start;
     justify-content: center;
     transition: margin-left 0.3s ease, width 0.3s ease;
-    background-color:#E7FBB4;
+    background-color:#C84C05;
   }
   
+
   /* Optional: Adjust Sidebar and content for smaller screens */
   @media screen and (max-width: 768px) {
     .sidebar {
-      width: 70px; /* Reduce sidebar width for mobile */
+      width: 70px;
+    /* Reduce sidebar width for mobile */
     }
   
     .content_area {

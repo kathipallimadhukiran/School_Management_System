@@ -11,7 +11,6 @@ require('dotenv').config();
 const app = express();
 
 // Middleware to serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Set up view engine (if needed)
 app.set("views", path.join(__dirname, "views"));
@@ -38,7 +37,8 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 
-
+const Feerouter=require("./src/routes/feerouters");
+app.use("/feepayments",Feerouter);
 // Import main router
 const mainRouter = require("./src/routes/mainrouters");
 app.use("/", mainRouter);

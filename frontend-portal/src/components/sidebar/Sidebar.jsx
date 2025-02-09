@@ -21,7 +21,7 @@ const Sidebar = () => {
   const [dashboardExpanded, setDashboardExpanded] = useState(false);
 
   return (
-    <div className={`sidebar ${barStatus ? "expanded" : "compressed"}`}>
+    <div className={`sidebar ${barStatus ? "expanded" : "compressed"}`} >
     <div className="bar-icon" onClick={() => setBarStatus(!barStatus)}>
       {barStatus ? (
         <TbLayoutSidebarLeftCollapseFilled />
@@ -43,11 +43,11 @@ const Sidebar = () => {
           </div>
           {dashboardExpanded && barStatus && (
             <ul className="submenu">
-              <li><Link to="#">Overview</Link></li>
-              <li><Link to="#">Students</Link></li>
-              <li><Link to="#">Teachers</Link></li>
-              <li><Link to="#">Payments</Link></li>
-              <li><Link to="#">Reports</Link></li>
+              <li><a href="#dashboard">Overview</a></li>
+              <li><a href="#students">Students</a></li>
+              <li><a href="#payments">Payments</a></li>
+              <li><a href="#Reports">Reports</a></li>
+              <li><a href="#Teachers">Teachers</a></li>
             </ul>
           )}
         </li>

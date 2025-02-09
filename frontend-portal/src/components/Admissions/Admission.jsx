@@ -4,7 +4,7 @@ import "./Admission.css";
 function Admission() {
   const initialState = {
     Student_name: "",
-    Student_age: "",
+    Student_age: null, // Reset to null
     Student_gender: "",
     Grade_applying_for: "",
     Date_of_birth: "",
@@ -13,36 +13,24 @@ function Admission() {
     State: "",
     District: "",
     ZIP_code: "",
-    Emergency_contact_number: "",
+    Emergency_contact_number: null, // Reset to null
     Student_father_name: "",
     Student_mother_name: "",
-    Student_father_number: "",
-    Student_mother_number: "",
+    Student_father_number: null, // Reset to null
+    Student_mother_number: null, // Reset to null
     Fathers_mail: "",
-    Total_fee: "",
-    Number_of_terms: "",
+    Total_fee: 0, // Reset total fee to 0
+    Number_of_terms: null, // Reset number of terms to null
+    fees: [], // Reset fees array
   };
+  
 
   const [formData, setFormData] = useState(initialState);
+  const [Totalfee, setTotalfee] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [pinCodeValid, setPinCodeValid] = useState(true);
   const [showPopup, setShowPopup] = useState(true);
   const [registrationDetails, setRegistrationDetails] = useState(null);
-  const [students, setStudents] = useState([]);  // New state for storing student data
-
-  useEffect(() => {
-    // Fetch student data when component mounts
-    const fetchStudentData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/getStudentData");
-        const data = await response.json();
-        setStudents(data);  // Store student data in state
-      } catch (error) {
-        console.error("Error fetching student data:", error);
-      }
-    };
-    fetchStudentData();
-  }, []);  // Empty dependency array means this will run once after the component mounts
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,6 +66,46 @@ function Admission() {
     }
   };
 
+  // Add Fee Row Function
+  const addFeeRow = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      fees: [
+        ...prevData.fees,
+        { FeeType: "", FeeAmount: "" }, // Add new fee row with empty values
+      ],
+    }));
+  };
+
+  // Remove Fee Row Function
+  const removeFeeRow = (index) => {
+    const updatedFees = formData.fees.filter((_, i) => i !== index);
+    setFormData((prevData) => ({
+      ...prevData,
+      fees: updatedFees,
+    }));
+  };
+
+  // Handle Fee Row Change
+  const handleFeeChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedFees = [...formData.fees];
+    updatedFees[index][name] = value;
+    setFormData((prevData) => ({
+      ...prevData,
+      fees: updatedFees,
+    }));
+  };
+
+  // Calculate Total Fee
+  const calculateTotalFee = () => {
+    let newTotalFee = formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0), 0);
+    setFormData((prevData) => ({
+      ...prevData,
+      Total_fee: newTotalFee, // Only update Total_fee
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -85,6 +113,10 @@ function Admission() {
       alert("Please fill all required fields.");
       return;
     }
+  if(formData.Total_fee != formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0), 0)){
+    alert("Some fees not added to Total fee");
+    return;
+  }
   
     setIsLoading(true);
   
@@ -96,18 +128,28 @@ function Admission() {
         },
         body: JSON.stringify(formData),
       });
-  
       if (response.ok) {
         const result = await response.json();
         setRegistrationDetails(result);
         setShowPopup(true);
-        
-        // Show success alert
         alert("Form submitted successfully!");
-  
-        // Reset the form after successful submission
-        setFormData(initialState); // Reset form data to initial state
-      } else {
+      
+
+        setFormData({
+          ...initialState, 
+          Student_age: "", 
+          Emergency_contact_number: "", 
+          Student_father_number: "", 
+          Student_mother_number: "", 
+          Number_of_terms: "", 
+          Total_fee: 0, 
+          fees: [], 
+        });
+      
+        setTotalfee(0);
+      }
+      
+       else {
         alert("Failed to send data to the server.");
       }
     } catch (error) {
@@ -118,7 +160,6 @@ function Admission() {
     }
   };
   
-
   return (
     <div className="main">
       <form onSubmit={handleSubmit}>
@@ -175,24 +216,24 @@ function Admission() {
         </div>
 
         <div className="field-row">
-        <div className="field">
-  <label>Grade Applying For:</label>
-  <select
-    name="Grade_applying_for"
-    value={formData.Grade_applying_for}
-    onChange={handleChange}
-  >
-    <option value="">Select Grade</option>
-    <option value="Nursery">Nursery</option>
-    <option value="LKG">LKG</option>
-    <option value="UKG">UKG</option>
-    <option value="1st Standard">1st Standard</option>
-    <option value="2nd Standard">2nd Standard</option>
-    <option value="3rd Standard">3rd Standard</option>
-    <option value="4th Standard">4th Standard</option>
-    <option value="5th Standard">5th Standard</option>
-  </select>
-</div>
+          <div className="field">
+            <label>Grade Applying For:</label>
+            <select
+              name="Grade_applying_for"
+              value={formData.Grade_applying_for}
+              onChange={handleChange}
+            >
+              <option value="">Select Grade</option>
+              <option value="Nursery">Nursery</option>
+              <option value="LKG">LKG</option>
+              <option value="UKG">UKG</option>
+              <option value="1st Standard">1st Standard</option>
+              <option value="2nd Standard">2nd Standard</option>
+              <option value="3rd Standard">3rd Standard</option>
+              <option value="4th Standard">4th Standard</option>
+              <option value="5th Standard">5th Standard</option>
+            </select>
+          </div>
 
           <div className="field">
             <label>Address:</label>
@@ -207,8 +248,7 @@ function Admission() {
         </div>
 
         <div className="field-row">
-        
-        <div className="field">
+          <div className="field">
             <label>ZIP Code:</label>
             <input
               type="text"
@@ -230,12 +270,10 @@ function Admission() {
               onChange={handleChange}
             />
           </div>
-
         </div>
 
         <div className="field-row">
-          
-        <div className="field">
+          <div className="field">
             <label>District:</label>
             <input
               type="text"
@@ -255,8 +293,6 @@ function Admission() {
               onChange={handleChange}
             />
           </div>
-
-
         </div>
 
         <div className="field-row">
@@ -266,12 +302,10 @@ function Admission() {
               type="number"
               name="Emergency_contact_number"
               placeholder="Emergency Contact number"
-              value={formData. Emergency_contact_number}
+              value={formData.Emergency_contact_number}
               onChange={handleChange}
             />
           </div>
-
-        
 
           <div className="field">
             <label>Father's Email:</label>
@@ -283,12 +317,6 @@ function Admission() {
               onChange={handleChange}
             />
           </div>
-
-
-
-
-
-        
         </div>
 
         <div className="field-row">
@@ -338,6 +366,55 @@ function Admission() {
           </div>
         </div>
 
+        {/* Fee Rows */}
+        <div className="fee-details">
+          <h3>Fee Details</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Fee Type</th>
+                <th>Fee Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.fees.map((fee, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="text"
+                      name="FeeType"
+                      placeholder="Type of Fee"
+                      value={fee.FeeType}
+                      onChange={(e) => handleFeeChange(e, index)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      name="FeeAmount"
+                      placeholder="Fee Amount"
+                      value={fee.FeeAmount}
+                      onChange={(e) => handleFeeChange(e, index)}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => removeFeeRow(index)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button type="button" onClick={addFeeRow}>
+            Add Fee Row
+          </button>
+          <button type="button" onClick={calculateTotalFee}>
+            Calculate Total Fee
+          </button>
+        </div>
+
         <div className="field-row">
           <div className="field">
             <label>Total Fee:</label>
@@ -347,6 +424,7 @@ function Admission() {
               placeholder="Total Fee"
               value={formData.Total_fee}
               onChange={handleChange}
+              disabled
             />
           </div>
 
@@ -362,6 +440,7 @@ function Admission() {
           </div>
         </div>
 
+        {/* Submit and Reset Buttons */}
         <div className="buttons-main">
           <div className="buttons">
             <button type="submit" disabled={isLoading}>
@@ -373,8 +452,8 @@ function Admission() {
           </div>
         </div>
       </form>
-       {/* Show confirmation popup */}
-      
+
+      {/* Show confirmation popup */}
       {showPopup && registrationDetails && (
         <div className="popup">
           <h3>Admission Successful!</h3>

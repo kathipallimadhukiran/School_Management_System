@@ -1,7 +1,7 @@
 /* Sidebar General Styling */
 .sidebar {
   background-color: #c84c05;
-  height: 80.8vh;
+ overflow: hidden;
   display: flex;
   overflow-y: hidden;
   flex-direction: column;
@@ -9,13 +9,11 @@
 }
 
 .sidebar.expanded {
-  margin-top: 50px;
   width: 15%;
 }
 
 .sidebar.compressed {
   width: 5%;
-  margin-top: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,6 +71,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
 }
 
 .menu-list {
@@ -130,7 +129,6 @@
   padding: 1rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
   color: white;
   cursor: pointer;
 }

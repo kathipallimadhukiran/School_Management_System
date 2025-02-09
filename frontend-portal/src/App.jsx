@@ -6,6 +6,8 @@ import "./App.css";
 import { useState } from "react";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Feepayments from "./components/Feepayments/Feepayments";
+import Dummypayments from "./components/Feepayments/dummyfee";
+import Receipt from "./components/Feepayments/Receipt";
 
 function App() {
   const [sidebarWidth, setSidebarWidth] = useState(250);
@@ -23,12 +25,16 @@ function App() {
         <div className="main_container">
           <Sidebar style={{ width: `${sidebarWidth}px` }} />
           <div className="content_area">
+          <div className="content_area_dup">
             <Routes>
               <Route path="/" element={<Dashboard/>} index />
               <Route path="/Dashboard" element={<Dashboard />} index />
               <Route path="/admissions" element={<Admission />} />
               <Route path="/Feepayments" element={<Feepayments />} />
+              <Route path="/feePayments/payments" element={<Dummypayments />} />
+              <Route path="/feePayments/payments/Receipt" element={<Receipt/>} />
             </Routes>
+            </div>
           </div>
         </div>
       </div>

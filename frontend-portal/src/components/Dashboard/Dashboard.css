@@ -6,25 +6,33 @@
 }
 
 .dashboard-container, .dashboard {
+  
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  background-color: #5d341c;
+ 
 }
 
 .Home-container {
   width: 100%;
+  height: 90svh;
 }
 
 .marquee {
   height: 30px;
+  color: white;
+  background-color: #333;
 }
 
 /* Image Container */
 .image-container {
   width: 100%;
+  min-width: 80svw;
+  min-height:80svh;
+  height: 90svh;
   overflow: hidden;
   position: relative;
 }
@@ -56,14 +64,18 @@
   font-weight: bold;
   padding: 10px;
 }
-
+.dashboard{
+  margin-top: 60px;
+}
 /* Dashboard Blocks */
 .dashboard .block {
   width: 300px;
   height: 150px;
   border-radius: 8px;
+  min-width: 250px;
   margin: 20px 0;
   overflow: hidden;
+  color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -74,8 +86,8 @@
 .block-row{
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  width: 50%;
+  justify-content: space-evenly;
+  width: 80%;
 }
 .dashboard .block h2 {
   font-size: 1.5rem;
@@ -209,6 +221,12 @@
 .complaint-btn { background-color: #dc3545; color: white; }
 .complaint-btn:hover { background-color: #a71d2a; }
 
+
+.Reports{
+  width: 100%;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .dashboard, .student-container {
@@ -258,3 +276,24 @@
     margin-bottom: 10px;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
