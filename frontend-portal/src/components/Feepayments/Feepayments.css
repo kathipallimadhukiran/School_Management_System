@@ -1,18 +1,20 @@
 /* General container styling */
 .fee-payment-container {
-  width: 80%;
-  margin: 20px auto;
+  width: 100%;
+  height: 100%;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  background: linear-gradient(155deg, #252a30, #FF5722); /* Midnight Blue to Deep Orange */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensures space between middle (student details) and bottom (instructions) */
 }
 
 /* Title styling */
 .fee-payment-title {
   text-align: center;
   font-size: 2rem;
-  color: #333;
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
@@ -40,13 +42,75 @@
   color: #ff6b6b;
   margin-top: 10px;
 }
-/* Add smooth transition to dropdown visibility */
+
+/* Dropdown container */
 .dropdown {
   position: relative;
   width: 100%;
   transition: all 0.3s ease;
 }
 
+/* Instructions at the bottom */
+.payment-info {
+  background-color: #f7f7f7;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.payment-info h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.payment-info p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Selected student details in the middle */
+.selected-student-details {
+  margin-top: 20px;
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-grow: 1; /* Allow this section to grow and take up space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Styling for individual student details */
+.selected-student-details h3 {
+  margin-bottom: 10px;
+}
+
+.selected-student-details p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+/* Pay Now   */
+.pay-now-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.pay-now-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Dropdown List Styling */
 .dropdown-list {
   list-style-type: none;
   padding: 0;
@@ -71,6 +135,7 @@
   visibility: hidden;
 }
 
+/* Dropdown item styling */
 .dropdown-item {
   padding: 10px;
   cursor: pointer;

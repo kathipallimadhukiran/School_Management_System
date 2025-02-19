@@ -96,7 +96,6 @@ const Dashboard = () => {
         );
   
         setTotalDues(totalDueAmount); 
-        console.log(studentsWithDues,totalDues)
       } catch (err) {
         setError(err.message);
       } finally {
@@ -109,153 +108,149 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <div className="Home-container">
-        <Marquee className="marquee" speed={50} gradient={false}>
-          Today meeting starts at 3:00pm || Parents meeting is held on
-          03-02-2025 || This site will be <b>Live</b> on <b>03-02-2025</b>
-        </Marquee>
+<div className="Home-container">
+  <Marquee className="marquee" speed={50} gradient={false}>
+    Today meeting starts at 3:00pm || Parents meeting is held on
+    03-02-2025 || This site will be <b>Live</b> on <b>03-02-2025</b>
+  </Marquee>
 
-        <div className="content-container">
-          <div className="image-container">
-            <img
-              src="https://res.cloudinary.com/dg5ir1kvd/image/fetch/f_auto,fl_advanced_resize,c_fill,w_720,h_253/https://www.ccu.edu/blogs/cags/uploads/2017/12/special-ed-teacher-with-student.jpg?v=1715282197043"
-              alt="School Children"
-            />
-            <div className="text-overlay">
-              Welcome to, <br />
-              School Management portal
-            </div>
-          </div>
-        </div>
+  <div className="content-container">
+    <div className="text-overlay">
+      Welcome to, <br />
+      School Management Portal
+    </div>
+  </div>
+</div>
+
+
+      <div className="Reports" id="Reports">
+        {loading ? <p>Loading Reports...</p> : <Statistics />}
       </div>
-      <div
-        className="Reports"
-        id="Reports"
-      >
-        <Statistics />
-      </div>
+  
       <div className="dashboard" id="dashboard">
         <div className="block-row">
           <div className="block total-students">
             <div className="block-text">
               <h2>Total Students</h2>
-              <p>{total_students.length}</p>
+              {loading ? <p>Loading...</p> : <p>{total_students.length}</p>}
             </div>
-            {/* Wrap with Link to navigate */}
             <Link to="/students" className="view-more">
               <p> More</p> <FaArrowAltCircleRight />
             </Link>
           </div>
+  
           <div className="block total-teachers">
             <div className="block-text">
-              <h2>Total Teachers</h2>
-              <p>totalTeachers</p>
+              <h2>Total classes</h2>
+              <p>totalClasses</p>
             </div>
-            {/* Wrap with Link to navigate */}
             <Link to="/teachers" className="view-more">
               <p> More</p> <FaArrowAltCircleRight />
             </Link>
           </div>
         </div>
+  
         <div className="block-row">
           <div className="block unpaid-students">
             <div className="block-text">
               <h2>Unpaid Students</h2>
-              {
-                <p>{unpaidStudents.length}</p>
-              }
+              {loading ? <p>Loading...</p> : <p>{unpaidStudents.length}</p>}
             </div>
-            {/* Wrap with Link to navigate */}
-            <Link to="/unpaid-students" className="view-more">
+            <Link to="/students" className="view-more">
               <p> More</p> <FaArrowAltCircleRight />
             </Link>
           </div>
+  
           <div className="block total-dues">
             <div className="block-text">
               <h2>Total Dues</h2>
-              <p>₹{totalDues}</p>
+              {loading ? <p>Loading...</p> : <p>₹{totalDues}</p>}
             </div>
-
             <Link to="/dues" className="view-more">
               <p> More</p> <FaArrowAltCircleRight />
             </Link>
           </div>
         </div>
       </div>
+  
+      {/* Student List */}
       <div className="student-container" id="students">
         <div className="student">
           <h2 className="student-heading">Student Details</h2>
           <div className="table-wrapper">
-            <table className="student-table">
-              <thead>
-                <tr>
-                  <th>S.no</th>
-                  <th>Student Name</th>
-                  <th>Student Email</th>
-                  <th>Student Phone</th>
-                  <th>Update Marks</th>
-                  <th>Pay Fee</th>
-                  <th>
-                    Emergency <br /> Intimate
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedStudents.map((student, index) => (
-                  <tr key={`${student.id}-${index}`}>
-                    <td>{index + 1}</td>
-                    <td>{student.Student_name}</td>
-                    <td>{student.Fathers_mail}</td>
-                    <td>{student.Emergency_contact_number}</td>
-                    <td>
-                      <button
-                        className="btn update-btn"
-                        onClick={() => updateMarks(student.id)}
-                      >
-                        Update Marks
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        className="btn pay-btn"
-                        onClick={() =>
-                          handlePayFee(
-                            student.Student_name,
-                            student.Student_father_number,
-                            student.Total_fee,
-                            student.Registration_number,
-                            student.Student_father_name,
-                            student._id,
-                            student.fees,
-                            student.Total_Fee_Paid
-
-                          )
-                        }
-                      >
-                        Pay Fee
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        className="btn complaint-btn"
-                        onClick={() =>
-                          emergencyIntimate(
-                            student.Fathers_mail,
-                            student.Student_name
-                          )
-                        }
-                      >
-                        Complaint
-                      </button>
-                    </td>
+            {loading ? (
+              <p className="loading-text">Fetching Student Data...</p>
+            ) : (
+              <table className="student-table">
+                <thead>
+                  <tr>
+                    <th>S.no</th>
+                    <th>Student Name</th>
+                    <th>Student Email</th>
+                    <th>Student Phone</th>
+                    <th>Update Marks</th>
+                    <th>Pay Fee</th>
+                    <th>
+                      Emergency <br /> Intimate
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {displayedStudents.map((student, index) => (
+                    <tr key={`${student.id}-${index}`}>
+                      <td>{index + 1}</td>
+                      <td>{student.Student_name}</td>
+                      <td>{student.Fathers_mail}</td>
+                      <td>{student.Emergency_contact_number}</td>
+                      <td>
+                        <button
+                          className="btn update-btn"
+                          onClick={() => updateMarks(student.id)}
+                        >
+                          Update Marks
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="btn pay-btn"
+                          onClick={() =>
+                            handlePayFee(
+                              student.Student_name,
+                              student.Student_father_number,
+                              student.Total_fee,
+                              student.Registration_number,
+                              student.Student_father_name,
+                              student._id,
+                              student.fees,
+                              student.Total_Fee_Paid
+                            )
+                          }
+                        >
+                          Pay Fee
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="btn complaint-btn"
+                          onClick={() =>
+                            emergencyIntimate(
+                              student.Fathers_mail,
+                              student.Student_name
+                            )
+                          }
+                        >
+                          Complaint
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
-
+  
           {/* Show More / Show Less Button */}
-          {total_students.length > 10 && (
+          {!loading && total_students.length > 10 && (
             <button
               className="btn show-more-btn"
               onClick={() => setShowAll(!showAll)}
@@ -267,6 +262,7 @@ const Dashboard = () => {
       </div>
     </div>
   );
+   
 };
 
 export default Dashboard;

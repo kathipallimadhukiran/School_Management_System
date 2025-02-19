@@ -4,69 +4,57 @@
   padding: 0;
   box-sizing: border-box;
 }
+.dashboard-container{
+  background: linear-gradient(155deg, #252a30, #FF5722); /* Midnight Blue to Deep Orange */
 
+}
 .dashboard-container, .dashboard {
-  
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #5d341c;
- 
-}
 
-.Home-container {
+  
+  
+  
+  
+}
+  
+  .content-container {
   width: 100%;
-  height: 90svh;
+  height: 150px;  /* Adjust the height as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}.Home-container{
+  width: 100%;
 }
 
 .marquee {
-  height: 30px;
-  color: white;
-  background-color: #333;
+  width: 100% !important; /* Ensure it takes up the full width */
+  display: block; /* Ensure it's treated as a block-level element */
+  overflow: hidden; /* Prevent overflow if content goes beyond */
+  white-space: nowrap; /* Prevent text from wrapping */
+  color: rgb(0, 0, 0);
+  background-color: #958a8a; /* Background color */
 }
 
-/* Image Container */
-.image-container {
-  width: 100%;
-  min-width: 80svw;
-  min-height:80svh;
-  height: 90svh;
-  overflow: hidden;
-  position: relative;
-}
 
-.image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, black, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
-  pointer-events: none;
-}
-
+/* Updated Text Overlay */
 .text-overlay {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
   color: white;
   font-size: 54px;
   font-weight: bold;
   padding: 10px;
+  text-align: center;
 }
-.dashboard{
+
+/* Adjust the rest of the styles... */
+.dashboard {
   margin-top: 60px;
 }
+
 /* Dashboard Blocks */
 .dashboard .block {
   width: 300px;
@@ -161,8 +149,8 @@
 
 /* Student Container */
 .student-container {
-  background-color: #5d341c;
   width: 100%;
+  
 }
 
 .student {
@@ -170,7 +158,6 @@
   margin: 0 auto;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .student-heading {
@@ -189,12 +176,16 @@
 .student-table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #5d341c;
 }
 
+.student-table 
 .student-table th, .student-table td {
   text-align: left;
   padding: 12px;
   border: 1px solid rgb(145, 137, 137);
+  background-color: #5d341c;
+
   color: white;
 }
 
@@ -289,6 +280,228 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Students.css */
+
+/* Main container */
+.student_container {
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(155deg, #252a30, #FF5722); /* Midnight Blue to Deep Orange */
+}
+
+/* Overview section */
+.overview_data {
+  background: linear-gradient(135deg, #007bff, #00bcd4);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.overview_data h2 {
+  margin-bottom: 10px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  font-size: 18px;
+}
+
+.stats p {
+  color: white;
+  font-weight: bold;
+}
+
+/* Student List Section */
+.students_list {
+  padding: 20px;
+}
+
+.students_list h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.34);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+thead {
+  background: #007bff;
+  color: white;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background: #251f1f1f;
+}
+
+tbody tr:hover {
+  background: #71747768;
+}
+
+/* Loading and error messages */
+p.loading-text, p.error-message {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: red;
+}
+
+
+/* Search & Sort Container */
+.search-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+/* Search Input */
+.search-input {
+  width: 40%;
+  padding: 10px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #0056b3;
+}
+
+/* Sort Button */
+.sort-button {
+  padding: 10px 15px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sort-button:hover {
+  background: #218838;
+}
+
+/* Sorting Dropdown (Initially Hidden) */
+.sort-options {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.sort-dropdown {
+  width: fit-content;
+  padding: 10px;
+  border: 2px solid #28a745;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  background: white;
+  cursor: pointer;
+}
+
+.sort-dropdown:focus {
+  border-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-input, .sort-button, .sort-dropdown {
+    width: 80%;
+  }
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-input {
+    width: 80%;
+  }
+
+  .sort-dropdown {
+    width: 80%;
+  }
+}
+
+
+
+/* Send Email Button */
+.email-button {
+  padding: 8px 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.email-button:hover {
+  background: #c82333;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+}
 
 
 

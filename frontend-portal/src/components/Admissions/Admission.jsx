@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Admission.css";
 
 function Admission() {
+  const navigate = useNavigate();
   const initialState = {
     Student_name: "",
     Student_age: null, // Reset to null
@@ -162,6 +164,10 @@ function Admission() {
   
   return (
     <div className="main">
+       {/* Back Button */}
+       <button className="back-button" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
       <form onSubmit={handleSubmit}>
         <h2>Primary School Admission Form</h2>
 
@@ -469,5 +475,5 @@ function Admission() {
     </div>
   );
 }
-
+ 
 export default Admission;

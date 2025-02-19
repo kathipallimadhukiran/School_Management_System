@@ -1,0 +1,84 @@
+/* Sidebar Styling */
+.sidebar {
+  background: linear-gradient(155deg, #2C3E50, #3B8C6E);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease-in-out;
+}
+
+.expanded {
+  width: 250px;
+}
+
+.compressed {
+  width: 70px;
+}
+
+.mobile {
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+}
+
+/* Sidebar Toggle Button */
+.barIcon {
+  padding: 1rem;
+  font-size: 1.8rem;
+  color: white;
+  cursor: pointer;
+  text-align: right;
+  transition: color 0.3s ease-in-out;
+}
+
+.barIcon:hover {
+  color: #F39C12; /* Change color on hover */
+}
+
+.menuLink {
+  width: 92%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: white;
+  padding: 10px 15px;
+  transition: background 0.3s ease-in-out, transform 0.2s ease;
+}
+
+/* Hover Effect for Menu Items */
+.menuLink:hover {
+  background-color: #34495E; /* Darker background on hover */
+  transform: translateX(5px); /* Slightly move the item on hover */
+}
+
+.menuLink span {
+  transition: color 0.3s ease-in-out;
+}
+
+.menuLink:hover span {
+  color: #F39C12; /* Change text color on hover */
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .expanded {
+    width: 180px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .expanded {
+    width: 50px;
+  }
+
+  .menuItem span {
+    display: block;
+  }
+
+  .compressed {
+    width: 20px;
+  }
+}

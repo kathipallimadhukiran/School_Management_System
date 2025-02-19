@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./dummyfee.css";
 
+
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -196,6 +197,10 @@ console.log(studentFee);
   
   return (
     <div className="payment-container">
+       {/* Back Button */}
+       <button className="back-button" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
       <h2 className="title">Fee Payment</h2>
 
       <div className="student-info">

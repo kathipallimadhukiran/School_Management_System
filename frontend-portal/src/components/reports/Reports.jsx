@@ -49,7 +49,6 @@ const Statistics = () => {
         setTotalPaid(paid);
         setTotalDue(due);
 
-        console.log(fees,paid,due)
 
       } catch (error) {
         console.error("Error fetching statistics:", error);

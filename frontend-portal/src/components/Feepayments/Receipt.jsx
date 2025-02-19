@@ -19,37 +19,35 @@ const Receipt = () => {
     receiptNumber,
     feeDetails 
   } = location.state || {};
- 
 
-  // Reference to print only the receipt section
   const receiptRef = useRef();
 
-  // Function to print only the receipt
+  // Function to print the receipt
   const printReceipt = () => {
     const printContent = receiptRef.current.innerHTML;
     const originalContent = document.body.innerHTML;
 
     document.body.innerHTML = printContent;
     window.print();
+    
+    // Restore original content without reloading
     document.body.innerHTML = originalContent;
-    window.location.reload();
+    document.title = "Receipt"; // Restore title if changed
   };
 
   return (
     <div className="receipt-container">
-      {/* Receipt Content for Printing */}
-      <div ref={receiptRef}  className="receipt-content">
-
+      {/* Receipt Content */}
+      <div ref={receiptRef} className="receipt-content">
         <div className="banner">
-        <IoSchool  size={50} className="logo"/>
-        <h2>SARASWATHI VIDYA NIKETHAN [E.M]</h2>
-        <p>LKG to 10TH Class , Phone : +91 8099723998 ,+91 94908 71064  ,Satellite city ,Rajahmundry-533107 </p>
+          <IoSchool size={50} className="logo"/>
+          <h2>SARASWATHI VIDYA NIKETHAN [E.M]</h2>
+          <p>LKG to 10TH Class, Phone: +91 8099723998, +91 94908 71064, Satellite City, Rajahmundry-533107</p>
         </div>
-       
 
-        {/* Student & Payment Details in Two Columns */}
+        {/* Student & Payment Details */}
         <div className="receipt-details">
-        <h3>Payment Receipt</h3>
+          <h3>Payment Receipt</h3>
           <table className="receipt-info-table">
             <tbody>
               <tr>
@@ -106,10 +104,10 @@ const Receipt = () => {
         </table>
       </div>
 
-      {/* Buttons for Print & Cancel */}
+      {/* Buttons */}
       <div className="button-container">
         <button onClick={printReceipt} className="print-button">Print Receipt</button>
-        <button onClick={() => navigate(-1)} className="cancel-button">Cancel</button>
+        <button onClick={() => navigate(-2)} className="cancel-button">Cancel</button>
       </div>
     </div>
   );
