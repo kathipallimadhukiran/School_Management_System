@@ -13,7 +13,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000";
+  const API_URL = "https://school-site-2e0d.onrender.com/";
 
   // ✅ Handle Login
   const handleLogin = async (e) => {

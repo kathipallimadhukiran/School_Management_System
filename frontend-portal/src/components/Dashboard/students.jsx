@@ -22,7 +22,7 @@ const Students = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:3000/gettingStudent");
+        const response = await fetch("https://school-site-2e0d.onrender.com/gettingStudent");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -82,7 +82,7 @@ const Students = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/sendDueReminder", {
+      const response = await fetch("https://school-site-2e0d.onrender.com/sendDueReminder", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

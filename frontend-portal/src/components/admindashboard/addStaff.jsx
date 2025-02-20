@@ -8,7 +8,7 @@ const AddStaff = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const API_URL = "http://localhost:3000";
+  const API_URL = "https://school-site-2e0d.onrender.com/";
 
   // ✅ Handle Staff Signup
   const handleSignup = async (e) => {

@@ -44,7 +44,7 @@ console.log(studentFee);
     if (!studentfeearrey || studentfeearrey.length === 0) return;
 
     axios
-      .get(`http://localhost:3000/feepayments/get-fee-data/${studentId}`)
+      .get(`https://school-site-2e0d.onrender.com/feepayments/get-fee-data/${studentId}`)
       .then((response) => {
         console.log("Fee Data:", response.data);
         const payments = response.data.payments || [];
@@ -97,7 +97,7 @@ console.log(studentFee);
     try {
       if (paymentType === "online") {
         const response = await axios.post(
-          "http://localhost:3000/feepayments/create-order",
+          "https://school-site-2e0d.onrender.com/feepayments/create-order",
           {
             amount: totalEnteredAmount,
             studentId,
@@ -171,7 +171,7 @@ console.log(studentFee);
       };
   
       // Save payment details to the database
-      await axios.post("http://localhost:3000/feepayments/record-payment", paymentData);
+      await axios.post("https://school-site-2e0d.onrender.com/feepayments/record-payment", paymentData);
   
       // Navigate to the receipt page with the new receipt number
       navigate("/feePayments/payments/Receipt", {
