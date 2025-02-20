@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./FeePayments.css";
+import "./Feepayments.css";
 import Dummypayments from "./dummyfee";
 
 const FeePayment = () => {
