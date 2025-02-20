@@ -9,7 +9,7 @@ import { IoPersonAddSharp, IoSearchSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { FaUserPlus } from "react-icons/fa";
 
-import styles from "./Sidebar.module.css"; // Using CSS Modules
+import styles from "./sidebar.module.css"; // Using CSS Modules
 
 const Sidebar = ({ width, isMobile, toggleSidebar }) => {
   return (
