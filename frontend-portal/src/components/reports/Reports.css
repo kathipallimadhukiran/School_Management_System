@@ -1,92 +1,80 @@
 .statistics-container {
-    width: 100%;
-    min-width: 900px;
-    margin: auto;
-margin-top: 10px;    padding: 20px;
-    color: #e0e7ff;
-    text-align: center;
-  }
-  
-  .title h2{
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: white;
-    padding: 20px;
-  }
-  
-  .stats-grid {
-  
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-  
-  .stat-box {
-    flex: 1;
-    min-width: 150px;
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
-  }
-  
-  .stat-box h3 {
-    font-size: 1rem;
-    margin-bottom: 8px;
-  }
-  
-  .meter {
-    height: 8px;
-    width: 100%;
-    background: #1b66e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  
-  .meter span {
-    display: block;
-    height: 100%;
-    background: #60a5fa;
-  }
-  
-  .stat-box p {
-    font-size: 0.9rem;
-    margin-top: 5px;
-    color: #cbd5e1;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+}
+
+.stats-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.stat-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stat-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.meter {
+  width: 100%;
+  background: #ddd;
+  height: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.meter span {
+  display: block;
+  height: 100%;
+  background: #4CAF50;
+  transition: width 0.5s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
   }
   
   .chart-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 20px;
-   
+    max-width: 300px;
+    height: 250px;
   }
-  
- .bargraph,.semi-circle{
-  width: 100%;
-  height: 50svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
- }
 
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .stats-grid {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .stat-box {
-      width: 100%;
-    }
-  
-    .chart-container {
-      flex-direction: column;
-    }
+  .stats-boxes {
+    max-width: 250px;
   }
-  
+}

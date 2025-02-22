@@ -2,7 +2,7 @@
 .navbar {
   width: 100%;
   height: 60px;
-  background: linear-gradient(15deg, #2C3E50, #3B8C6E);
+  background: linear-gradient(15deg, #2c3e50, #3b8c6e);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +15,7 @@
 
 /* Add a shadow effect when scrolling */
 .scrolled {
-  background-color:#2779a7;
+  background-color: #2779a7;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-5px);
 }
@@ -23,7 +23,6 @@
 .mainNav {
   width: 90%;
   display: flex;
-  
   align-items: center;
   justify-content: space-between;
   color: #fff;
@@ -48,11 +47,12 @@
 .login {
   display: flex;
   align-items: center;
+  gap: 10px; /* Add spacing between elements */
 }
 
 .authBtn {
   background-color: white;
-  color: #C84C05;
+  color: #c84c05;
   border: none;
   padding: 8px 15px;
   font-size: 1rem;
@@ -66,8 +66,29 @@
   transform: scale(1.05);
 }
 
-/* Responsive Design */
+
+/* Menu Button for Mobile */
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: none; /* Hide by default */
+  align-items: center;
+  justify-content: center;
+}
+
+.menuIcon {
+  font-size: 24px;
+  color: white; /* Match the navbar text color */
+}
+
+/* Show Menu Button on Mobile Screens */
 @media screen and (max-width: 768px) {
+  .menuButton {
+    display: flex; /* Show on mobile screens */
+  }
+
   .navbar {
     height: 50px;
   }

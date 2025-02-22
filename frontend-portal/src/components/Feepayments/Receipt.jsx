@@ -1,23 +1,23 @@
 import React, { useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./Receipt.css";
 import { IoSchool } from "react-icons/io5";
+import styles from "./Receipt.module.css"; // Import CSS Module
 
 const Receipt = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  const { 
-    studentName, 
-    fatherName, 
-    studentRegno, 
-    studentFee, 
-    totalPaid, 
-    paymentMethod, 
-    transactionId, 
-    paymentDate, 
+
+  const {
+    studentName,
+    fatherName,
+    studentRegno,
+    studentFee,
+    totalPaid,
+    paymentMethod,
+    transactionId,
+    paymentDate,
     receiptNumber,
-    feeDetails 
+    feeDetails,
   } = location.state || {};
 
   const receiptRef = useRef();
@@ -29,53 +29,75 @@ const Receipt = () => {
 
     document.body.innerHTML = printContent;
     window.print();
-    
+
     // Restore original content without reloading
     document.body.innerHTML = originalContent;
     document.title = "Receipt"; // Restore title if changed
   };
 
   return (
-    <div className="receipt-container">
+    <div className={styles.container}>
       {/* Receipt Content */}
-      <div ref={receiptRef} className="receipt-content">
-        <div className="banner">
-          <IoSchool size={50} className="logo"/>
+      <div ref={receiptRef} className={styles.receiptContent}>
+        {/* Banner */}
+        <div className={styles.banner}>
+          <IoSchool size={50} className={styles.logo} />
           <h2>SARASWATHI VIDYA NIKETHAN [E.M]</h2>
-          <p>LKG to 10TH Class, Phone: +91 8099723998, +91 94908 71064, Satellite City, Rajahmundry-533107</p>
+          <p>
+            LKG to 10TH Class, Phone: +91 8099723998, +91 94908 71064, Satellite
+            City, Rajahmundry-533107
+          </p>
         </div>
 
         {/* Student & Payment Details */}
-        <div className="receipt-details">
+        <div className={styles.receiptDetails}>
           <h3>Payment Receipt</h3>
-          <table className="receipt-info-table">
+          <table className={styles.receiptInfoTable}>
             <tbody>
               <tr>
-                <td><strong>Student Name:</strong></td>
+                <td>
+                  <strong>Student Name:</strong>
+                </td>
                 <td>{studentName}</td>
-                <td><strong>Father's Name:</strong></td>
+                <td>
+                  <strong>Father's Name:</strong>
+                </td>
                 <td>{fatherName}</td>
               </tr>
               <tr>
-                <td><strong>Registration No:</strong></td>
+                <td>
+                  <strong>Registration No:</strong>
+                </td>
                 <td>{studentRegno}</td>
-                <td><strong>Total Fee:</strong></td>
+                <td>
+                  <strong>Total Fee:</strong>
+                </td>
                 <td>₹{studentFee}</td>
               </tr>
               <tr>
-                <td><strong>Total Paid:</strong></td>
+                <td>
+                  <strong>Total Paid:</strong>
+                </td>
                 <td>₹{totalPaid}</td>
-                <td><strong>Remaining Balance:</strong></td>
+                <td>
+                  <strong>Remaining Balance:</strong>
+                </td>
                 <td>₹{studentFee - totalPaid}</td>
               </tr>
               <tr>
-                <td><strong>Payment Method:</strong></td>
+                <td>
+                  <strong>Payment Method:</strong>
+                </td>
                 <td>{paymentMethod}</td>
-                <td><strong>Transaction ID:</strong></td>
+                <td>
+                  <strong>Transaction ID:</strong>
+                </td>
                 <td>{receiptNumber || "N/A"}</td>
               </tr>
               <tr>
-                <td><strong>Payment Date:</strong></td>
+                <td>
+                  <strong>Payment Date:</strong>
+                </td>
                 <td>{paymentDate || new Date().toLocaleDateString()}</td>
                 <td></td>
                 <td></td>
@@ -86,7 +108,7 @@ const Receipt = () => {
 
         {/* Fee Breakdown Table */}
         <h3>Detailed Fee Breakdown</h3>
-        <table className="receipt-table">
+        <table className={styles.receiptTable}>
           <thead>
             <tr>
               <th>Fee Type</th>
@@ -102,12 +124,33 @@ const Receipt = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Additional Fields */}
+        <div className={styles.additionalFields}>
+          <h4>Additional Information</h4>
+          <p>
+            <strong>School Address:</strong> Satellite City, Rajahmundry-533107
+          </p>
+          <p>
+            <strong>Contact:</strong> +91 8099723998, +91 94908 71064
+          </p>
+          <p>
+            <strong>Email:</strong> info@saraswathividyanikethan.com
+          </p>
+          <p>
+            <strong>Website:</strong> www.saraswathividyanikethan.com
+          </p>
+        </div>
       </div>
 
       {/* Buttons */}
-      <div className="button-container">
-        <button onClick={printReceipt} className="print-button">Print Receipt</button>
-        <button onClick={() => navigate(-2)} className="cancel-button">Cancel</button>
+      <div className={styles.buttonContainer}>
+        <button onClick={printReceipt} className={styles.printButton}>
+          Print Receipt
+        </button>
+        <button onClick={() => navigate(-2)} className={styles.cancelButton}>
+          Cancel
+        </button>
       </div>
     </div>
   );

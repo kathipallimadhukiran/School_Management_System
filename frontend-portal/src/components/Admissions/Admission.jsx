@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Admission.css";
+import styles from "./Admission.module.css"; // Import CSS Module
 
 function Admission() {
   const navigate = useNavigate();
   const initialState = {
     Student_name: "",
-    Student_age: null, // Reset to null
+    Student_age: null,
     Student_gender: "",
     Grade_applying_for: "",
     Date_of_birth: "",
@@ -15,23 +15,22 @@ function Admission() {
     State: "",
     District: "",
     ZIP_code: "",
-    Emergency_contact_number: null, // Reset to null
+    Emergency_contact_number: null,
     Student_father_name: "",
     Student_mother_name: "",
-    Student_father_number: null, // Reset to null
-    Student_mother_number: null, // Reset to null
+    Student_father_number: null,
+    Student_mother_number: null,
     Fathers_mail: "",
-    Total_fee: 0, // Reset total fee to 0
-    Number_of_terms: null, // Reset number of terms to null
-    fees: [], // Reset fees array
+    Total_fee: 0,
+    Number_of_terms: null,
+    fees: [],
   };
-  
 
   const [formData, setFormData] = useState(initialState);
   const [Totalfee, setTotalfee] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [pinCodeValid, setPinCodeValid] = useState(true);
-  const [showPopup, setShowPopup] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
   const [registrationDetails, setRegistrationDetails] = useState(null);
 
   const handleChange = (e) => {
@@ -68,18 +67,16 @@ function Admission() {
     }
   };
 
-  // Add Fee Row Function
   const addFeeRow = () => {
     setFormData((prevData) => ({
       ...prevData,
       fees: [
         ...prevData.fees,
-        { FeeType: "", FeeAmount: "" }, // Add new fee row with empty values
+        { FeeType: "", FeeAmount: "" },
       ],
     }));
   };
 
-  // Remove Fee Row Function
   const removeFeeRow = (index) => {
     const updatedFees = formData.fees.filter((_, i) => i !== index);
     setFormData((prevData) => ({
@@ -88,7 +85,6 @@ function Admission() {
     }));
   };
 
-  // Handle Fee Row Change
   const handleFeeChange = (e, index) => {
     const { name, value } = e.target;
     const updatedFees = [...formData.fees];
@@ -99,29 +95,28 @@ function Admission() {
     }));
   };
 
-  // Calculate Total Fee
   const calculateTotalFee = () => {
     let newTotalFee = formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0), 0);
     setFormData((prevData) => ({
       ...prevData,
-      Total_fee: newTotalFee, // Only update Total_fee
+      Total_fee: newTotalFee,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!formData.Student_name || !formData.Student_age || !formData.Emergency_contact_number) {
       alert("Please fill all required fields.");
       return;
     }
-  if(formData.Total_fee != formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0), 0)){
-    alert("Some fees not added to Total fee");
-    return;
-  }
-  
+    if (formData.Total_fee !== formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0, 0))) {
+      alert("Some fees not added to Total fee");
+      return;
+    }
+
     setIsLoading(true);
-  
+
     try {
       const response = await fetch("https://school-site-2e0d.onrender.com/start", {
         method: "POST",
@@ -135,23 +130,20 @@ function Admission() {
         setRegistrationDetails(result);
         setShowPopup(true);
         alert("Form submitted successfully!");
-      
 
         setFormData({
-          ...initialState, 
-          Student_age: "", 
-          Emergency_contact_number: "", 
-          Student_father_number: "", 
-          Student_mother_number: "", 
-          Number_of_terms: "", 
-          Total_fee: 0, 
-          fees: [], 
+          ...initialState,
+          Student_age: "",
+          Emergency_contact_number: "",
+          Student_father_number: "",
+          Student_mother_number: "",
+          Number_of_terms: "",
+          Total_fee: 0,
+          fees: [],
         });
-      
+
         setTotalfee(0);
-      }
-      
-       else {
+      } else {
         alert("Failed to send data to the server.");
       }
     } catch (error) {
@@ -161,18 +153,19 @@ function Admission() {
       setIsLoading(false);
     }
   };
-  
+
   return (
-    <div className="main">
-       {/* Back Button */}
-       <button className="back-button" onClick={() => navigate(-1)}>
+    <div className={styles.main}>
+      {/* Back Button */}<div className={styles.backDiv}>
+      <button className={styles.backButton} onClick={() => navigate(-1)}>
         ← Back
       </button>
+      </div>
       <form onSubmit={handleSubmit}>
         <h2>Primary School Admission Form</h2>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Student Name:</label>
             <input
               type="text"
@@ -183,7 +176,7 @@ function Admission() {
             />
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>Student Age:</label>
             <input
               type="number"
@@ -195,8 +188,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Gender:</label>
             <select
               name="Student_gender"
@@ -210,7 +203,7 @@ function Admission() {
             </select>
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>Date of Birth:</label>
             <input
               type="date"
@@ -221,8 +214,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Grade Applying For:</label>
             <select
               name="Grade_applying_for"
@@ -241,7 +234,7 @@ function Admission() {
             </select>
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>Address:</label>
             <input
               type="text"
@@ -253,8 +246,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>ZIP Code:</label>
             <input
               type="text"
@@ -266,7 +259,7 @@ function Admission() {
             {!pinCodeValid && <span style={{ color: "red" }}>Invalid PIN Code</span>}
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>State:</label>
             <input
               type="text"
@@ -278,8 +271,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>District:</label>
             <input
               type="text"
@@ -289,7 +282,7 @@ function Admission() {
               onChange={handleChange}
             />
           </div>
-          <div className="field">
+          <div className={styles.field}>
             <label>City:</label>
             <input
               type="text"
@@ -301,8 +294,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Emergency Contact Number:</label>
             <input
               type="number"
@@ -313,7 +306,7 @@ function Admission() {
             />
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>Father's Email:</label>
             <input
               type="email"
@@ -325,8 +318,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Father's Name:</label>
             <input
               type="text"
@@ -337,7 +330,7 @@ function Admission() {
             />
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>Father's Phone Number:</label>
             <input
               type="tel"
@@ -349,8 +342,8 @@ function Admission() {
           </div>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Mother's Name:</label>
             <input
               type="text"
@@ -360,7 +353,7 @@ function Admission() {
               onChange={handleChange}
             />
           </div>
-          <div className="field">
+          <div className={styles.field}>
             <label>Mother's Phone Number:</label>
             <input
               type="tel"
@@ -373,7 +366,7 @@ function Admission() {
         </div>
 
         {/* Fee Rows */}
-        <div className="fee-details">
+        <div className={styles.feeDetails}>
           <h3>Fee Details</h3>
           <table>
             <thead>
@@ -421,8 +414,8 @@ function Admission() {
           </button>
         </div>
 
-        <div className="field-row">
-          <div className="field">
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
             <label>Total Fee:</label>
             <input
               type="number"
@@ -434,7 +427,7 @@ function Admission() {
             />
           </div>
 
-          <div className="field">
+          <div className={styles.field}>
             <label>Number of Terms:</label>
             <input
               type="number"
@@ -447,8 +440,8 @@ function Admission() {
         </div>
 
         {/* Submit and Reset Buttons */}
-        <div className="buttons-main">
-          <div className="buttons">
+        <div className={styles.buttonsMain}>
+          <div className={styles.buttons}>
             <button type="submit" disabled={isLoading}>
               {isLoading ? "Submitting..." : "Submit"}
             </button>
@@ -461,7 +454,7 @@ function Admission() {
 
       {/* Show confirmation popup */}
       {showPopup && registrationDetails && (
-        <div className="popup">
+        <div className={styles.popup}>
           <h3>Admission Successful!</h3>
           <p>Student Name: {registrationDetails.studentName}</p>
           <p>Registration Number: {registrationDetails.regNo}</p>
@@ -475,5 +468,5 @@ function Admission() {
     </div>
   );
 }
- 
+
 export default Admission;

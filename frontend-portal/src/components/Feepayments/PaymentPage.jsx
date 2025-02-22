@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./dummyfee.css";
-
+import styles from "./PaymentPage.module.css"; // Import CSS Module
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -18,10 +17,6 @@ const PaymentPage = () => {
     studentfeearrey = [], // Default empty array to avoid undefined.map()
   } = location.state || {};
 
-
-console.log(studentFee);
-
-
   const [customAmounts, setCustomAmounts] = useState(() => {
     if (!studentfeearrey) return {};
     return studentfeearrey.reduce((acc, fee) => {
@@ -36,7 +31,7 @@ console.log(studentFee);
 
   const [paymentType, setPaymentType] = useState("offline");
   const [totalFee, setTotalFee] = useState(0);
-  const [totalEnteredAmount, setTotalEnteredAmount] = useState(0); // NEW: Tracks total entered amount
+  const [totalEnteredAmount, setTotalEnteredAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -46,7 +41,6 @@ console.log(studentFee);
     axios
       .get(`https://school-site-2e0d.onrender.com/feepayments/get-fee-data/${studentId}`)
       .then((response) => {
-        console.log("Fee Data:", response.data);
         const payments = response.data.payments || [];
         const updatedAmounts = {};
 
@@ -70,10 +64,8 @@ console.log(studentFee);
         setTotalFee(response.data.totalPaid || 0);
       })
       .catch((err) => console.error("Error fetching fee data:", err));
-      console.log(studentfeearrey)
   }, [studentId, studentfeearrey]);
 
-  // Handle amount input change and update the total entered amount
   const handleAmountChange = (feeId, value) => {
     if (isNaN(value) || value < 0) return;
 
@@ -81,7 +73,6 @@ console.log(studentFee);
       const updatedAmounts = { ...prev };
       updatedAmounts[feeId].amount = parseFloat(value) || 0;
 
-      // Calculate total entered amount
       const newTotalEntered = Object.values(updatedAmounts).reduce(
         (sum, fee) => sum + (parseFloat(fee.amount) || 0),
         0
@@ -153,9 +144,8 @@ console.log(studentFee);
 
   const recordPayment = async (paymentId = "offline") => {
     try {
-      // Generate a unique receipt number (e.g., using timestamp and student ID)
       const receiptNumber = `REC-${studentId.slice(-4)}-${Date.now()}`;
-  
+
       const paymentData = {
         amountPaid: totalEnteredAmount,
         FeeTypes: studentfeearrey.map((fee) => ({
@@ -167,13 +157,11 @@ console.log(studentFee);
         paymentMethod: paymentId === "offline" ? "Offline" : "Online",
         transactionId: paymentId !== "offline" ? paymentId : null,
         paymentDate: new Date().toLocaleDateString(),
-        receiptNumber, // Add the generated receipt number
+        receiptNumber,
       };
-  
-      // Save payment details to the database
+
       await axios.post("https://school-site-2e0d.onrender.com/feepayments/record-payment", paymentData);
-  
-      // Navigate to the receipt page with the new receipt number
+
       navigate("/feePayments/payments/Receipt", {
         state: {
           studentName,
@@ -184,26 +172,25 @@ console.log(studentFee);
           paymentMethod: paymentData.paymentMethod,
           transactionId: paymentData.transactionId,
           paymentDate: paymentData.paymentDate,
-          receiptNumber,  // Pass receipt number in state
+          receiptNumber,
           feeDetails: paymentData.FeeTypes,
         },
       });
-  
     } catch (error) {
       console.error("Error recording payment:", error);
       setError("Failed to record payment. Please try again.");
     }
   };
-  
+
   return (
-    <div className="payment-container">
-       {/* Back Button */}
-       <button className="back-button" onClick={() => navigate(-1)}>
+    <div className={styles.container}>
+      {/* Back Button */}
+      <button className={styles.backButton} onClick={() => navigate(-1)}>
         ← Back
       </button>
-      <h2 className="title">Fee Payment</h2>
+      <h2 className={styles.title}>Fee Payment</h2>
 
-      <div className="student-info">
+      <div className={styles.studentInfo}>
         <p>
           <strong>Name:</strong> {studentName}
         </p>
@@ -218,7 +205,7 @@ console.log(studentFee);
         </p>
       </div>
 
-      <table className="fee-table">
+      <table className={styles.feeTable}>
         <thead>
           <tr>
             <th>Fee Type</th>
@@ -244,6 +231,7 @@ console.log(studentFee);
                     onChange={(e) =>
                       handleAmountChange(fee._id, e.target.value)
                     }
+                    className={styles.amountInput}
                   />
                 </td>
                 <td>
@@ -257,6 +245,7 @@ console.log(studentFee);
                         );
                       }
                     }}
+                    className={styles.checkbox}
                   />
                 </td>
               </tr>
@@ -269,14 +258,13 @@ console.log(studentFee);
         </tbody>
       </table>
 
-      {/* Displaying the Total Entered Amount */}
-      <div className="total-amount-section">
+      <div className={styles.totalAmountSection}>
         <p>
           <strong>Total Amount Entered:</strong> ₹{totalEnteredAmount}
         </p>
       </div>
 
-      <label className="payment-method">
+      <label className={styles.paymentMethod}>
         Select Payment Method:
         <select
           value={paymentType}
@@ -288,15 +276,14 @@ console.log(studentFee);
       </label>
 
       <button
-        className="pay-button"
+        className={styles.payButton}
         onClick={handlePayment}
         disabled={loading || totalEnteredAmount === 0}
       >
         {loading ? "Processing..." : "Pay Now"}
       </button>
-   
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
   );
 };

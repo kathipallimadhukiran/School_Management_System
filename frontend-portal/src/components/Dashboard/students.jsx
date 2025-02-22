@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import "./Dashboard.css";
+import "./students.css";
 
 
 const Students = () => {
@@ -105,117 +105,99 @@ const Students = () => {
 
   return (
    <>
-    <div className="student_container">
-       <button className="back-button" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
-       {/* Back Button */}
-      <div className="overview_data">
-        <h2>Student Overview</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p className="error-message">Error: {error}</p>
+   <div className="student_container">
+  {/* 🔙 Back Button */}
+  <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
+
+  {/* 📌 Overview Section */}
+  <div className="overview_data">
+    <h2>Student Overview</h2>
+    {loading ? (
+      <p>Loading...</p>
+    ) : error ? (
+      <p className="error-message">Error: {error}</p>
+    ) : (
+      <div className="stats">
+        <p>Total Students: {total_students.length}</p>
+        <p>Unpaid Students: {unpaidStudents.length}</p>
+        <p>Total Dues: ₹{totalDues}</p>
+      </div>
+    )}
+  </div>
+
+  {/* 🔍 Search & Filters */}
+  <div className="search-container">
+    <input
+      type="text"
+      placeholder="Search by Name, Mobile, or Father's Name..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      className="search-input"
+    />
+
+    <input
+      type="number"
+      placeholder="Min Remaining Fee ₹"
+      value={minRemainingFee}
+      onChange={(e) => setMinRemainingFee(e.target.value)}
+      className="search-input"
+    />
+
+    <select className="sort-dropdown" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+      <option value="">Sort by Remaining Fee</option>
+      <option value="asc">Lowest to Highest</option>
+      <option value="desc">Highest to Lowest</option>
+    </select>
+  </div>
+
+  {/* 📜 Student List */}
+  <div className="students_list">
+    <h2>Student List</h2>
+    {loading ? (
+      <p>Loading students...</p>
+    ) : (
+      <>
+        {filteredStudents.length === 0 ? (
+          <p>No students found.</p>
         ) : (
-          <div className="stats">
-            <p>Total Students: {total_students.length}</p>
-            <p>Unpaid Students: {unpaidStudents.length}</p>
-            <p>Total Dues: ₹{totalDues}</p>
+          <div className="table-container"> {/* 📌 Table Scroll Container */}
+            <table>
+              <thead>
+                <tr>
+                  <th>Reg No</th>
+                  <th>Name</th>
+                  <th>Father's Name</th>
+                  <th>Mobile Number</th>
+                  <th>Fee Paid</th>
+                  <th>Remaining Due</th>
+                  <th>Send Reminder</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.map((student, index) => (
+                  <tr key={index}>
+                    <td>{student.Registration_number}</td>
+                    <td>{student.Student_name}</td>
+                    <td>{student.Student_father_name}</td>
+                    <td>{student.Student_father_number}</td>
+                    <td>₹{student.Total_Fee_Paid}</td>
+                    <td>₹{student.Total_fee - student.Total_Fee_Paid}</td>
+                    <td>
+                      <button className="email-button" onClick={() => sendEmailReminder(student.Fathers_mail, student.Student_name, student.Total_fee - student.Total_Fee_Paid)}>
+                        Send Reminder
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
-      </div>
-
-      <div className="search-container">
-  <input
-    type="text"
-    placeholder="Search by Name, Mobile, or Father's Name..."
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    className="search-input"
-  />
-
-  <input
-    type="number"
-    placeholder="Min Remaining Fee ₹"
-    value={minRemainingFee}
-    onChange={(e) => setMinRemainingFee(e.target.value)}
-    className="search-input"
-  />
-
-  <select
-    className="sort-dropdown"
-    value={sortOrder}
-    onChange={(e) => setSortOrder(e.target.value)}
-  >
-    <option value="">Sort by Remaining Fee</option>
-    <option value="asc">Lowest to Highest</option>
-    <option value="desc">Highest to Lowest</option>
-  </select>
+      </>
+    )}
+  </div>
 </div>
 
-    
-
-      <div className="students_list">
-        <h2>Student List</h2>
-        {loading ? (
-          <p>Loading students...</p>
-        ) : (
-          <>
-            {filteredStudents.length === 0 ? (
-              <p>No students found.</p>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Reg No</th>
-                    <th>Name</th>
-                    <th>Father's Name</th>
-                    <th>Mobile Number</th>
-                    <th>Fee Paid</th>
-                    <th>Remaining Due</th>
-                    <th>Send Reminder</th>
-                  </tr>
-                </thead>
-                <tbody>
-  {filteredStudents.map((student, index) => {
-    const remainingFee = student.Total_fee - student.Total_Fee_Paid;
-
-    // Normalize the remaining fee to a value between 0 and 255 for color intensity
-    const maxFee = Math.max(...filteredStudents.map(s => s.Total_fee - s.Total_Fee_Paid), 1); // Avoid division by zero
-    const intensity = Math.min(255, Math.floor((remainingFee / maxFee) * 255)); // Scale between 0 and 255
-    const backgroundColor = `rgb(255, ${255 - intensity}, ${255 - intensity})`; // Red gradient effect
-
-    return (
-      <tr key={index}>
-        <td>{student.Registration_number}</td>
-        <td>{student.Student_name}</td>
-        <td>{student.Student_father_name}</td>
-        <td>{student.Student_father_number}</td>
-        <td>₹{student.Total_Fee_Paid}</td>
-        <td style={{ backgroundColor, color: 'black', fontWeight: 'bold' }}>
-          ₹{remainingFee}
-        </td>
-        <td>
-          <button
-            className="email-button"
-            onClick={() =>
-              sendEmailReminder(student.Fathers_mail, student.Student_name, remainingFee)
-            }
-          >
-            Send Reminder
-          </button>
-        </td>
-      </tr>
-    );
-  })}
-</tbody>
-
-              </table>
-            )}
-          </>
-        )}
-      </div>
-    </div>
     </>
   );
 };

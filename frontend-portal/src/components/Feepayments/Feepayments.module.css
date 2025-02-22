@@ -1,28 +1,28 @@
 /* General container styling */
-.fee-payment-container {
+.container {
   width: 100%;
   height: 100%;
   padding: 20px;
-  background: linear-gradient(155deg, #252a30, #FF5722); /* Midnight Blue to Deep Orange */
+  background: linear-gradient(155deg, #252a30, #ff5722); /* Midnight Blue to Deep Orange */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Ensures space between middle (student details) and bottom (instructions) */
+  justify-content: start; /* Ensures space between middle (student details) and bottom (instructions) */
 }
 
 /* Title styling */
-.fee-payment-title {
+.title {
+
   text-align: center;
   font-size: 2rem;
+  margin: 30px 0px;
   color: #ffffff;
-  margin-bottom: 20px;
 }
 
 /* Input field styling */
-.fee-payment-input {
+.input {
   width: 100%;
   padding: 12px;
-  margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1rem;
@@ -30,13 +30,13 @@
   transition: border 0.3s ease;
 }
 
-.fee-payment-input:focus {
+.input:focus {
   border-color: #007bff;
 }
 
 /* Loading and error text styling */
-.loading-text,
-.error-text {
+.loadingText,
+.errorText {
   text-align: center;
   font-size: 1.2rem;
   color: #ff6b6b;
@@ -51,26 +51,27 @@
 }
 
 /* Instructions at the bottom */
-.payment-info {
+.paymentInfo {
   background-color: #f7f7f7;
   padding: 15px;
-  margin-top: 20px;
+  margin-top: 200px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
 }
 
-.payment-info h3 {
+.paymentInfo h3 {
   font-size: 18px;
   margin-bottom: 10px;
 }
 
-.payment-info p {
+.paymentInfo p {
   font-size: 16px;
   margin-bottom: 10px;
 }
 
 /* Selected student details in the middle */
-.selected-student-details {
+.selectedStudentDetails {
   margin-top: 20px;
   background-color: #f7f7f7;
   padding: 20px;
@@ -84,17 +85,17 @@
 }
 
 /* Styling for individual student details */
-.selected-student-details h3 {
+.selectedStudentDetails h3 {
   margin-bottom: 10px;
 }
 
-.selected-student-details p {
+.selectedStudentDetails p {
   font-size: 16px;
   margin: 5px 0;
 }
 
-/* Pay Now   */
-.pay-now-button {
+/* Pay Now Button */
+.payNowButton {
   padding: 10px 20px;
   background-color: #28a745;
   color: white;
@@ -105,13 +106,13 @@
   margin-top: 10px;
 }
 
-.pay-now-button:disabled {
+.payNowButton:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
 }
 
 /* Dropdown List Styling */
-.dropdown-list {
+.dropdownList {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -130,31 +131,31 @@
 }
 
 /* Hide dropdown when filteredStudents is empty */
-.dropdown-list.hidden {
+.dropdownList.hidden {
   opacity: 0;
   visibility: hidden;
 }
 
 /* Dropdown item styling */
-.dropdown-item {
+.dropdownItem {
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.dropdown-item:hover {
+.dropdownItem:hover {
   background-color: #f1f1f1;
 }
 
 /* No results message */
-.no-results {
+.noResults {
   text-align: center;
   font-size: 1rem;
   color: #555;
 }
 
 /* Student details container styling */
-.student-details {
+.studentDetails {
   margin-top: 30px;
   padding: 20px;
   background-color: #fff;
@@ -163,37 +164,91 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.student-details h3 {
+.studentDetails h3 {
   font-size: 1.8rem;
   color: #333;
   margin-bottom: 15px;
 }
 
-.student-details p {
+.studentDetails p {
   font-size: 1rem;
   color: #555;
   margin: 5px 0;
 }
 
-.student-details strong {
+.studentDetails strong {
   color: #333;
+}
+
+/* Back Button */
+.backButton {
+  padding: 10px 15px;
+  font-size: 16px;
+  width: fit-content;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-top: 50px ;
+
+}
+
+.backButton:hover {
+  background-color: #d32f2f;
 }
 
 /* Responsive styling */
 @media screen and (max-width: 768px) {
-  .fee-payment-container {
-    width: 90%;
+  .container {
+    padding: 15px;
   }
 
-  .fee-payment-title {
+  .title {
     font-size: 1.8rem;
   }
 
-  .fee-payment-input {
+  .input {
     font-size: 1rem;
   }
 
-  .dropdown-item {
+  .dropdownItem {
     font-size: 1rem;
+  }
+
+  .selectedStudentDetails {
+    padding: 15px;
+  }
+
+  .paymentInfo {
+    padding: 10px;
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .input {
+    font-size: 0.9rem;
+  }
+
+  .selectedStudentDetails h3 {
+    font-size: 1.2rem;
+  }
+
+  .selectedStudentDetails p {
+    font-size: 0.9rem;
+  }
+
+  .payNowButton {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  .paymentInfo{
+    margin-top: 270px;
   }
 }

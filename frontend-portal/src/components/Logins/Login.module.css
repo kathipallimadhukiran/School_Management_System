@@ -1,0 +1,190 @@
+/* General Styles */
+.loginPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(155deg, #252a30, #ff5722);
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.loginContainer {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Form Heading */
+.loginContainer h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* Input Fields */
+.inputGroup {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.inputGroup label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #555;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.inputGroup input,
+.inputGroup select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus {
+  border-color: #6e8efb;
+  outline: none;
+}
+
+/* Password Wrapper */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 12px;
+  font-size: 1.2rem;
+  color: #252a30;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+.togglePassword:hover {
+  color: #ff5722;
+}
+
+/* Buttons */
+.loginContainer button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #ff5722, #252a30); /* Adjusted to match the background gradient */
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: 1rem;
+}
+
+.loginContainer button:hover {
+  opacity: 0.9;
+  background: linear-gradient(135deg, #e64a19, #1c1f23); /* Darker shades for hover effect */
+}
+/* Forgot Password Link */
+.forgotPasswordLink {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.blueText {
+  color: #e98c70;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+.blueText:hover {
+  color: #a777e3;
+  text-decoration: underline;
+}
+
+/* Error and Success Messages */
+.errorMessage {
+  color: #ff0000;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.successMessage {
+  color: #4caf50;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+/* Loading Spinner */
+.loadingSpinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #6e8efb;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .loginContainer {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .loginContainer h2 {
+    font-size: 1.5rem;
+  }
+
+  .inputGroup input,
+  .inputGroup select {
+    font-size: 0.9rem;
+  }
+
+  .loginContainer button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}

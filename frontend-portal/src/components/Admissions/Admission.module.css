@@ -1,13 +1,26 @@
+/* General Styles */
 .main {
   width: 100%;
-  margin: auto;
+  margin-top: 40px;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-.back-button {
+.backDiv {
+  margin-top: 10px;
+  width: 100%;
+  text-align: start;
+}
+
+.main h2 {
+  font-weight: 900;
+  padding: 50px 0px;
+}
+
+.backButton {
   background-color: #f44336;
   color: white;
   border: none;
@@ -17,7 +30,7 @@
   margin-bottom: 15px;
 }
 
-.field-row {
+.fieldRow {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
@@ -34,29 +47,31 @@
   margin-bottom: 5px;
 }
 
-.field input, .field select {
+.field input,
+.field select {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-.fee-details {
+.feeDetails {
   margin-top: 20px;
 }
 
-.fee-details table {
+.feeDetails table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
 }
 
-.fee-details th, .fee-details td {
+.feeDetails th,
+.feeDetails td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
-.fee-details button {
+.feeDetails button {
   background-color: #007bff;
   color: white;
   border: none;
@@ -66,7 +81,7 @@
   margin-top: 10px;
 }
 
-.buttons-main {
+.buttonsMain {
   display: flex;
   justify-content: center;
   margin-top: 20px;
@@ -110,4 +125,85 @@
   background-color: #007bff;
   color: white;
   border-radius: 5px;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For tablets and smaller screens (max-width: 768px) */
+@media screen and (max-width: 768px) {
+  .main {
+    padding: 15px;
+    margin-top: 30px;
+  }
+
+  .main h2 {
+    padding: 30px 0px;
+    font-size: 1.5rem;
+  }
+
+  .fieldRow {
+    flex-direction: column;
+  }
+
+  .field {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .feeDetails table {
+    font-size: 0.9rem;
+  }
+
+  .buttonsMain {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .buttons button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+/* For mobile devices (max-width: 480px) */
+@media screen and (max-width: 480px) {
+  .main {
+    padding: 10px;
+    margin-top: 40px;
+  }
+
+  .main h2 {
+    padding: 20px 0px;
+    font-size: 1.3rem;
+  }
+
+  .backButton {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .field input,
+  .field select {
+    padding: 6px;
+    font-size: 0.9rem;
+  }
+
+  .feeDetails table {
+    font-size: 0.8rem;
+  }
+
+  .feeDetails th,
+  .feeDetails td {
+    padding: 6px;
+  }
+
+  .popup {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .popup button {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
 }

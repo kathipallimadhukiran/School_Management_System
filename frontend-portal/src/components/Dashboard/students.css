@@ -1,0 +1,164 @@
+/* ✅ Student Container */
+.student_container {
+    width: 100%;
+    margin-top: 40px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ✅ Overview Data */
+  .overview_data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .stats {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .stats p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* ✅ Search & Filter Section */
+  .search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .search-input, .sort-dropdown {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* ✅ Table - Aligned & Scrollable */
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .students_list table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .students_list th, .students_list td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .students_list th {
+    background: #007bff;
+    color: white;
+  }
+  
+  .students_list td {
+    background: #ffffff;
+  }
+  
+  .students_list tr:hover {
+    background: #f1f1f1;
+  }
+  
+  /* ✅ Email Button */
+  .email-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .email-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* ✅ Back Button */
+  .back-button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .back-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* ✅ Responsive Adjustments */
+  @media (max-width: 1024px) {
+    .stats {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .search-container {
+      flex-direction: column;
+    }
+  
+    .search-input, .sort-dropdown {
+      width: 100%;
+    }
+  
+    .students_list th, .students_list td {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .students_list th, .students_list td {
+      font-size: 12px;
+      padding: 8px;
+    }
+  
+    .email-button {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+  
+    .back-button {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .students_list th, .students_list td {
+      font-size: 12px;
+      padding: 6px;
+    }
+  
+    .email-button {
+      font-size: 10px;
+      padding: 5px 8px;
+    }
+  }
+  

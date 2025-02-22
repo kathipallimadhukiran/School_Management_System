@@ -23,31 +23,31 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
       <nav className={styles.menu}>
         <ul className={styles.menuList}>
           <li className={styles.menuItem}>
-            <Link to="/Dashboard" className={styles.menuLink}>
+            <Link to="/Dashboard" className={styles.menuLink} onClick={toggleSidebar}>
               <MdDashboard />
               {width > 70 && <span>Dashboard</span>}
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <Link to="/admissions" className={styles.menuLink}>
+            <Link to="/admissions" className={styles.menuLink} onClick={toggleSidebar}>
               <IoPersonAddSharp />
               {width > 70 && <span>New Admission</span>}
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <Link to="/Feepayments" className={styles.menuLink}>
+            <Link to="/Feepayments" className={styles.menuLink}  onClick={toggleSidebar}>
               <MdOutlinePayments />
               {width > 70 && <span>Fee Payments</span>}
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <Link to="#" className={styles.menuLink}>
+            <Link to="/updatemarks" className={styles.menuLink} onClick={toggleSidebar}>
               <MdAddChart />
               {width > 70 && <span>Marks Entry</span>}
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <Link to="#" className={styles.menuLink}>
+            <Link to="/StudentManagement" className={styles.menuLink} onClick={toggleSidebar}>
               <MdSystemSecurityUpdateGood />
               {width > 70 && <span>Update Student Data</span>}
             </Link>

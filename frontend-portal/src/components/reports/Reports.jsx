@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Doughnut, Bar } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import "./Reports.css";
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const StatBox = ({ title, value, maxValue }) => {
+  const percentage = maxValue ? (value / maxValue) * 100 : 0;
+  return (
+    <div className="stat-box">
+      <h3>{title}</h3>
+      <div className="meter">
+        <span style={{ width: `${percentage}%` }}></span>
+      </div>
+      <p>
+        {value} / {maxValue}
+      </p>
+    </div>
+  );
+};
 
 const Statistics = () => {
-  const [data, setData] = useState([]);
   const [totalFees, setTotalFee] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
@@ -15,102 +29,56 @@ const Statistics = () => {
     const fetchData = async () => {
       try {
         const response = await fetch("https://school-site-2e0d.onrender.com/gettingStudent");
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        if (!result || !result.data) throw new Error("Empty data from server");
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const result = await response.json(); // Directly parse JSON response
-
-        if (!result || !result.data) {
-          throw new Error("Empty data from server");
-        }
-
-        // Set the fetched data
-        setData(result.data);
-
-        // Calculate totals for fees, paid, and due
-        let fees = 0;
-        let paid = 0;
-        let due = 0;
-
+        let fees = 0, paid = 0;
         result.data.forEach((student) => {
-          // console.log(student.Total_fee);
-
-
-          // Safely add fees, paid, and due (check if the values exist)
           fees += student.Total_fee || 0;
           paid += student.Total_Fee_Paid || 0;
-          due = (fees-paid)|| 0;
         });
 
-        // Set the totals after the loop
         setTotalFee(fees);
         setTotalPaid(paid);
-        setTotalDue(due);
-
-
+        setTotalDue(fees - paid);
       } catch (error) {
         console.error("Error fetching statistics:", error);
       }
     };
-
     fetchData();
   }, []);
 
-  if (!data) return <p>Loading statistics...</p>;
-
-  // Data for the Doughnut Chart (Paid vs. Due Fees)
   const feeData = {
     labels: ["Paid Fees", "Due Fees"],
     datasets: [
       {
-        data: [totalPaid,totalDue], // Corrected to use totalPaid and totalDue
+        data: [totalPaid, totalDue],
         backgroundColor: ["#4CAF50", "#F44336"],
       },
     ],
   };
 
-
   const options = {
-    rotation: -90, // Start from the top
-    circumference: 180, // Half circle (180 degrees)
+    maintainAspectRatio: false,
+    responsive: true,
+    rotation: -90,
+    circumference: 180,
     plugins: {
-      legend: {
-        position: "bottom",
-      },
+      legend: { position: "bottom" },
     },
   };
 
   return (
     <div className="statistics-container">
-      <div className="title"><h2>Fee Payment Statistics</h2></div>
-
-      <div className="stats-grid">
-        {/* Student Count */}
-        <div className="stat-box">
-          <h3>Total Students</h3>
-          <div className="meter">
-            <span style={{ width: `${(data.length / 50) * 100}%` }}></span>
-          </div>
-          <p>{data.length} / {50}</p>
-        </div>
-
-        {/* Teacher Count */}
-        <div className="stat-box">
-          <h3>Total Teachers</h3>
-          <div className="meter">
-            <span style={{ width: `${(50 / 100) * 100}%` }}></span>
-          </div>
-          <p>{50} /10</p>
-        </div>
-      </div>
-
-      <div className="chart-container">
-       
-        <div className="semi-circle">
-          {/* Fee Due vs. Paid Doughnut Chart */}
+      <h2 className="title">Fee Payment Statistics</h2>
+      <div className="content">
+        <div className="chart-container">
           <Doughnut data={feeData} options={options} />
+        </div>
+        <div className="stats-boxes">
+          <StatBox title="Paid Fees" value={totalPaid} maxValue={totalFees} />
+          <StatBox title="Due Fees" value={totalDue} maxValue={totalFees} />
         </div>
       </div>
     </div>

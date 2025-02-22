@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./Feepayments.css";
-import Dummypayments from "./dummyfee";
+import styles from "./Feepayments.module.css"; // Import CSS Module
 
 const FeePayment = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [total_students, setTotalStudents] = useState([]);
+  const [totalStudents, setTotalStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -19,7 +18,6 @@ const FeePayment = () => {
 
   // Function to navigate to payment page
   const handlePayFee = (student) => {
-    console.log(student);
     navigate("/feePayments/payments", {
       state: {
         studentFee: student.Total_fee,
@@ -57,7 +55,7 @@ const FeePayment = () => {
   // Automatically select a student based on URL state
   useEffect(() => {
     if (studentName || studentNumber) {
-      const student = total_students.find(
+      const student = totalStudents.find(
         (s) =>
           s.Student_father_number === studentNumber ||
           s.Student_name === studentName
@@ -67,7 +65,7 @@ const FeePayment = () => {
         setSearchTerm(student.Student_name);
       }
     }
-  }, [studentName, studentNumber, total_students]);
+  }, [studentName, studentNumber, totalStudents]);
 
   // Handle student selection from dropdown
   const handleStudentClick = (student) => {
@@ -81,7 +79,7 @@ const FeePayment = () => {
     if (searchTerm.trim().length < 1) {
       setFilteredStudents([]);
     } else {
-      const filtered = total_students.filter((student) => {
+      const filtered = totalStudents.filter((student) => {
         const nameMatch = student.Student_name
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase());
@@ -94,35 +92,35 @@ const FeePayment = () => {
 
       setFilteredStudents(filtered);
     }
-  }, [searchTerm, total_students]);
+  }, [searchTerm, totalStudents]);
 
   return (
-    <div className="fee-payment-container" id="payments">
+    <div className={styles.container} id="payments">
       {/* Back Button */}
-      <button className="back-button" onClick={() => navigate(-1)}>
+      <button className={styles.backButton} onClick={() => navigate(-1)}>
         ← Back
       </button>
-      <h2 className="fee-payment-title">Fees Payment</h2>
+      <h2 className={styles.title}>Fees Payment</h2>
       <input
         type="text"
         placeholder="Search by Name or Mobile Number"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="fee-payment-input"
+        className={styles.input}
       />
 
-      {loading && <p className="loading-text">Loading...</p>}
-      {error && <p className="error-text">{error}</p>}
+      {loading && <p className={styles.loadingText}>Loading...</p>}
+      {error && <p className={styles.errorText}>{error}</p>}
 
       {/* Search Results Dropdown */}
       {searchTerm.trim().length >= 3 && (
-        <div className="dropdown">
+        <div className={styles.dropdown}>
           {filteredStudents.length > 0 ? (
-            <ul className="dropdown-list">
+            <ul className={styles.dropdownList}>
               {filteredStudents.map((student) => (
                 <li
                   key={student._id}
-                  className="dropdown-item"
+                  className={styles.dropdownItem}
                   onClick={() => handleStudentClick(student)} // Select student but don't navigate immediately
                 >
                   {student.Student_name || "Unknown"} -{" "}
@@ -131,14 +129,14 @@ const FeePayment = () => {
               ))}
             </ul>
           ) : (
-            <p className="no-results">No students found.</p>
+            <p className={styles.noResults}>No students found.</p>
           )}
         </div>
       )}
 
       {/* Centered Student Details */}
       {selectedStudent && (
-        <div className="selected-student-details">
+        <div className={styles.selectedStudentDetails}>
           <h3>Selected Student</h3>
           <p>Name: {selectedStudent.Student_name}</p>
           <p>Registration Number: {selectedStudent.Registration_number}</p>
@@ -146,7 +144,7 @@ const FeePayment = () => {
           <p>Remaining Fee: ₹{selectedStudent.Total_fee - selectedStudent.Total_Fee_Paid}</p>
 
           <button
-            className="pay-now-button"
+            className={styles.payNowButton}
             onClick={() => handlePayFee(selectedStudent)} // Allow navigation when "Pay Now" is clicked
             disabled={selectedStudent.Total_fee === selectedStudent.Total_Fee_Paid}
           >
@@ -158,7 +156,7 @@ const FeePayment = () => {
       )}
 
       {/* Instructions at the Bottom */}
-      <div className="payment-info">
+      <div className={styles.paymentInfo}>
         <h3>Note:</h3>
         <p>
           Please ensure that the student's details are correct before proceeding

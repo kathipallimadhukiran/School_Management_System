@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-import "./Dashboard.css";
-
+import styles from "./Teacher.module.css"; // Import CSS Module
 
 const Teacher = () => {
   const navigate = useNavigate();
 
-  const [total_students, setTotalStudents] = useState([]);
+  const [totalStudents, setTotalStudents] = useState([]);
   const [unpaidStudents, setUnpaidStudents] = useState([]);
   const [totalDues, setTotalDues] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const [sortOrder, setSortOrder] = useState(""); 
-  const [minRemainingFee, setMinRemainingFee] = useState(""); 
-  const [showSortOptions, setShowSortOptions] = useState(false); 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+  const [minRemainingFee, setMinRemainingFee] = useState("");
+  const [showSortOptions, setShowSortOptions] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,8 +47,8 @@ const Teacher = () => {
     fetchData();
   }, []);
 
-  // ✅ Search & Filter Function
-  let filteredStudents = total_students.filter((student) =>
+  // Filter and sort students
+  let filteredStudents = totalStudents.filter((student) =>
     [student.Student_name, student.Student_father_number, student.Student_father_name]
       .some((field) => field?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
@@ -74,7 +71,7 @@ const Teacher = () => {
     );
   }
 
-  // ✅ Function to Send Email Reminder
+  // Send email reminder
   const sendEmailReminder = async (parentEmail, studentName, dueAmount) => {
     if (!parentEmail) {
       alert("No parent email available for this student.");
@@ -104,58 +101,56 @@ const Teacher = () => {
   };
 
   return (
-   <>
-    <div className="Teacher_container">
-       <button className="back-button" onClick={() => navigate(-1)}>
+    <div className={styles.teacherContainer}>
+      <button className={styles.backButton} onClick={() => navigate(-1)}>
         ← Back
       </button>
-       {/* Back Button */}
-      <div className="overview_data">
+
+      {/* Overview Section */}
+      <div className={styles.overviewData}>
         <h2>Teacher Overview</h2>
         {loading ? (
           <p>Loading...</p>
         ) : error ? (
-          <p className="error-message">Error: {error}</p>
+          <p className={styles.errorMessage}>Error: {error}</p>
         ) : (
-          <div className="stats">
-            <p>Total Students: {total_students.length}</p>
+          <div className={styles.stats}>
+            <p>Total Students: {totalStudents.length}</p>
             <p>Unpaid Students: {unpaidStudents.length}</p>
             <p>Total Dues: ₹{totalDues}</p>
           </div>
         )}
       </div>
 
-      <div className="search-container">
-  <input
-    type="text"
-    placeholder="Search by Name, Mobile, or Father's Name..."
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    className="search-input"
-  />
+      {/* Search and Filter Section */}
+      <div className={styles.searchContainer}>
+        <input
+          type="text"
+          placeholder="Search by Name, Mobile, or Father's Name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.searchInput}
+        />
+        <input
+          type="number"
+          placeholder="Min Remaining Fee ₹"
+          value={minRemainingFee}
+          onChange={(e) => setMinRemainingFee(e.target.value)}
+          className={styles.searchInput}
+        />
+        <select
+          className={styles.sortDropdown}
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+        >
+          <option value="">Sort by Remaining Fee</option>
+          <option value="asc">Lowest to Highest</option>
+          <option value="desc">Highest to Lowest</option>
+        </select>
+      </div>
 
-  <input
-    type="number"
-    placeholder="Min Remaining Fee ₹"
-    value={minRemainingFee}
-    onChange={(e) => setMinRemainingFee(e.target.value)}
-    className="search-input"
-  />
-
-  <select
-    className="sort-dropdown"
-    value={sortOrder}
-    onChange={(e) => setSortOrder(e.target.value)}
-  >
-    <option value="">Sort by Remaining Fee</option>
-    <option value="asc">Lowest to Highest</option>
-    <option value="desc">Highest to Lowest</option>
-  </select>
-</div>
-
-    
-
-      <div className="students_list">
+      {/* Student List Section */}
+      <div className={styles.studentsList}>
         <h2>Student List</h2>
         {loading ? (
           <p>Loading students...</p>
@@ -187,7 +182,7 @@ const Teacher = () => {
                       <td>₹{student.Total_fee - student.Total_Fee_Paid}</td>
                       <td>
                         <button
-                          className="email-button"
+                          className={styles.emailButton}
                           onClick={() =>
                             sendEmailReminder(
                               student.Fathers_mail,
@@ -208,7 +203,6 @@ const Teacher = () => {
         )}
       </div>
     </div>
-    </>
   );
 };
 

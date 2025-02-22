@@ -1,0 +1,354 @@
+/* General Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.dashboardContainer {
+  background: linear-gradient(155deg, #252a30, #ff5722);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Home Container */
+.homeContainer {
+  width: 100%;
+}
+
+.marquee {
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  color: rgb(0, 0, 0);
+  background-color: #958a8a;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.contentContainer {
+  width: 100%;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.textOverlay {
+  color: white;
+  font-size: 42px;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Dashboard Blocks */
+.dashboard {
+  margin-top: 30px;
+  width: 60%
+}
+
+.blockRow {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+  min-width: 100px;
+}
+
+.dashboard .block {
+  flex: 1;
+  min-width: 250px;
+  max-width: 320px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  text-align: center;
+}
+
+.blockText h2 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.blockText p {
+  font-size: 20px;
+}
+
+.viewMore {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 10px;
+  height: 30px;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s;
+  background-color: rgba(15, 14, 14, 0.433);
+  color: white;
+}
+
+.viewMore:hover {
+  scale: 1.1;
+  transform: translateX(5px);
+}
+
+/* Block Colors */
+.totalStudents {
+  background-color: #4caf50;
+}
+.totalTeachers {
+  background-color: #2196f3;
+}
+.unpaidStudents {
+  background-color: #ff9800;
+}
+.totalDues {
+  background-color: #f44336;
+}
+
+/* Student Table */
+.studentContainer {
+  width: 100%;
+}
+
+.student {
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.studentHeading {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.studentTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #5d341c;
+}
+
+.studentTable th,
+.studentTable td {
+  text-align: left;
+  padding: 12px;
+  border: 1px solid rgb(145, 137, 137);
+  background-color: #5d341c;
+  color: white;
+}
+
+.studentTable th {
+  background-color: rgba(223, 110, 45, 0.31);
+  color: white;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.updateBtn {
+  background-color: #007bff;
+  color: white;
+}
+.updateBtn:hover {
+  background-color: #0056b3;
+}
+
+.payBtn {
+  background-color: #28a745;
+  color: white;
+}
+.payBtn:hover {
+  background-color: #1c7430;
+}
+
+.complaintBtn {
+  background-color: #dc3545;
+  color: white;
+}
+.complaintBtn:hover {
+  background-color: #a71d2a;
+}
+
+/* Show More Button */
+.showMoreBtn {
+  display: block;
+  margin: 20px auto;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.showMoreBtn:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .blockRow {
+    justify-content: center;
+  }
+  .textOverlay {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .textOverlay {
+    font-size: 24px;
+  }
+  .dashboard {
+    width: 100%;
+    padding: 10px;
+  }
+  .studentTable th,
+  .studentTable td {
+    font-size: 12px;
+    padding: 8px;
+  }
+  .btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard .block {
+    margin: 10px 0;
+    padding: 10px;
+  }
+  .textOverlay {
+    font-size: 18px;
+  }
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* Student Name Button */
+.studentNameBtn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.studentNameBtn:hover {
+  color: #0056b3;
+}
+
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Content */
+.modalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+}
+
+.modalContent h2 {
+  color: #333;
+}
+
+.modalContent p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* Modal Buttons */
+.modalButtons {
+  margin-top: 15px;
+}
+
+.modalButtons button {
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.payBtn {
+  background-color: #28a745;
+  color: white;
+}
+
+.complaintBtn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.updateBtn {
+  background-color: #007bff;
+  color: white;
+}
+
+.closeBtn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.payBtn:hover {
+  background-color: #1c7430;
+}
+
+.complaintBtn:hover {
+  background-color: #a71d2a;
+}
+
+.updateBtn:hover {
+  background-color: #0056b3;
+}
+
+.closeBtn:hover {
+  background-color: #5a6268;
+}
