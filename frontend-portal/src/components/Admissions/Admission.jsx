@@ -6,7 +6,7 @@ function Admission() {
   const navigate = useNavigate();
   const initialState = {
     Student_name: "",
-    Student_age: null,
+    Student_age: "",  // Change null to an empty string
     Student_gender: "",
     Grade_applying_for: "",
     Date_of_birth: "",
@@ -15,17 +15,17 @@ function Admission() {
     State: "",
     District: "",
     ZIP_code: "",
-    Emergency_contact_number: null,
+    Emergency_contact_number: "",  // Change null to an empty string
     Student_father_name: "",
     Student_mother_name: "",
-    Student_father_number: null,
-    Student_mother_number: null,
+    Student_father_number: "",  // Change null to an empty string
+    Student_mother_number: "",  // Change null to an empty string
     Fathers_mail: "",
     Total_fee: 0,
-    Number_of_terms: null,
+    Number_of_terms: "",  // Change null to an empty string
     fees: [],
   };
-
+  
   const [formData, setFormData] = useState(initialState);
   const [Totalfee, setTotalfee] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,46 +75,67 @@ function Admission() {
         { FeeType: "", FeeAmount: "" },
       ],
     }));
+    calculateTotalFee(); // Recalculate total fee after adding a row
   };
-
   const removeFeeRow = (index) => {
     const updatedFees = formData.fees.filter((_, i) => i !== index);
     setFormData((prevData) => ({
       ...prevData,
       fees: updatedFees,
     }));
+    calculateTotalFee(); // Recalculate total fee after removing a row
   };
-
   const handleFeeChange = (e, index) => {
     const { name, value } = e.target;
     const updatedFees = [...formData.fees];
     updatedFees[index][name] = value;
+  
+    // Update the fees array
     setFormData((prevData) => ({
       ...prevData,
       fees: updatedFees,
     }));
+  
+    // Recalculate the total fee
+    calculateTotalFee();
   };
-
   const calculateTotalFee = () => {
-    let newTotalFee = formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0), 0);
+    const newTotalFee = formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0), 0);
     setFormData((prevData) => ({
       ...prevData,
       Total_fee: newTotalFee,
     }));
   };
+  useEffect(() => {
+    calculateTotalFee();
+  }, [formData.fees]);
+    
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.Student_name || !formData.Student_age || !formData.Emergency_contact_number) {
-      alert("Please fill all required fields.");
+  // Check if any field is empty
+  for (const key in formData) {
+    if (
+      formData[key] === "" ||
+      formData[key] === null ||
+      (Array.isArray(formData[key]) && formData[key].length === 0)
+    ) {
+      alert(`Please fill out all required fields: Missing ${key}`);
       return;
     }
-    if (formData.Total_fee !== formData.fees.reduce((total, fee) => total + (parseFloat(fee.FeeAmount) || 0, 0))) {
-      alert("Some fees not added to Total fee");
-      return;
-    }
+  }
 
+  // Ensure fees are properly calculated
+  const calculatedTotalFee = formData.fees.reduce(
+    (total, fee) => total + (parseFloat(fee.FeeAmount) || 0),
+    0
+  );
+
+  if (formData.Total_fee !== calculatedTotalFee) {
+    alert("Some fees not added to Total fee");
+    return;
+  }
     setIsLoading(true);
 
     try {
@@ -365,80 +386,76 @@ function Admission() {
           </div>
         </div>
 
-        {/* Fee Rows */}
-        <div className={styles.feeDetails}>
-          <h3>Fee Details</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Fee Type</th>
-                <th>Fee Amount</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {formData.fees.map((fee, index) => (
-                <tr key={index}>
-                  <td>
-                    <input
-                      type="text"
-                      name="FeeType"
-                      placeholder="Type of Fee"
-                      value={fee.FeeType}
-                      onChange={(e) => handleFeeChange(e, index)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      name="FeeAmount"
-                      placeholder="Fee Amount"
-                      value={fee.FeeAmount}
-                      onChange={(e) => handleFeeChange(e, index)}
-                    />
-                  </td>
-                  <td>
-                    <button type="button" onClick={() => removeFeeRow(index)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <button type="button" onClick={addFeeRow}>
-            Add Fee Row
-          </button>
-          <button type="button" onClick={calculateTotalFee}>
-            Calculate Total Fee
-          </button>
-        </div>
-
-        <div className={styles.fieldRow}>
-          <div className={styles.field}>
-            <label>Total Fee:</label>
+       {/* Fee Rows */}
+<div className={styles.feeDetails}>
+  <h3>Fee Details</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Fee Type</th>
+        <th>Fee Amount</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {formData.fees.map((fee, index) => (
+        <tr key={index}>
+          <td>
+            <input
+              type="text"
+              name="FeeType"
+              placeholder="Type of Fee"
+              value={fee.FeeType}
+              onChange={(e) => handleFeeChange(e, index)} // Call handleFeeChange
+            />
+          </td>
+          <td>
             <input
               type="number"
-              name="Total_fee"
-              placeholder="Total Fee"
-              value={formData.Total_fee}
-              onChange={handleChange}
-              disabled
+              name="FeeAmount"
+              placeholder="Fee Amount"
+              value={fee.FeeAmount}
+              onChange={(e) => handleFeeChange(e, index)} // Call handleFeeChange
             />
-          </div>
+          </td>
+          <td>
+            <button type="button" onClick={() => removeFeeRow(index)}>
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <button type="button" onClick={addFeeRow}>
+    Add Fee Row
+  </button>
+</div>
 
-          <div className={styles.field}>
-            <label>Number of Terms:</label>
-            <input
-              type="number"
-              name="Number_of_terms"
-              placeholder="Number of Terms"
-              value={formData.Number_of_terms}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+<div className={styles.fieldRow}>
+<div className={styles.field}>
+  <label>Total Fee:</label>
+  <input
+    type="number"
+    name="Total_fee"
+    placeholder="Total Fee"
+    value={formData.Total_fee}
+    onChange={handleChange}
+    disabled
+  />
+</div>
 
+  <div className={styles.field}>
+    <label>Number of Terms:</label>
+    <input
+      type="number"
+      name="Number_of_terms"
+      placeholder="Number of Terms"
+      value={formData.Number_of_terms}
+      onChange={handleChange}
+    />
+  </div>
+</div>
         {/* Submit and Reset Buttons */}
         <div className={styles.buttonsMain}>
           <div className={styles.buttons}>

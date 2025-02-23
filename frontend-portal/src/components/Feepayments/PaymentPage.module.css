@@ -50,9 +50,7 @@
   color: white;
 }
 
-.feeTable tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
+
 
 /* Amount input styling */
 .amountInput {
@@ -123,7 +121,7 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 50px;
 }
 
 .backButton:hover {
