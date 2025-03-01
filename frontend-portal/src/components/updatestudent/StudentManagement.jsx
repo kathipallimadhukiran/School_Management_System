@@ -71,7 +71,7 @@ const StudentManagement = () => {
 
   const handleDeleteSubmit = async () => {
     try {
-      await axios.delete(`http://localhost:3000/deletestudentdetails/${selectedStudent._id}`);
+      await axios.delete(`https://school-site-2e0d.onrender.com/deletestudentdetails/${selectedStudent._id}`);
       fetchStudents();
       setIsDeleteModalOpen(false);
       toast.success("Student deleted successfully.");
