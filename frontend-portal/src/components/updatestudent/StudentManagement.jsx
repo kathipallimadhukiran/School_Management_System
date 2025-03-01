@@ -69,59 +69,26 @@ const StudentManagement = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleUpdateSubmit = async (e) => {
-    e.preventDefault();
-    // try {
-    //   await axios.put(
-    //     `https://school-site-2e0d.onrender.com/updateStudent/${selectedStudent._id}`,
-    //     formData
-    //   );
-    //   fetchStudents();
-    //   setIsUpdateModalOpen(false);
-    // } catch (error) {
-    //   console.error("Error updating student:", error);
-    // }
-    toast.success("Thankuuuuu 🙏"); // Show success toast
-    setIsUpdateModalOpen(false);
-  };
-
-  const handleAddFeeSubmit = async (e) => {
-    e.preventDefault();
-    // try {
-    //   await axios.post(
-    //     `https://school-site-2e0d.onrender.com/addFee/${selectedStudent._id}`,
-    //     { amount: formData.feeAmount }
-    //   );
-    //   fetchStudents();
-    //   setIsFeeModalOpen(false);
-    // } catch (error) {
-    //   console.error("Error adding fee:", error);
-    // }
-    toast.info("Ma Inti Papers Icheyimantara 🤬"); // Show info toast
-    setIsFeeModalOpen(false);
-  };
-
   const handleDeleteSubmit = async () => {
-    // try {
-    //   await axios.delete(
-    //     `https://school-site-2e0d.onrender.com/deleteStudent/${selectedStudent._id}`
-    //   );
-    //   fetchStudents();
-    //   setIsDeleteModalOpen(false);
-    // } catch (error) {
-    //   console.error("Error deleting student:", error);
-    // }
-    toast.warning(" Nenem Papam Chesanu Ayya 😭"); // Show warning toast
-    setIsDeleteModalOpen(false);
+    try {
+      await axios.delete(`http://localhost:3000/deletestudentdetails/${selectedStudent._id}`);
+      fetchStudents();
+      setIsDeleteModalOpen(false);
+      toast.success("Student deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      toast.error("Error deleting student. Please try again.");
+    }
   };
 
   return (
     <div className={styles.container}>
-       {/* Back Button */}<div className={styles.backDiv}>
-            <button className={styles.backButton} onClick={() => navigate(-1)}>
-              ← Back
-            </button>
-            </div>
+      {/* Back Button */}
+      <div className={styles.backDiv}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          ← Back
+        </button>
+      </div>
       <h2>Student Management</h2>
 
       {/* Toast Container */}
