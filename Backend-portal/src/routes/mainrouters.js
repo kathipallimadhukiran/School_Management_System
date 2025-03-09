@@ -5,7 +5,8 @@ const EmergencyMailSending = require("../controllers/emergencymail");
 const getfeedata = require("../controllers/feepayment/getfeedata");
 const { Duemailer } = require("../controllers/Duemailer"); // ✅ Ensure correct import
 const { Signup, Login, ForgotPassword, ResetPassword } = require("../controllers/Logincontroller");
-const { UpdateStudentDetails, DeleteStudentDetails } = require('../controllers/UpdateStudentDetails');
+const { UpdateStudentDetails, DeleteStudentDetails, AddFee } = require('../controllers/UpdateStudentDetails');
+const { Add_Student_Class, Get_classes } = require("../controllers/classes/classes");
 
 
 
@@ -25,6 +26,10 @@ router.post("/ForgotPassword", ForgotPassword);
 router.post("/ResetPassword", ResetPassword);
 router.put('/updatestudentdetails', UpdateStudentDetails);
 router.delete('/deletestudentdetails/:id', DeleteStudentDetails);
+router.post('/AddFee', AddFee);
+router.delete('/deletestudentdetails/:id', DeleteStudentDetails);
+router.get('/Add_Student_Class', Add_Student_Class);
+router.get('/Get_classes', Get_classes);
 
 
 

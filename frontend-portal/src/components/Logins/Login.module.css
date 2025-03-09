@@ -1,17 +1,18 @@
 /* General Styles */
 .loginPage {
+  background: #fff;
+
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(155deg, #252a30, #ff5722);
   padding: 20px;
   font-family: "Poppins", sans-serif;
 }
 
 .loginContainer {
-  background: #fff;
   padding: 2rem;
+  background: linear-gradient(155deg, #252a30, #ff5722);
   border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
@@ -23,7 +24,7 @@
 /* Form Heading */
 .loginContainer h2 {
   font-size: 1.8rem;
-  color: #333;
+  color: #ffffff;
   margin-bottom: 1.5rem;
 }
 
@@ -36,7 +37,7 @@
 .inputGroup label {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #555;
+  color: #ffffff;
   display: block;
   margin-bottom: 5px;
 }
@@ -108,10 +109,11 @@
 .forgotPasswordLink {
   margin-top: 1rem;
   font-size: 0.9rem;
+  color: white;
 }
 
 .blueText {
-  color: #e98c70;
+  color:#fff;
   font-weight: bold;
   cursor: pointer;
   transition: color 0.3s ease-in-out;

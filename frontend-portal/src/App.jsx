@@ -17,6 +17,7 @@ import AdminDashboard from "./components/admindashboard/admindahboard";
 import AddStaff from "./components/admindashboard/addStaff";
 import StudentManagement from "./components/updatestudent/StudentManagement";
 import MarksUpdate from "./components/marksupdate/marksupdate";
+import ClassManagement from "./components/admindashboard/classes/classes";
 
 function App() {
   const [sidebarWidth, setSidebarWidth] = useState(250);
@@ -89,6 +90,8 @@ function App() {
                 <Route path="/updatemarks" element={<ProtectedRoute><MarksUpdate /></ProtectedRoute>} />
                 <Route path="/AdminDashboard" element={<AdminDashboard />} />
                 <Route path="/AdminDashboard/AddStaff" element={<AddStaff />} />
+                <Route path="/AdminDashboard/ClassManagement" element={<ClassManagement />} />
+
               </Routes>
             </div>
           </div>

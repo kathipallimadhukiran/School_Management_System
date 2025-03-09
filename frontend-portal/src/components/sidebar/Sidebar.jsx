@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   TbLayoutSidebarLeftExpandFilled,
   TbLayoutSidebarLeftCollapseFilled,
 } from "react-icons/tb";
 import { MdDashboard, MdOutlinePayments, MdAddChart, MdSystemSecurityUpdateGood } from "react-icons/md";
-import { IoPersonAddSharp, IoSearchSharp } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-import { FaUserPlus } from "react-icons/fa";
+import { IoPersonAddSharp } from "react-icons/io5";
 
 import styles from "./sidebar.module.css"; // Using CSS Modules
 
 const Sidebar = ({ width, isMobile, toggleSidebar }) => {
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    // Retrieve user role from localStorage
+    const storedUserRole = localStorage.getItem("userRole");
+    setUserRole(storedUserRole);
+  }, []);
   return (
     <div
       className={`${styles.sidebar} ${width > 70 ? styles.expanded : styles.compressed} ${isMobile ? styles.mobile : ""}`}
@@ -35,7 +40,7 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <Link to="/Feepayments" className={styles.menuLink}  onClick={toggleSidebar}>
+            <Link to="/Feepayments" className={styles.menuLink} onClick={toggleSidebar}>
               <MdOutlinePayments />
               {width > 70 && <span>Fee Payments</span>}
             </Link>
@@ -52,6 +57,16 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
               {width > 70 && <span>Update Student Data</span>}
             </Link>
           </li>
+
+          {/* Show Admin Dashboard only for Admins */}
+          {userRole === "Admin" && (
+            <li className={styles.menuItem}>
+              <Link to="/AdminDashboard" className={styles.menuLink} onClick={toggleSidebar}>
+                <MdDashboard />
+                {width > 70 && <span>Admin Dashboard</span>}
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
     </div>

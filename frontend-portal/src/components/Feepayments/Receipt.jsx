@@ -33,6 +33,7 @@ const Receipt = () => {
     // Restore original content without reloading
     document.body.innerHTML = originalContent;
     document.title = "Receipt"; // Restore title if changed
+    window.location.reload(); // Ensure styles remain intact
   };
 
   return (
@@ -76,7 +77,7 @@ const Receipt = () => {
               </tr>
               <tr>
                 <td>
-                  <strong>Total Paid:</strong>
+                  <strong>Total Fee Paid:</strong>
                 </td>
                 <td>₹{totalPaid}</td>
                 <td>
@@ -122,6 +123,14 @@ const Receipt = () => {
                 <td>₹{fee.amountPaid}</td>
               </tr>
             ))}
+            <tr className={styles.totalRow}>
+              <td>
+                <strong>Total Paid:</strong>
+              </td>
+              <td>
+                <strong>₹{totalPaid}</strong>
+              </td>
+            </tr>
           </tbody>
         </table>
 
@@ -148,7 +157,7 @@ const Receipt = () => {
         <button onClick={printReceipt} className={styles.printButton}>
           Print Receipt
         </button>
-        <button onClick={() => navigate(-2)} className={styles.cancelButton}>
+        <button onClick={() => navigate("/Dashboard")} className={styles.cancelButton}>
           Cancel
         </button>
       </div>

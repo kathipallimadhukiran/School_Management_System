@@ -35,7 +35,10 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+      localStorage.removeItem("authToken");
+  
+
     navigate("/Login");
   };
 

@@ -18,7 +18,7 @@
 .mainContainer {
   display: flex;
   flex: 1;
-  background-color: #333;
+  background-color: #fff;
   overflow: hidden;
 }
 
@@ -36,7 +36,7 @@
   height: 100%;
   overflow: hidden;
   transition: width 0.3s ease;
-  background-color: #333; /* Sidebar background */
+  background-color: #fff; /* Sidebar background */
   position: fixed;
   left: 0;
   top: 60px; /* Below navbar */

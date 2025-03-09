@@ -119,9 +119,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className={styles.reports} id="reports">
-        {loading ? <p>Loading Reports...</p> : <Statistics />}
-      </div>
+    
 
       <div className={styles.dashboard} id="dashboard">
         <div className={styles.blockRow}>
@@ -168,7 +166,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
+      <div className={styles.reports} id="reports">
+        {loading ? <p>Loading Reports...</p> : <Statistics />}
+      </div>
       {/* Student List */}
       <div className={styles.studentContainer} id="students">
         <div className={styles.student}>

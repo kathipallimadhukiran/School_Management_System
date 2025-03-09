@@ -3,7 +3,7 @@
   width: 100%;
   height: 100%;
   margin: auto;
-  background: linear-gradient(155deg, #252a30, #ff5722); /* Midnight Blue to Deep Orange */
+  background: #fff; /* Midnight Blue to Deep Orange */
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   font-family: "Arial", sans-serif;

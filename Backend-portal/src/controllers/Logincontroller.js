@@ -1,6 +1,6 @@
 require("dotenv").config(); // Load environment variables
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const Logindata = require("../models/loginsdata"); // Import User model
 
@@ -32,29 +32,23 @@ const Signup = async (req, res) => {
 
 // ✅ Login Function (Only Staff & Admin)
 const Login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
     const user = await Logindata.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found!" });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials!" });
-    }
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-    if (user.role !== "Staff" && user.role !== "Admin") {
-      return res.status(403).json({ message: "Access denied!" });
-    }
-
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    res.json({ token, role: user.role, message: "Login successful!" });
+    res.json({ token, role: user.role });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -88,11 +82,10 @@ const ForgotPassword = async (req, res) => {
 
     const mailOptions = {
       to: user.email,
-      from: process.env.EMAIL_USER, 
+      from: process.env.EMAIL_USER,
       subject: "Password Reset Request",
       text: `Click the link below to reset your password:\n\n${resetURL}\n\nIf you did not request this, please ignore this email.`,
     };
-    
 
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Password reset link sent to email!" });

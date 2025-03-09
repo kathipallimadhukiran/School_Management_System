@@ -78,7 +78,6 @@ const Statistics = () => {
         </div>
         <div className="stats-boxes">
           <StatBox title="Paid Fees" value={totalPaid} maxValue={totalFees} />
-          <StatBox title="Due Fees" value={totalDue} maxValue={totalFees} />
         </div>
       </div>
     </div>

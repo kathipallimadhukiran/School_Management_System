@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import styles from "./addStaff.module.css"; // Import CSS Module
+
 const AddStaff = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -8,7 +10,7 @@ const AddStaff = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const API_URL = "https://school-site-2e0d.onrender.com/";
+  const API_URL = "https://school-site-2e0d.onrender.com";
 
   // ✅ Handle Staff Signup
   const handleSignup = async (e) => {
@@ -32,7 +34,6 @@ const AddStaff = () => {
 
       if (response.ok) {
         setMessage("Staff added successfully!");
-        setTimeout(() => navigate("/AdminDashboard"), 2000); // Redirect to Admin Dashboard
       } else {
         setError(result.message || "Signup failed!");
       }
@@ -42,10 +43,10 @@ const AddStaff = () => {
   };
 
   return (
-    <div className="add-staff-container">
+    <div className={styles.addStaffContainer}>
       <h2>Add New Staff</h2>
       <form onSubmit={handleSignup}>
-        <div className="input-group">
+        <div className={styles.inputGroup}>
           <label>Name</label>
           <input
             type="text"
@@ -55,7 +56,7 @@ const AddStaff = () => {
           />
         </div>
 
-        <div className="input-group">
+        <div className={styles.inputGroup}>
           <label>Email</label>
           <input
             type="email"
@@ -65,7 +66,7 @@ const AddStaff = () => {
           />
         </div>
 
-        <div className="input-group">
+        <div className={styles.inputGroup}>
           <label>Password</label>
           <input
             type="password"
@@ -75,10 +76,11 @@ const AddStaff = () => {
           />
         </div>
 
-        {error && <p className="error-message">{error}</p>}
-        {message && <p className="success-message">{message}</p>}
+        {error && <p className={styles.errorMessage}>{error}</p>}
+        {message && <p className={styles.successMessage}>{message}</p>}
 
-        <button type="submit">Add Staff</button>
+        <button type="submit" className={styles.addStaffBtn}>Add Staff</button>
+        <button onClick={()=>{navigate(-1)}} className={styles.cancleBtn}>Cancel</button>
       </form>
     </div>
   );

@@ -29,7 +29,7 @@ const PaymentPage = () => {
     }, {});
   });
 
-  const [paymentType, setPaymentType] = useState("offline");
+  const [paymentType, setPaymentType] = useState("online");
   const [totalFee, setTotalFee] = useState(0);
   const [totalEnteredAmount, setTotalEnteredAmount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -66,22 +66,36 @@ const PaymentPage = () => {
       .catch((err) => console.error("Error fetching fee data:", err));
   }, [studentId, studentfeearrey]);
 
-  const handleAmountChange = (feeId, value) => {
-    if (isNaN(value) || value < 0) return;
+
+  const handleAmountChange = (feeId, value, dueAmount) => {
+    let enteredAmount = parseFloat(value) || 0;
+
+
+    // Prevent entering negative values or values greater than due amount
+    if (enteredAmount < 0) {
+      enteredAmount = 0;
+    } else if (enteredAmount > dueAmount) {
+      enteredAmount = dueAmount; // Cap the value at dueAmount
+    }
 
     setCustomAmounts((prev) => {
       const updatedAmounts = { ...prev };
-      updatedAmounts[feeId].amount = parseFloat(value) || 0;
+      updatedAmounts[feeId] = {
+        ...updatedAmounts[feeId],
+        amount: enteredAmount,
+      };
 
+      // Recalculate the total entered amount
       const newTotalEntered = Object.values(updatedAmounts).reduce(
         (sum, fee) => sum + (parseFloat(fee.amount) || 0),
         0
       );
 
-      setTotalEnteredAmount(isNaN(newTotalEntered) ? 0 : newTotalEntered);
+      setTotalEnteredAmount(newTotalEntered);
       return updatedAmounts;
     });
   };
+
 
   const handlePayment = async () => {
     setLoading(true);
@@ -218,43 +232,45 @@ const PaymentPage = () => {
         </thead>
         <tbody>
           {studentfeearrey && studentfeearrey.length > 0 ? (
-            studentfeearrey.map((fee) => (
-              <tr key={fee._id}>
-                <td>{fee.FeeType}</td>
-                <td>₹{fee.FeeAmount}</td>
-                <td>₹{fee.FeePaid}</td>
-                <td>₹{fee.FeeAmount - fee.FeePaid || 0}</td>
-                <td>
-                  <input
-                    type="number"
-                    value={customAmounts[fee._id]?.amount ?? ""}
-                    onChange={(e) =>
-                      handleAmountChange(fee._id, e.target.value)
-                    }
-                    className={styles.amountInput}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handleAmountChange(
-                          fee._id,
-                          customAmounts[fee._id]?.remainingFee ?? fee.FeeAmount
-                        );
-                      }
-                    }}
-                    className={styles.checkbox}
-                  />
-                </td>
-              </tr>
-            ))
+            studentfeearrey.map((fee) => {
+              const dueAmount = Math.max(fee.FeeAmount - fee.FeePaid, 0); // Ensure non-negative
+
+              return (
+                <tr key={fee._id}>
+                  <td>{fee.FeeType}</td>
+                  <td>₹{fee.FeeAmount}</td>
+                  <td>₹{fee.FeePaid}</td>
+                  <td>₹{dueAmount}</td>
+                  <td>
+                    <input
+                      type="number"
+                      value={customAmounts[fee._id]?.amount ?? ""}
+                      onChange={(e) => handleAmountChange(fee._id, e.target.value, fee.FeeAmount - fee.FeePaid)}
+                      max={fee.FeeAmount - fee.FeePaid ?? 0} // Prevents exceeding due amount
+                      disabled={fee.FeeAmount - fee.FeePaid === 0}
+                      className={styles.amountInput}
+                    />
+
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      disabled={dueAmount === 0} // Disable checkbox if no due amount
+                      onChange={(e) => {
+                        handleAmountChange(fee._id, e.target.checked ? dueAmount : 0, dueAmount);
+                      }}
+                      className={styles.checkbox}
+                    />
+                  </td>
+                </tr>
+              );
+            })
           ) : (
             <tr>
               <td colSpan="6">No fee data available</td>
             </tr>
           )}
+
         </tbody>
       </table>
 

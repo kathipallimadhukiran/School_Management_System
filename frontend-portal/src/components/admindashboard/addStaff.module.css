@@ -1,0 +1,61 @@
+.addStaffContainer {
+    margin-top: 60px;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .addStaffContainer h2 {
+    color: #333;
+  }
+  
+  .inputGroup {
+    margin-bottom: 15px;
+  }
+  
+  .inputGroup label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+  }
+  
+  .inputGroup input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .errorMessage {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .successMessage {
+    color: green;
+    margin-top: 10px;
+  }
+  
+  .addStaffBtn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .addStaffBtn:hover {
+    background-color: #0056b3;
+  }
+  .cancleBtn {
+    padding: 10px 20px;
+    background-color: #e93131;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .cancleBtn:hover {
+    background-color: #0056b3;
+  }
