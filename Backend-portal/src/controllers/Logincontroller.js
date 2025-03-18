@@ -5,30 +5,88 @@ const nodemailer = require("nodemailer");
 const Logindata = require("../models/loginsdata"); // Import User model
 
 // ✅ Signup Function (Only Staff & Admin)
+const mongoose = require("mongoose");
+const Teacher = require("../models/teacherdata");
+
 const Signup = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const { name, email, password, role } = req.body;
+    let { name, email, password, role, phone, gender, dob, address, nationality, 
+          subjectSpecialization, employmentType, experience, salary, joiningDate, department } = req.body;
 
-    if (role !== "Staff" && role !== "Admin") {
-      return res.status(403).json({ message: "Only Staff and Admin can sign up!" });
+    // Trim and normalize inputs
+    name = name?.trim();
+    email = email?.trim().toLowerCase();
+    password = password?.trim();
+    role = role?.trim();
+
+    // Validate required fields
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: "Missing required fields!" });
     }
 
-    const existingUser = await Logindata.findOne({ email });
+    // Ensure role is valid
+    const allowedRoles = ["Staff", "Admin", "Teacher"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(403).json({ message: "Invalid role! Only Staff, Admin, or Teacher can sign up." });
+    }
+
+    // Check if user already exists
+    const existingUser = await Logindata.findOne({ email }).session(session);
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists." });
+      return res.status(400).json({ message: "User already exists with this email." });
     }
 
+    // Hash password before storing
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new Logindata({ name, email, password: hashedPassword, role });
 
-    await newUser.save();
+    // Register Teacher with additional details
+    if (role === "Teacher") {
+      if (!phone || !gender || !dob || !address || !nationality || !subjectSpecialization || 
+          !employmentType || !experience || !salary || !joiningDate || !department) {
+        return res.status(400).json({ message: "All teacher fields are required!" });
+      }
 
-    res.status(201).json({ message: "User registered successfully!" });
+      const newTeacher = new Teacher({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        gender,
+        dob,
+        address,
+        nationality,
+        subjectSpecialization,
+        employmentType,
+        experience,
+        salary,
+        joiningDate,
+        department,
+        role: "Teacher",
+      });
+
+      await newTeacher.save({ session });
+    } else {
+      // Register Admin or Staff
+      const newUser = new Logindata({ name, email, password: hashedPassword, role });
+      await newUser.save({ session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ message: `${role} registered successfully!` });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error("Signup error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 };
+
+
 
 // ✅ Login Function (Only Staff & Admin)
 const Login = async (req, res) => {

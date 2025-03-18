@@ -9,6 +9,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/Login" replace />;
   }
 
+  if (userRole === "admin") {
+    return <Navigate to="/AdminDashboard" replace />;
+  }
+
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     return <Navigate to="/Dashboard" replace />; // Redirect if role is not allowed
   }

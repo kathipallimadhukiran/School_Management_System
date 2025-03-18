@@ -102,9 +102,7 @@ const Teacher = () => {
 
   return (
     <div className={styles.teacherContainer}>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+    
 
       {/* Overview Section */}
       <div className={styles.overviewData}>

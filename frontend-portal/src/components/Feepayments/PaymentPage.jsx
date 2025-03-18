@@ -198,10 +198,7 @@ const PaymentPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* Back Button */}
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+    
       <h2 className={styles.title}>Fee Payment</h2>
 
       <div className={styles.studentInfo}>

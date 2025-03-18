@@ -1,61 +1,167 @@
 .addStaffContainer {
-    margin-top: 60px;
-    padding: 20px;
-    background-color: #f9f9f9;
+  padding: 30px;
+  margin-top: -20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.addStaffContainer h2 {
+  color: #343a40;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* ✅ Two Fields in One Row */
+.inputRow {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.inputGroup {
+  flex: 1;
+  text-align: left;
+}
+
+.inputGroup label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #495057;
+}
+
+.inputGroup input,
+.inputGroup select {
+  width: 80%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+.inputGroup select {
+  width: 85%;
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus {
+  border-color: #007bff;
+  box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+/* ✅ Multi-Select Dropdown */
+.inputGroup select {
+  height: auto;
+  cursor: pointer;
+}
+
+/* ✅ Checkbox Styling */
+.checkboxContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #495057;
+}
+
+.checkboxLabel input {
+  width: 18px;
+  height: 18px;
+  accent-color: #007bff;
+}
+
+/* ✅ Error & Success Messages */
+.errorMessage {
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.successMessage {
+  color: #28a745;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* ✅ Button Styles */
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.addStaffBtn,
+.cancelBtn {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.addStaffBtn {
+  background-color: #007bff;
+  color: white;
+  margin-right: 10px;
+}
+
+.addStaffBtn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+.cancelBtn {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px;
+}
+
+.cancelBtn:hover {
+  background-color: #a71d2a;
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 10px rgba(220, 53, 69, 0.3);
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 768px) {
+  .inputRow {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .addStaffContainer h2 {
-    color: #333;
+}
+
+@media (max-width: 600px) {
+  .addStaffContainer {
+      width: 90%;
+      padding: 25px;
   }
-  
-  .inputGroup {
-    margin-bottom: 15px;
+
+  .buttonContainer {
+      flex-direction: column;
   }
-  
-  .inputGroup label {
-    display: block;
-    margin-bottom: 5px;
-    color: #666;
+
+  .addStaffBtn,
+  .cancelBtn {
+      width: 100%;
+      margin: 6px 0;
   }
-  
-  .inputGroup input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .errorMessage {
-    color: red;
-    margin-top: 10px;
-  }
-  
-  .successMessage {
-    color: green;
-    margin-top: 10px;
-  }
-  
-  .addStaffBtn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .addStaffBtn:hover {
-    background-color: #0056b3;
-  }
-  .cancleBtn {
-    padding: 10px 20px;
-    background-color: #e93131;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .cancleBtn:hover {
-    background-color: #0056b3;
-  }
+}

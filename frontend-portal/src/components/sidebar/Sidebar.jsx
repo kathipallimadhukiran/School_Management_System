@@ -27,12 +27,25 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
       </div>
       <nav className={styles.menu}>
         <ul className={styles.menuList}>
-          <li className={styles.menuItem}>
+
+
+             {/* Show Admin Dashboard only for Admins */}
+             {userRole === "Admin"? (
+            <li className={styles.menuItem}>
+              <Link to="/AdminDashboard" className={styles.menuLink} onClick={toggleSidebar}>
+                <MdDashboard />
+                {width > 70 && <span>Admin Dashboard</span>}
+              </Link>
+            </li>
+          ):(
+            <li className={styles.menuItem}>
             <Link to="/Dashboard" className={styles.menuLink} onClick={toggleSidebar}>
               <MdDashboard />
               {width > 70 && <span>Dashboard</span>}
             </Link>
           </li>
+          )}
+         
           <li className={styles.menuItem}>
             <Link to="/admissions" className={styles.menuLink} onClick={toggleSidebar}>
               <IoPersonAddSharp />
@@ -58,15 +71,7 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
             </Link>
           </li>
 
-          {/* Show Admin Dashboard only for Admins */}
-          {userRole === "Admin" && (
-            <li className={styles.menuItem}>
-              <Link to="/AdminDashboard" className={styles.menuLink} onClick={toggleSidebar}>
-                <MdDashboard />
-                {width > 70 && <span>Admin Dashboard</span>}
-              </Link>
-            </li>
-          )}
+       
         </ul>
       </nav>
     </div>

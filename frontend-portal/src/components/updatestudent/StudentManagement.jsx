@@ -32,6 +32,18 @@ const StudentManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+
+  const [classes, setClasses] = useState([]);
+
+
+  useEffect(() => {
+    fetch("http://localhost:3000/getAllClass")
+      .then((response) => response.json())
+      .then((data) => setClasses(data))
+      .catch((error) => console.error("Error fetching classes:", error));
+  }, []);
+
   useEffect(() => {
     fetchStudents();
   }, []);
@@ -40,7 +52,7 @@ const StudentManagement = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://school-site-2e0d.onrender.com/gettingStudent"
+        "http://localhost:3000/gettingStudent"
       );
       if (response.data && Array.isArray(response.data.data)) {
         setStudents(response.data.data);
@@ -82,30 +94,43 @@ const StudentManagement = () => {
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+
+    const updateData = {
+      id: selectedStudent._id,  // Ensure this is defined
+      Student_name: formData.name,
+      Student_age: formData.age,
+      Grade_applying_for: formData.grade,
+      Address: formData.address,
+      City: formData.city,
+      State: formData.state,
+      District: formData.district,
+      ZIP_code: formData.zipCode,
+      Emergency_contact_number: formData.emergencyContactNumber,
+      Student_father_number: formData.fatherNumber,
+      Student_mother_number: formData.motherNumber,
+      Number_of_terms: formData.numberOfTerms,
+      Total_fee: formData.totalFee,
+      Fathers_mail: formData.fathersMail,
+      Student_mother_name: formData.motherName,
+      Student_gender: formData.gender,
+      Date_of_birth: formData.dateOfBirth,
+      Student_father_name: formData.fatherName,
+    };
+
+    console.log("Sending update request with data:", updateData);
+
     try {
-      await axios.put(`https://school-site-2e0d.onrender.com/updatestudentdetails`, {
-        id: selectedStudent._id,
-        Student_name: formData.name,
-        Student_age: formData.age,
-        Grade_applying_for: formData.grade,
-        Address: formData.address,
-        City: formData.city,
-        State: formData.state,
-        District: formData.district,
-        ZIP_code: formData.zipCode,
-        Emergency_contact_number: formData.emergencyContactNumber,
-        Student_father_number: formData.fatherNumber,
-        Student_mother_number: formData.motherNumber,
-        Number_of_terms: formData.numberOfTerms,
-      });
+      await axios.put(`http://localhost:3000/updatestudentdetails`, updateData);
       fetchStudents();
       setIsUpdateModalOpen(false);
       toast.success("Student updated successfully.");
     } catch (error) {
-      console.error("Error updating student:", error);
+      console.error("Error updating student:", error.response ? error.response.data : error);
       toast.error("Error updating student. Please try again.");
     }
   };
+
+
 
   const handleAddFeeClick = (student) => {
     setSelectedStudent(student);
@@ -121,11 +146,13 @@ const StudentManagement = () => {
   const handleAddFeeSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log({ id: selectedStudent._id,
+      console.log({
+        id: selectedStudent._id,
         FeeType: formData.feeType,
         FeeAmount: formData.feeAmount,
-        FeePaid: formData.feePaid,})
-      await axios.post(`https://school-site-2e0d.onrender.com/AddFee`, {
+        FeePaid: formData.feePaid,
+      })
+      await axios.post(`http://localhost:3000/AddFee`, {
         id: selectedStudent._id,
         FeeType: formData.feeType,
         FeeAmount: formData.feeAmount,
@@ -148,7 +175,7 @@ const StudentManagement = () => {
 
   const handleDeleteSubmit = async () => {
     try {
-      await axios.delete(`https://school-site-2e0d.onrender.com/deletestudentdetails/${selectedStudent._id}`);
+      await axios.delete(`http://localhost:3000/deletestudentdetails/${selectedStudent._id}`);
       fetchStudents();
       setIsDeleteModalOpen(false);
       toast.success("Student deleted successfully.");
@@ -160,12 +187,6 @@ const StudentManagement = () => {
 
   return (
     <div className={styles.container}>
-      {/* Back Button */}
-      <div className={styles.backDiv}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}>
-          ← Back
-        </button>
-      </div>
       <h2>Student Management</h2>
 
       {/* Toast Container */}
@@ -245,27 +266,27 @@ const StudentManagement = () => {
                     />
                   </label>
                   <label>
-                    Grade:
-                    <select
-                      name="grade"
-                      value={formData.grade}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="">Select Grade</option>
-                      {formData.grade &&
-                        !["1", "2", "3", "4", "5"].includes(formData.grade) && (
-                          <option value={formData.grade}>
-                            {formData.grade}
-                          </option>
-                        )}
-                      <option value="1">Grade 1</option>
-                      <option value="2">Grade 2</option>
-                      <option value="3">Grade 3</option>
-                      <option value="4">Grade 4</option>
-                      <option value="5">Grade 5</option>
-                    </select>
-                  </label>
+  Grade:
+  <select
+    name="grade"
+    value={formData.grade}
+    onChange={handleInputChange}
+    required
+  >
+    {/* Show student's past grade first */}
+    <option value={formData.grade} disabled>
+      {formData.grade} (Current)
+    </option>
+
+    {/* Render all available classes */}
+    {classes.map((cls) => (
+      <option key={cls._id} value={cls.name}>
+        {cls.name}
+      </option>
+    ))}
+  </select>
+</label>
+
                   <label>
                     Address:
                     <input
@@ -423,7 +444,9 @@ const StudentManagement = () => {
                   Are you sure you want to delete {selectedStudent?.Student_name}?
                 </p>
                 <button onClick={handleDeleteSubmit}>Yes, Delete</button>
-                <button onClick={() => setIsDeleteModalOpen(false)}>
+                <button onClick={() => {setIsDeleteModalOpen(false)
+                  setFormData(null)
+                }}>
                   Cancel
                 </button>
               </div>

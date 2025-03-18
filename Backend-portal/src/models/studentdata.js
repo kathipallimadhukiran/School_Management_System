@@ -4,6 +4,8 @@ const userSchema = new mongoose.Schema({
   Student_name: { type: String, required: true },
   Student_age: { type: Number, required: true },
   Student_gender: { type: String, required: true },
+  classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class' },
+  password: String, // Hashed
   Grade_applying_for: { type: String, required: true },
   Date_of_birth: { type: String, required: true },
   Address: { type: String, required: true },

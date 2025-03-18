@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const User = require('../models/studentdata');
+const User = require('../models/studentdata'); // Student Model
+const Class = require('../models/classes'); // Class Model
 const feepaymentdata = require("../models/feepaymentsdata");
 
 const studentdata = async (req, res) => {
@@ -23,10 +24,10 @@ const studentdata = async (req, res) => {
     Fathers_mail,
     Total_fee,
     Number_of_terms,
-    fees, // Add this to capture the fees data
+    fees, // Capture the fees data
   } = req.body;
 
-  console.log(req.body); // This will log the entire request body to confirm it's coming correctly
+  console.log(req.body); // Debug: Log request body
 
   if (
     !Student_name || !Total_fee || !Number_of_terms || !Fathers_mail || 
@@ -38,7 +39,17 @@ const studentdata = async (req, res) => {
   }
 
   try {
-    // Fetch the latest user entry from the database
+    // 🔍 Check if student already exists (Prevent duplicate registration)
+    const existingStudent = await User.findOne({ 
+      Student_name, 
+      Date_of_birth 
+    });
+
+    if (existingStudent) {
+      return res.status(400).json({ message: "Student already registered!" });
+    }
+
+    // 🔢 Generate Registration Number (Auto-increment)
     const lastStudent = await User.findOne().sort({ _id: -1 });
 
     let newRegNumber = "REG001";
@@ -47,7 +58,10 @@ const studentdata = async (req, res) => {
       newRegNumber = `REG${(lastRegNum + 1).toString().padStart(3, '0')}`;
     }
 
-    // Create the new user including the fees data
+    // 🏫 Find Class based on "Grade_applying_for"
+    const matchedClass = await Class.findOne({ name: Grade_applying_for });
+
+    // 👨‍🎓 Create New Student
     const newUser = new User({
       Student_name,
       Student_age,
@@ -68,11 +82,19 @@ const studentdata = async (req, res) => {
       Total_fee,
       Number_of_terms,
       Registration_number: newRegNumber,
-      fees, // Save the fees data here
+      fees, 
+      classId: matchedClass ? matchedClass._id : null, // Auto-assign class if found
     });
 
-    await newUser.save(); // Save the new user along with the fees
+    await newUser.save(); // Save Student
 
+    // 📌 If class exists, add student to class
+    if (matchedClass) {
+      matchedClass.students.push(newUser._id);
+      await matchedClass.save();
+    }
+
+    // 📩 Send Confirmation Email
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -87,30 +109,14 @@ const studentdata = async (req, res) => {
       subject: `Student Registration Details for ${Student_name}`,
       html: `
         <p>Hello, ${Student_father_name}!</p>
-
         <p>Here are the details for the student registration:</p>
         <p><b>Registration Number:</b> ${newRegNumber}</p>
         <p><b>Student Name:</b> ${Student_name}</p>
-        <p><b>Student Age:</b> ${Student_age}</p>
-        <p><b>Student Gender:</b> ${Student_gender}</p>
         <p><b>Grade Applying For:</b> ${Grade_applying_for}</p>
-        <p><b>Date of Birth:</b> ${Date_of_birth}</p>
-        <p><b>Address:</b> ${Address}</p>
-        <p><b>City:</b> ${City}</p>
-        <p><b>State:</b> ${State}</p>
-        <p><b>District:</b> ${District}</p>
-        <p><b>ZIP Code:</b> ${ZIP_code}</p>
-        <p><b>Emergency Contact Number:</b> ${Emergency_contact_number}</p>
-        <p><b>Father's Name:</b> ${Student_father_name}</p>
-        <p><b>Mother's Name:</b> ${Student_mother_name}</p>
-        <p><b>Father's Mobile Number:</b> ${Student_father_number}</p>
-        <p><b>Mother's Mobile Number:</b> ${Student_mother_number}</p>
-        <p><b>Number of Terms:</b> ${Number_of_terms}</p>
         <p><b>Total Fee:</b> ${Total_fee}</p>
-        <p><b>Please take a moment to review the details provided above.</b> If any information is incorrect or if you have any questions, kindly <b>contact us at your earliest convenience.</b></p>
-        <p>Thank you for choosing our school. We are honored to have you as part of our community and are committed to providing the best educational experience. Should you need assistance, please do not hesitate to reach out.</p>
+        <p><b>Father's Contact:</b> ${Student_father_number}</p>
+        <p>Please review the details above and contact us if any corrections are needed.</p>
         <p><b>SFGC Schools,</b><br> Rajahmundry.</p>
-        <p>Thank you.</p>
       `,
     };
 
@@ -123,12 +129,10 @@ const studentdata = async (req, res) => {
     });
 
     res.status(200).json({
+      message: "Student registered successfully",
       studentName: Student_name,
       regNo: newRegNumber,
-      fatherName: Student_father_name,
-      fatherPhone: Student_father_number,
-      totalFee: Total_fee,
-      totalTerms: Number_of_terms,
+      classAssigned: matchedClass ? matchedClass.name : "No class assigned",
     });
   } catch (error) {
     console.error("Error saving student data:", error);
@@ -136,6 +140,4 @@ const studentdata = async (req, res) => {
   }
 };
 
-module.exports = {
-  studentdata,
-};
+module.exports = { studentdata };

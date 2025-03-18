@@ -1,25 +1,15 @@
-const mongoose =require('mongoose');
-const Schema=mongoose.Schema;
-const classSchema=new Schema({
-    class_name:{
-        type:String,
-        required:true
-    },
-    class_teacher:{
-        type:String,
-        required:true
-    },
-    class_students:{
-        type:Array,
-        required:true
-    },
-    class_subjects:{
-        type:Array,
-        required:true
-    },
-    subject_marks:{
-        type:Array,
-        required:true
+const mongoose = require('mongoose');
+
+const classSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', required: true },
+  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  subjects: [
+    {
+      subjectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject' }, // Link to Subject model
+      teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' } // Assign specific teachers to subjects
     }
+  ]
 });
-exports.Class=mongoose.model('Class',classSchema);
+
+module.exports = mongoose.model('Class', classSchema);

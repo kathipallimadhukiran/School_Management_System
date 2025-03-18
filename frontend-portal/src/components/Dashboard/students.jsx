@@ -106,9 +106,7 @@ const Students = () => {
   return (
    <>
    <div className="student_container">
-  {/* 🔙 Back Button */}
-  <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
-
+ 
   {/* 📌 Overview Section */}
   <div className="overview_data">
     <h2>Student Overview</h2>

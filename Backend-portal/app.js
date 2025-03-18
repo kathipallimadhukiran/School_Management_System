@@ -42,6 +42,8 @@ app.use("/feepayments",Feerouter);
 // Import main router
 const mainRouter = require("./src/routes/mainrouters");
 app.use("/", mainRouter);
+const aggregations =require("./src/routes/aggregations");
+app.use("/aggregate",aggregations)
 
 // 404 Error handler
 app.use(function (req, res, next) {

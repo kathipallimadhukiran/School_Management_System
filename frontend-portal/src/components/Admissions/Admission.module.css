@@ -1,34 +1,20 @@
 /* General Styles */
 .main {
-  width: 100%;
-  margin-top: 40px;
-  padding: 20px;
+  padding: 0px 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-.backDiv {
-  margin-top: 10px;
-  width: 100%;
-  text-align: start;
-}
+
 
 .main h2 {
   font-weight: 900;
-  padding: 50px 0px;
+  padding: 5px 0px;
 }
 
-.backButton {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-bottom: 15px;
-}
+
 
 .fieldRow {
   display: flex;

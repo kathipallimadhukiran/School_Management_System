@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Admission from "./components/Admissions/Admission";
 import Navbar from "./components/Navbar/Navbar";
@@ -17,13 +17,18 @@ import AdminDashboard from "./components/admindashboard/admindahboard";
 import AddStaff from "./components/admindashboard/addStaff";
 import StudentManagement from "./components/updatestudent/StudentManagement";
 import MarksUpdate from "./components/marksupdate/marksupdate";
-import ClassManagement from "./components/admindashboard/classes/classes";
-
+import ClassApp from "./components/admindashboard/classes/classApp";
 function App() {
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const location = useLocation(); // Get the current route
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Track screen size
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const hideBackButtonPaths = ["/Dashboard", "/AdminDashboard"];
+  const shouldHideBackButton = hideBackButtonPaths.includes(location.pathname);
+
+
 
   // Detect screen size changes
   useEffect(() => {
@@ -60,29 +65,37 @@ function App() {
             <Navbar toggleSidebar={toggleSidebar} />
           </div>
           <div className={styles.mainContainer}>
-          {!isMobile && (
-    <Sidebar width={sidebarWidth} isMobile={isMobile} toggleSidebar={toggleSidebar} />
-  )}
+            {!isMobile && (
+              <Sidebar width={sidebarWidth} isMobile={isMobile} toggleSidebar={toggleSidebar} />
+            )}
 
-  {/* Render Mobile Menu */}
-  {isMobile && isMobileMenuOpen && (
-    <div className={styles.mobileMenu}>
-      <Sidebar width={250} isMobile={isMobile} toggleSidebar={toggleSidebar} />
-    </div>
-  )}
+            {/* Render Mobile Menu */}
+            {isMobile && isMobileMenuOpen && (
+              <div className={styles.mobileMenu}>
+                <Sidebar width={250} isMobile={isMobile} toggleSidebar={toggleSidebar} />
+              </div>
+            )}
 
-  {/* Overlay for mobile menu */}
-  {isMobile && isMobileMenuOpen && (
-    <div className={styles.overlay} onClick={toggleSidebar}></div>
-  )}
+            {/* Overlay for mobile menu */}
+            {isMobile && isMobileMenuOpen && (
+              <div className={styles.overlay} onClick={toggleSidebar}></div>
+            )}
+
+
+           
 
             <div className={styles.contentArea}>
+            {!shouldHideBackButton && (
+             
+                <button className={styles.backButton} onClick={() => navigate(-1)}> ← Back</button>
+             
+            )}
               <Routes>
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/Teachers" element={<ProtectedRoute><Teacher /></ProtectedRoute>} />
                 <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
-                <Route path="/StudentManagement" element={<ProtectedRoute><StudentManagement/></ProtectedRoute>} />
+                <Route path="/StudentManagement" element={<ProtectedRoute><StudentManagement /></ProtectedRoute>} />
                 <Route path="/admissions" element={<ProtectedRoute><Admission /></ProtectedRoute>} />
                 <Route path="/Feepayments" element={<ProtectedRoute><Feepayments /></ProtectedRoute>} />
                 <Route path="/feePayments/payments" element={<ProtectedRoute><Dummypayments /></ProtectedRoute>} />
@@ -90,7 +103,7 @@ function App() {
                 <Route path="/updatemarks" element={<ProtectedRoute><MarksUpdate /></ProtectedRoute>} />
                 <Route path="/AdminDashboard" element={<AdminDashboard />} />
                 <Route path="/AdminDashboard/AddStaff" element={<AddStaff />} />
-                <Route path="/AdminDashboard/ClassManagement" element={<ClassManagement />} />
+                <Route path="/AdminDashboard/ClassManagement/*" element={<ClassApp />} />
 
               </Routes>
             </div>

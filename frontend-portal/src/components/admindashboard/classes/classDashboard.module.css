@@ -1,0 +1,233 @@
+.dashboard {
+  text-align: center;
+  padding: 20px;
+  background-color: white; /* Soft background */
+  min-height: 100vh;
+}
+
+/* 🔹 Cards Layout */
+.cardContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.card {
+  width: 220px;
+  height: 160px;
+  background: linear-gradient(135deg, #007bff, #0056b3); /* Blue gradient */
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: 0.3s;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔹 Updated Colors for Different Cards */
+.card:nth-child(2) { background: linear-gradient(135deg, #28a745, #218838); } /* Green */
+.card:nth-child(3) { background: linear-gradient(135deg, #ffc107, #e0a800); } /* Yellow */
+.card:nth-child(4) { background: linear-gradient(135deg, #dc3545, #c82333); } /* Red */
+.card:nth-child(5) { background: linear-gradient(135deg, #6610f2, #520dc2); } /* Purple */
+
+/* 🔹 Existing Classes Section */
+.formContainer {
+  margin-top: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.classGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.classCard {
+  background: linear-gradient(135deg, #17a2b8, #138496); /* Teal */
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.classCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔹 Modal Styling *//* 🔹 Modal (Popup) Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Darkened background */
+  backdrop-filter: blur(6px); /* Soft blur effect */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 🔹 Modal (Popup) Content */
+.modalContent {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideUp 0.3s ease-in-out;
+}
+
+/* 🔹 Modal Heading */
+.modalContent h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+}
+
+/* 🔹 Student & Teacher Section */
+.modalContent h3 {
+  color: #007bff;
+  font-size: 18px;
+  margin-top: 15px;
+}
+
+.studentList, .teacherInfo {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: left;
+}
+/* 🔹 Student List Styling */
+.studentList {
+  list-style: none;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: left;
+}
+
+/* 🔹 Each Student Item */
+.studentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 5px 0;
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.studentList li {
+  list-style: none;
+  padding: 5px;
+  font-size: 16px;
+  color: #333;
+}
+/* 🔹 Add Student Button */
+.addButton {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+.addButton:hover {
+  background: #218838;
+}
+
+/* 🔹 Delete Button */
+.deleteButton {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+  margin-left: 10px;
+}
+
+.deleteButton:hover {
+  background: #c0392b;
+}
+
+
+/* 🔹 Close Button */
+.closeButton {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+.closeButton:hover {
+  background: #c0392b;
+}
+
+/* 🔹 Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

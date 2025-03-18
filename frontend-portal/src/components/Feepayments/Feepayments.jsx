@@ -96,10 +96,7 @@ const FeePayment = () => {
 
   return (
     <div className={styles.container} id="payments">
-      {/* Back Button */}
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+   
       <h2 className={styles.title}>Fees Payment</h2>
       <input
         type="text"

@@ -25,13 +25,22 @@ function Admission() {
     Number_of_terms: "",  // Change null to an empty string
     fees: [],
   };
-  
+
   const [formData, setFormData] = useState(initialState);
   const [Totalfee, setTotalfee] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [pinCodeValid, setPinCodeValid] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [registrationDetails, setRegistrationDetails] = useState(null);
+  const [classes, setClasses] = useState([]);
+
+
+  useEffect(() => {
+    fetch("http://localhost:3000/getAllClass")
+      .then((response) => response.json())
+      .then((data) => setClasses(data))
+      .catch((error) => console.error("Error fetching classes:", error));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,13 +98,13 @@ function Admission() {
     const { name, value } = e.target;
     const updatedFees = [...formData.fees];
     updatedFees[index][name] = value;
-  
+
     // Update the fees array
     setFormData((prevData) => ({
       ...prevData,
       fees: updatedFees,
     }));
-  
+
     // Recalculate the total fee
     calculateTotalFee();
   };
@@ -109,37 +118,37 @@ function Admission() {
   useEffect(() => {
     calculateTotalFee();
   }, [formData.fees]);
-    
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  // Check if any field is empty
-  for (const key in formData) {
-    if (
-      formData[key] === "" ||
-      formData[key] === null ||
-      (Array.isArray(formData[key]) && formData[key].length === 0)
-    ) {
-      alert(`Please fill out all required fields: Missing ${key}`);
+    // Check if any field is empty
+    for (const key in formData) {
+      if (
+        formData[key] === "" ||
+        formData[key] === null ||
+        (Array.isArray(formData[key]) && formData[key].length === 0)
+      ) {
+        alert(`Please fill out all required fields: Missing ${key}`);
+        return;
+      }
+    }
+
+    // Ensure fees are properly calculated
+    const calculatedTotalFee = formData.fees.reduce(
+      (total, fee) => total + (parseFloat(fee.FeeAmount) || 0),
+      0
+    );
+
+    if (formData.Total_fee !== calculatedTotalFee) {
+      alert("Some fees not added to Total fee");
       return;
     }
-  }
-
-  // Ensure fees are properly calculated
-  const calculatedTotalFee = formData.fees.reduce(
-    (total, fee) => total + (parseFloat(fee.FeeAmount) || 0),
-    0
-  );
-
-  if (formData.Total_fee !== calculatedTotalFee) {
-    alert("Some fees not added to Total fee");
-    return;
-  }
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://school-site-2e0d.onrender.com/start", {
+      const response = await fetch("http://localhost:3000/start", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -177,11 +186,7 @@ function Admission() {
 
   return (
     <div className={styles.main}>
-      {/* Back Button */}<div className={styles.backDiv}>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        ← Back
-      </button>
-      </div>
+
       <form onSubmit={handleSubmit}>
         <h2>Primary School Admission Form</h2>
 
@@ -244,14 +249,11 @@ function Admission() {
               onChange={handleChange}
             >
               <option value="">Select Grade</option>
-              <option value="Nursery">Nursery</option>
-              <option value="LKG">LKG</option>
-              <option value="UKG">UKG</option>
-              <option value="1st Standard">1st Standard</option>
-              <option value="2nd Standard">2nd Standard</option>
-              <option value="3rd Standard">3rd Standard</option>
-              <option value="4th Standard">4th Standard</option>
-              <option value="5th Standard">5th Standard</option>
+              {classes.map((cls) => (
+                <option key={cls._id} value={cls.name} >
+                  {cls.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -386,76 +388,76 @@ function Admission() {
           </div>
         </div>
 
-       {/* Fee Rows */}
-<div className={styles.feeDetails}>
-  <h3>Fee Details</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Fee Type</th>
-        <th>Fee Amount</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {formData.fees.map((fee, index) => (
-        <tr key={index}>
-          <td>
-            <input
-              type="text"
-              name="FeeType"
-              placeholder="Type of Fee"
-              value={fee.FeeType}
-              onChange={(e) => handleFeeChange(e, index)} // Call handleFeeChange
-            />
-          </td>
-          <td>
+        {/* Fee Rows */}
+        <div className={styles.feeDetails}>
+          <h3>Fee Details</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Fee Type</th>
+                <th>Fee Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.fees.map((fee, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="text"
+                      name="FeeType"
+                      placeholder="Type of Fee"
+                      value={fee.FeeType}
+                      onChange={(e) => handleFeeChange(e, index)} // Call handleFeeChange
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      name="FeeAmount"
+                      placeholder="Fee Amount"
+                      value={fee.FeeAmount}
+                      onChange={(e) => handleFeeChange(e, index)} // Call handleFeeChange
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => removeFeeRow(index)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button type="button" onClick={addFeeRow}>
+            Add Fee Row
+          </button>
+        </div>
+
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
+            <label>Total Fee:</label>
             <input
               type="number"
-              name="FeeAmount"
-              placeholder="Fee Amount"
-              value={fee.FeeAmount}
-              onChange={(e) => handleFeeChange(e, index)} // Call handleFeeChange
+              name="Total_fee"
+              placeholder="Total Fee"
+              value={formData.Total_fee}
+              onChange={handleChange}
+              disabled
             />
-          </td>
-          <td>
-            <button type="button" onClick={() => removeFeeRow(index)}>
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-  <button type="button" onClick={addFeeRow}>
-    Add Fee Row
-  </button>
-</div>
+          </div>
 
-<div className={styles.fieldRow}>
-<div className={styles.field}>
-  <label>Total Fee:</label>
-  <input
-    type="number"
-    name="Total_fee"
-    placeholder="Total Fee"
-    value={formData.Total_fee}
-    onChange={handleChange}
-    disabled
-  />
-</div>
-
-  <div className={styles.field}>
-    <label>Number of Terms:</label>
-    <input
-      type="number"
-      name="Number_of_terms"
-      placeholder="Number of Terms"
-      value={formData.Number_of_terms}
-      onChange={handleChange}
-    />
-  </div>
-</div>
+          <div className={styles.field}>
+            <label>Number of Terms:</label>
+            <input
+              type="number"
+              name="Number_of_terms"
+              placeholder="Number of Terms"
+              value={formData.Number_of_terms}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
         {/* Submit and Reset Buttons */}
         <div className={styles.buttonsMain}>
           <div className={styles.buttons}>
