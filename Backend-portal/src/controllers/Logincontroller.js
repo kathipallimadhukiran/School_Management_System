@@ -1,51 +1,40 @@
+const mongoose = require("mongoose");
 require("dotenv").config(); // Load environment variables
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
-const Logindata = require("../models/loginsdata"); // Import User model
-
-// ✅ Signup Function (Only Staff & Admin)
-const mongoose = require("mongoose");
+const Logindata = require("../models/loginsdata"); // Import User model  const mongoose = require("mongoose");
 const Teacher = require("../models/teacherdata");
-
 const Signup = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    let { name, email, password, role, phone, gender, dob, address, nationality, 
-          subjectSpecialization, employmentType, experience, salary, joiningDate, department } = req.body;
+    let { name, email, role, phone, gender, dob, address, subjectSpecialization, employmentType, experience, salary, joiningDate, department } = req.body;
 
-    // Trim and normalize inputs
     name = name?.trim();
     email = email?.trim().toLowerCase();
-    password = password?.trim();
     role = role?.trim();
 
-    // Validate required fields
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !role) {
       return res.status(400).json({ message: "Missing required fields!" });
     }
 
-    // Ensure role is valid
     const allowedRoles = ["Staff", "Admin", "Teacher"];
     if (!allowedRoles.includes(role)) {
       return res.status(403).json({ message: "Invalid role! Only Staff, Admin, or Teacher can sign up." });
     }
 
-    // Check if user already exists
     const existingUser = await Logindata.findOne({ email }).session(session);
     if (existingUser) {
       return res.status(400).json({ message: "User already exists with this email." });
     }
 
-    // Hash password before storing
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const defaultPassword = "EM@123";
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
-    // Register Teacher with additional details
     if (role === "Teacher") {
-      if (!phone || !gender || !dob || !address || !nationality || !subjectSpecialization || 
-          !employmentType || !experience || !salary || !joiningDate || !department) {
+      if (!phone || !gender || !dob || !address || !subjectSpecialization || !employmentType || !experience || !salary || !joiningDate || !department) {
         return res.status(400).json({ message: "All teacher fields are required!" });
       }
 
@@ -57,7 +46,6 @@ const Signup = async (req, res) => {
         gender,
         dob,
         address,
-        nationality,
         subjectSpecialization,
         employmentType,
         experience,
@@ -69,7 +57,6 @@ const Signup = async (req, res) => {
 
       await newTeacher.save({ session });
     } else {
-      // Register Admin or Staff
       const newUser = new Logindata({ name, email, password: hashedPassword, role });
       await newUser.save({ session });
     }
@@ -77,7 +64,10 @@ const Signup = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json({ message: `${role} registered successfully!` });
+    // ✅ **Send Welcome Email**
+    sendWelcomeEmail(email, name, role);
+
+    res.status(201).json({ message: `${role} registered successfully with default password EM@123!` });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -85,6 +75,47 @@ const Signup = async (req, res) => {
     res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 };
+
+
+
+
+const sendWelcomeEmail = async (email, name, role) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Welcome to Our System",
+    html: `
+      <h2>Welcome, ${name}!</h2>
+      <p>Dear ${name},</p>
+      <p>You have been successfully registered as a <strong>${role}</strong> in our system.</p>
+      <p>Your default password is: <strong>EM@123</strong> (please change it after login).</p>
+      <p>Click the link below to login:</p>
+      <a href="http://localhost:5173/login">Login Now</a>
+      <br><br>
+      <p>Best regards,</p>
+      <p>School Management Team</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Welcome email sent successfully to:", email);
+  } catch (error) {
+    console.error("Error sending welcome email:", error);
+  }
+};
+
+
 
 
 
