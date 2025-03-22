@@ -1,5 +1,5 @@
-
-import Teacher from "../../models/teacherdata.js";
+const express = require('express');
+var Teacher = require("../../models/teacherdata");
 
 
 const getAllTeachers = async (req, res) => {
@@ -10,4 +10,4 @@ const getAllTeachers = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-export default getAllTeachers
+exports.getAllTeachers= getAllTeachers

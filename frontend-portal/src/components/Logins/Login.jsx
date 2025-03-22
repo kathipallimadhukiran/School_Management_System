@@ -38,21 +38,34 @@ const Login = () => {
       });
   
       const result = await response.json();
-  
+      console.log(result);
+
       if (response.ok) {
         localStorage.setItem("authToken", result.token);
         localStorage.setItem("userRole", result.role);
-  
+        localStorage.setItem("userid", result.id);
+        console.log(result.role);
+          
         toast.success(`Login successful! Welcome ${result.role}`);
   
        
-          if (result.role === "Admin") {
+        
+        
+        if (result.role === "Admin") {
             navigate("/AdminDashboard");
-          } else {
+
+          } 
+        
+        if (result.role === "Staff") {
             navigate("/Dashboard");
-          }
-          window.location.reload();
+          } 
+
+
+          // window.location.reload();
          // Delay to allow the toast message to be visible
+
+
+         
       } else {
         setError(result.message || "Invalid credentials!");
       }

@@ -7,7 +7,7 @@ const { Duemailer } = require("../controllers/Duemailer"); // ✅ Ensure correct
 const { Signup, Login, ForgotPassword, ResetPassword } = require("../controllers/Logincontroller");
 const { UpdateStudentDetails, DeleteStudentDetails, AddFee } = require('../controllers/UpdateStudentDetails');
 const {  assignStudentToClass, createClass, assignSubjectToClass, addTeacher, assignTeacherToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromClass, updateStudentGrade, getStudents } = require("../controllers/classes/classes");
-const { default: getAllTeachers } = require("../controllers/classes/teachers");
+const {  getAllTeachers } = require("../controllers/classes/teachers");
 
 
 

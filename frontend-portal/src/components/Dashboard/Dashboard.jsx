@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [studentsInClasses, setStudentsInClasses] = useState(0);
   const [pendingGrading, setPendingGrading] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [teaherdata, setteaherdata] = useState([]);
   const [attendanceOverview, setAttendanceOverview] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -20,10 +21,15 @@ const Dashboard = () => {
         if (!response.ok) throw new Error("Failed to fetch data");
         
         const data = await response.json();
-        setAssignedClasses(data.assignedClasses);
-        setStudentsInClasses(data.studentsInClasses);
+        
+        
+        setteaherdata(data);
+        
+        setAssignedClasses(teaherdata.name);
+        setStudentsInClasses(teaherdata.students);
         setPendingGrading(data.pendingGrading);
         setUpcomingEvents(data.upcomingEvents);
+
         setAttendanceOverview(data.attendanceOverview);
       } catch (error) {
         console.error("Error fetching teacher data:", error);
