@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./AddSubject.module.css"; // ✅ Import CSS Module
+import styles from "./Addsubject.module.css"; // ✅ Import CSS Module
 
 const AddSubject = () => {
   const navigate = useNavigate();
