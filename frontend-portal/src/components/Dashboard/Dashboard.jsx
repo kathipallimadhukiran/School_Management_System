@@ -13,11 +13,12 @@ const Dashboard = () => {
   const [attendanceOverview, setAttendanceOverview] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchTeacherData = async () => {
       try {
-        const response = await fetch("https://school-api.com/teacher/dashboard");
+        const response = await fetch(`${API_URL}/dashboard`);
         if (!response.ok) throw new Error("Failed to fetch data");
         
         const data = await response.json();

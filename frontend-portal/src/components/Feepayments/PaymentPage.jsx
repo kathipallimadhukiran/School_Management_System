@@ -34,37 +34,38 @@ const PaymentPage = () => {
   const [totalEnteredAmount, setTotalEnteredAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    if (!studentfeearrey || studentfeearrey.length === 0) return;
+  // useEffect(() => {
+  //   if (!studentfeearrey || studentfeearrey.length === 0) return;
 
-    axios
-      .get(`https://school-site-2e0d.onrender.com/feepayments/get-fee-data/${studentId}`)
-      .then((response) => {
-        const payments = response.data.payments || [];
-        const updatedAmounts = {};
+  //   axios
+  //     .get(`${API_URL}/feepayments/get-fee-data/${studentId}`)
+  //     .then((response) => {
+  //       const payments = response.data.payments || [];
+  //       const updatedAmounts = {};
 
-        studentfeearrey.forEach((fee) => {
-          updatedAmounts[fee._id] = {
-            amountPaid: 0,
-            remainingFee: fee.FeeAmount,
-          };
-        });
+  //       studentfeearrey.forEach((fee) => {
+  //         updatedAmounts[fee._id] = {
+  //           amountPaid: 0,
+  //           remainingFee: fee.FeeAmount,
+  //         };
+  //       });
 
-        payments.forEach((payment) => {
-          payment.feeTypes.forEach((fee) => {
-            if (updatedAmounts[fee._id]) {
-              updatedAmounts[fee._id].amountPaid += fee.amountPaid;
-              updatedAmounts[fee._id].remainingFee = fee.remainingBalance;
-            }
-          });
-        });
+  //       payments.forEach((payment) => {
+  //         payment.feeTypes.forEach((fee) => {
+  //           if (updatedAmounts[fee._id]) {
+  //             updatedAmounts[fee._id].amountPaid += fee.amountPaid;
+  //             updatedAmounts[fee._id].remainingFee = fee.remainingBalance;
+  //           }
+  //         });
+  //       });
 
-        setCustomAmounts(updatedAmounts);
-        setTotalFee(response.data.totalPaid || 0);
-      })
-      .catch((err) => console.error("Error fetching fee data:", err));
-  }, [studentId, studentfeearrey]);
+  //       setCustomAmounts(updatedAmounts);
+  //       setTotalFee(response.data.totalPaid || 0);
+  //     })
+  //     .catch((err) => console.error("Error fetching fee data:", err));
+  // }, [studentId, studentfeearrey]);
 
 
   const handleAmountChange = (feeId, value, dueAmount) => {
@@ -102,7 +103,7 @@ const PaymentPage = () => {
     try {
       if (paymentType === "online") {
         const response = await axios.post(
-          "https://school-site-2e0d.onrender.com/feepayments/create-order",
+          `${API_URL}/feepayments/create-order`,
           {
             amount: totalEnteredAmount,
             studentId,
@@ -174,7 +175,7 @@ const PaymentPage = () => {
         receiptNumber,
       };
 
-      await axios.post("https://school-site-2e0d.onrender.com/feepayments/record-payment", paymentData);
+      await axios.post(`${API_URL}/feepayments/record-payment`, paymentData);
 
       navigate("/feePayments/payments/Receipt", {
         state: {

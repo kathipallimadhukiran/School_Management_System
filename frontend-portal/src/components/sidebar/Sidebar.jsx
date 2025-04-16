@@ -59,7 +59,7 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <Link to="/updatemarks" className={styles.menuLink} onClick={toggleSidebar}>
+            <Link to="/MarksManagement" className={styles.menuLink} onClick={toggleSidebar}>
               <MdAddChart />
               {width > 70 && <span>Marks Entry</span>}
             </Link>

@@ -25,6 +25,7 @@ function Admission() {
     Number_of_terms: "",  // Change null to an empty string
     fees: [],
   };
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [formData, setFormData] = useState(initialState);
   const [Totalfee, setTotalfee] = useState(0);
@@ -36,7 +37,7 @@ function Admission() {
 
 
   useEffect(() => {
-    fetch("http://localhost:3000/getAllClass")
+    fetch(`${API_URL}/getAllClass`)
       .then((response) => response.json())
       .then((data) => setClasses(data))
       .catch((error) => console.error("Error fetching classes:", error));
@@ -148,7 +149,7 @@ function Admission() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/start", {
+      const response = await fetch(`${API_URL}/start`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

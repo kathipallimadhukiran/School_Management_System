@@ -190,3 +190,87 @@
     padding: 10px;
   }
 }
+
+
+/* Existing styles remain unchanged above this line */
+
+/* Reset Password Page Styles */
+.resetPage {
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.resetCard {
+  padding: 2rem;
+  background: linear-gradient(155deg, #252a30, #ff5722);
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.resetCard h2 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+.resetCard .inputGroup label {
+  color: #ffffff;
+}
+
+.resetCard .inputGroup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.resetCard button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #ff5722, #252a30);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: 1rem;
+}
+
+.resetCard button:hover {
+  opacity: 0.9;
+  background: linear-gradient(135deg, #e64a19, #1c1f23);
+}
+
+.successMsg {
+  color: #4caf50;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.errorMsg {
+  color: #ff0000;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #6e8efb;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}

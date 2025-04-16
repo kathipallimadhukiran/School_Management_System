@@ -16,9 +16,22 @@ import ResetPassword from "./components/Logins/ResetPassword";
 import AdminDashboard from "./components/admindashboard/admindahboard";
 import AddStaff from "./components/admindashboard/addStaff";
 import StudentManagement from "./components/updatestudent/StudentManagement";
-import MarksUpdate from "./components/marksupdate/marksupdate";
 import ClassApp from "./components/admindashboard/classes/classApp";
+import TeachersList from "./components/admindashboard/TeachersList";
+import ClassList from "./components/admindashboard/classlist";
+import MarksManagement from "./components/marksmanagement/MarksManagement";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 function App() {
+
+    const [userRole, setUserRole] = useState(null);
+  
+    useEffect(() => {
+      const storedUserRole = localStorage.getItem("userRole");
+      setUserRole(storedUserRole);
+    }, []);
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const location = useLocation(); // Get the current route
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Track screen size
@@ -54,6 +67,7 @@ function App() {
 
   return (
     <div className={styles.mainApp}>
+<ToastContainer />
       {isAuthPage ? (
         <Routes>
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -91,7 +105,8 @@ function App() {
              
             )}
               <Routes>
-                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                {userRole=="Admin"?<Route path="/" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />:<Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                }
                 <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/Teachers" element={<ProtectedRoute><Teacher /></ProtectedRoute>} />
                 <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
@@ -100,9 +115,11 @@ function App() {
                 <Route path="/Feepayments" element={<ProtectedRoute><Feepayments /></ProtectedRoute>} />
                 <Route path="/feePayments/payments" element={<ProtectedRoute><Dummypayments /></ProtectedRoute>} />
                 <Route path="/feePayments/payments/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
-                <Route path="/updatemarks" element={<ProtectedRoute><MarksUpdate /></ProtectedRoute>} />
+                <Route path="/MarksManagement" element={<ProtectedRoute><MarksManagement/></ProtectedRoute>} />
                 <Route path="/AdminDashboard" element={<AdminDashboard />} />
                 <Route path="/AdminDashboard/AddStaff" element={<AddStaff />} />
+                <Route path="/AdminDashboard/TeachersList" element={<TeachersList />} />
+                <Route path="/AdminDashboard/ClassList" element={<ClassList/>} />
                 <Route path="/AdminDashboard/ClassManagement/*" element={<ClassApp />} />
 
               </Routes>

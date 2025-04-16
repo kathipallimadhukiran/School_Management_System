@@ -1,0 +1,102 @@
+.container {
+    padding: 20px;
+    max-width: 90%;
+    margin: auto;
+}
+
+.heading {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    font-size: 18px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.actions {
+    display: flex;
+    gap: 5px;
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.delete {
+    background-color: red;
+    color: white;
+}
+
+.delete:hover {
+    background-color: darkred;
+}
+
+.pay {
+    background-color: green;
+    color: white;
+}
+
+.pay:hover {
+    background-color: darkgreen;
+}
+
+.update {
+    background-color: orange;
+    color: white;
+}
+
+.update:hover {
+    background-color: darkorange;
+}
+
+.notify {
+    background-color: blue;
+    color: white;
+}
+
+.notify:hover {
+    background-color: darkblue;
+}
+
+.noData {
+    text-align: center;
+    font-size: 18px;
+    color: gray;
+}

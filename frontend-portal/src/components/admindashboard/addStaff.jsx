@@ -4,7 +4,7 @@ import styles from "./addStaff.module.css"; // Import CSS Module
 
 const AddStaff = () => {
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Form State
   const [formData, setFormData] = useState({
@@ -30,16 +30,14 @@ const AddStaff = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        console.log("Fetching subjects from:", `${API_URL}/getAllSubjects`);
         const response = await fetch(`${API_URL}/getAllSubjects`);
-  
+
         if (!response.ok) {
           throw new Error(`Failed to fetch subjects. Status: ${response.status}`);
         }
-  
+
         const data = await response.json();
-        console.log("Subjects fetched:", data); // ✅ Log the response
-  
+
         if (Array.isArray(data)) {
           setSubjects(data); // ✅ Ensure 'data' is an array
         } else if (data.subjects && Array.isArray(data.subjects)) {
@@ -51,12 +49,9 @@ const AddStaff = () => {
         console.error("Error fetching subjects:", err);
       }
     };
-  
+
     fetchSubjects();
   }, []);
-  
-
- 
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -68,52 +63,34 @@ const AddStaff = () => {
     setError("");
     setMessage("");
     setLoading(true);
-  
-    // ✅ Log all form data before sending
+
     console.log("Form Data before submission:", formData);
-  
-    const { name, email, role, dob, joiningDate } = formData;
-  
-    if (!name || !email || !role) {
-      setError("Please fill in all required fields.");
-      setLoading(false);
-      return;
+
+    const requiredFields = ["name", "email", "role"];
+    if (formData.role === "Teacher") {
+      requiredFields.push("phone", "gender", "dob", "address", "subjectSpecialization", "experience", "salary", "joiningDate", "department");
     }
-  
-    // Validate Teacher fields
-    if (role === "Teacher") {
-      const teacherFields = [
-        "phone",
-        "gender",
-        "dob",
-        "address",
-        "subjectSpecialization",
-        "experience",
-        "salary",
-        "joiningDate",
-        "department",
-      ];
-      for (let field of teacherFields) {
-        if (!formData[field]) {
-          setError("Please fill in all required fields for Teacher.");
-          setLoading(false);
-          return;
-        }
+
+    for (let field of requiredFields) {
+      if (!formData[field]) {
+        setError(`Please fill in all required fields.`);
+        setLoading(false);
+        return;
       }
     }
-  
+
     try {
       const response = await fetch(`${API_URL}/Signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       const result = await response.json();
       setLoading(false);
-  
+
       if (response.ok) {
-        setMessage(`${role} added successfully!`);
+        setMessage(`${formData.role} added successfully!`);
         console.log("Signup Response:", result);
         setFormData({
           name: "",
@@ -138,8 +115,6 @@ const AddStaff = () => {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <div className={styles.addStaffContainer}>
@@ -151,14 +126,13 @@ const AddStaff = () => {
             <label>Name *</label>
             <input type="text" name="name" placeholder="Enter name" value={formData.name} onChange={handleChange} />
           </div>
-
           <div className={styles.inputGroup}>
             <label>Email *</label>
             <input type="email" name="email" placeholder="Enter email" value={formData.email} onChange={handleChange} />
           </div>
         </div>
 
-        {/* Role */}
+        {/* Role & Phone */}
         <div className={styles.inputRow}>
           <div className={styles.inputGroup}>
             <label>Role *</label>
@@ -174,78 +148,64 @@ const AddStaff = () => {
           </div>
         </div>
 
-        <>
-          {/* Phone & Gender */}
-          <div className={styles.inputRow}>
-
-
-            <div className={styles.inputGroup}>
-              <label>Gender *</label>
-              <select name="gender" value={formData.gender} onChange={handleChange}>
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Date of Birth *</label>
-              <input type="date" name="dob" value={formData.dob} onChange={handleChange} />
-            </div>
+        {/* Gender & DOB */}
+        <div className={styles.inputRow}>
+          <div className={styles.inputGroup}>
+            <label>Gender *</label>
+            <select name="gender" value={formData.gender} onChange={handleChange}>
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
           </div>
-
-
-          {/* DOB & Address */}
-          <div className={styles.inputRow}>
-
-
-            <div className={styles.inputGroup}>
-              <label>Address *</label>
-              <input type="text" name="address" placeholder="Enter address" value={formData.address} onChange={handleChange} />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Subject Specialization *</label>
-              <select name="subjectSpecialization" value={formData.subjectSpecialization} onChange={handleChange}>
-                <option value="">Select Subject</option>
-                {subjects.map((subject) => (
-                  <option key={subject._id} value={subject.name}>
-                    {subject.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className={styles.inputGroup}>
+            <label>Date of Birth *</label>
+            <input type="date" name="dob" value={formData.dob} onChange={handleChange} />
           </div>
+        </div>
 
-          {/* Subject Specialization */}
-          <div className={styles.inputRow}>
-
+        {/* Address & Subject Specialization */}
+        <div className={styles.inputRow}>
+          <div className={styles.inputGroup}>
+            <label>Address *</label>
+            <input type="text" name="address" placeholder="Enter address" value={formData.address} onChange={handleChange} />
           </div>
-
-          {/* Experience & Salary */}
-          <div className={styles.inputRow}>
-            <div className={styles.inputGroup}>
-              <label>Experience (Years) *</label>
-              <input type="number" name="experience" placeholder="Enter years of experience" value={formData.experience} onChange={handleChange} />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>Salary *</label>
-              <input type="number" name="salary" placeholder="Enter salary" value={formData.salary} onChange={handleChange} />
-            </div>
+          <div className={styles.inputGroup}>
+            <label>Subject Specialization *</label>
+            <select name="subjectSpecialization" value={formData.subjectSpecialization} onChange={handleChange}>
+              <option value="">Select Subject</option>
+              {subjects.map((subject) => (
+                <option key={subject._id} value={subject.name}>
+                  {subject.name}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
 
-          {/* Joining Date & Department */}
-          <div className={styles.inputRow}>
-            <div className={styles.inputGroup}>
-              <label>Joining Date *</label>
-              <input type="date" name="joiningDate" value={formData.joiningDate} onChange={handleChange} />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>Department *</label>
-              <input type="text" name="department" placeholder="Enter department" value={formData.department} onChange={handleChange} />
-            </div>
+        {/* Experience & Salary */}
+        <div className={styles.inputRow}>
+          <div className={styles.inputGroup}>
+            <label>Experience (Years) *</label>
+            <input type="number" name="experience" placeholder="Enter years of experience" value={formData.experience} onChange={handleChange} />
           </div>
-        </>
+          <div className={styles.inputGroup}>
+            <label>Salary *</label>
+            <input type="number" name="salary" placeholder="Enter salary" value={formData.salary} onChange={handleChange} />
+          </div>
+        </div>
+
+        {/* Joining Date & Department */}
+        <div className={styles.inputRow}>
+          <div className={styles.inputGroup}>
+            <label>Joining Date *</label>
+            <input type="date" name="joiningDate" value={formData.joiningDate} onChange={handleChange} />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Department *</label>
+            <input type="text" name="department" placeholder="Enter department" value={formData.department} onChange={handleChange} />
+          </div>
+        </div>
 
         {/* Error and Success Messages */}
         {error && <p className={styles.errorMessage}>{error}</p>}

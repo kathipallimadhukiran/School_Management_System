@@ -33,12 +33,13 @@ const StudentManagement = () => {
   const [error, setError] = useState(null);
 
 
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [classes, setClasses] = useState([]);
 
 
   useEffect(() => {
-    fetch("http://localhost:3000/getAllClass")
+    fetch(`${API_URL}/getAllClass`)
       .then((response) => response.json())
       .then((data) => setClasses(data))
       .catch((error) => console.error("Error fetching classes:", error));
@@ -52,7 +53,7 @@ const StudentManagement = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:3000/gettingStudent"
+        `${API_URL}/gettingStudent`
       );
       if (response.data && Array.isArray(response.data.data)) {
         setStudents(response.data.data);
@@ -120,7 +121,7 @@ const StudentManagement = () => {
     console.log("Sending update request with data:", updateData);
 
     try {
-      await axios.put(`http://localhost:3000/updatestudentdetails`, updateData);
+      await axios.put(`${API_URL}/updatestudentdetails`, updateData);
       fetchStudents();
       setIsUpdateModalOpen(false);
       toast.success("Student updated successfully.");
@@ -152,7 +153,7 @@ const StudentManagement = () => {
         FeeAmount: formData.feeAmount,
         FeePaid: formData.feePaid,
       })
-      await axios.post(`http://localhost:3000/AddFee`, {
+      await axios.post(`${API_URL}/AddFee`, {
         id: selectedStudent._id,
         FeeType: formData.feeType,
         FeeAmount: formData.feeAmount,
@@ -175,7 +176,7 @@ const StudentManagement = () => {
 
   const handleDeleteSubmit = async () => {
     try {
-      await axios.delete(`http://localhost:3000/deletestudentdetails/${selectedStudent._id}`);
+      await axios.delete(`${API_URL}/deletestudentdetails/${selectedStudent._id}`);
       fetchStudents();
       setIsDeleteModalOpen(false);
       toast.success("Student deleted successfully.");

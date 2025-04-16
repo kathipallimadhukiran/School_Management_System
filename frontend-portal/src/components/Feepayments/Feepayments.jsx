@@ -12,6 +12,7 @@ const FeePayment = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Extract student details from location state
   const { studentName, studentNumber } = location.state || {};
@@ -36,7 +37,7 @@ const FeePayment = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://school-site-2e0d.onrender.com/gettingStudent");
+        const response = await fetch(`${API_URL}/gettingStudent`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

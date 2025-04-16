@@ -1,0 +1,479 @@
+/* ========== COLORS ========== */
+:root {
+  --primary: #4f46e5;
+  --primary-light: #6366f1;
+  --accent: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --white: #ffffff;
+  --bg-light: #f9fafb;
+  --overlay: rgba(0, 0, 0, 0.3);
+  --green-500: #16a34a;
+  --yellow-500: #fbbf24;
+  --red-500: #dc2626;
+  --blue-500: #3b82f6;
+}
+
+/* ========== TYPOGRAPHY ========== */
+h1, h2, h3, h4 {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+input, select {
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+/* ========== LAYOUT ========== */
+.container {
+  padding: 2rem;
+  background: var(--bg-light);
+  min-height: 100vh;
+}
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.pageTitle {
+  font-size: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.currentSelection {
+  font-size: 1rem;
+  color: var(--gray-500);
+}
+
+/* ========== COMPONENTS ========== */
+
+/* Dropdowns */
+.card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cardIcon {
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+.cardTitle {
+  font-size: 1.1rem;
+}
+.dropdown {
+  margin-top: 0.5rem;
+  position: relative;
+}
+.selectInput {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.5rem;
+  appearance: none;
+}
+.dropdownArrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+}
+
+/* Radio Buttons */
+.radioGroup {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+.radioLabel {
+  position: relative;
+  padding-left: 1.5rem;
+  cursor: pointer;
+  color: var(--gray-700);
+}
+.radioInput {
+  position: absolute;
+  opacity: 0;
+}
+.radioCustom {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  height: 16px;
+  width: 16px;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+}
+.radioInput:checked + .radioCustom {
+  background-color: var(--primary);
+}
+
+/* Subject Cards */
+.subjectsContainer {
+  margin-top: 2rem;
+}
+.sectionTitle {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.subjectCards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.subjectCard {
+  background: var(--white);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--gray-200);
+  width: 100%;
+  max-width: 400px;
+}
+.subjectHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.removeButton, .removeDivisionButton {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 1rem;
+}
+.divisionsList {
+  margin-top: 1rem;
+}
+.divisionItem {
+  border-top: 1px solid var(--gray-100);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  background: var(--gray-100);
+  border-radius: 0.75rem;
+}
+.inputGroup {
+  margin-bottom: 0.75rem;
+}
+.textInput, .numberInput {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.5rem;
+}
+.addButton {
+  margin-top: 1rem;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+/* Marks Table */
+.marksTableContainer {
+  overflow-x: auto;
+  margin-top: 2rem;
+}
+.marksTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.marksTable th, .marksTable td {
+  border: 1px solid var(--gray-200);
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+.marksInputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+.marksInput {
+  width: 60px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+/* Grade Color Differentiation */
+.gradeA {
+  background-color: var(--green-500);
+  color: var(--white);
+}
+.gradeB {
+  background-color: var(--blue-500);
+  color: var(--white);
+}
+.gradeC {
+  background-color: var(--yellow-500);
+  color: var(--gray-900);
+}
+.gradeF {
+  background-color: var(--red-500);
+  color: var(--white);
+}
+
+/* Action Buttons */
+.actionButtons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.importButton, .exportButton, .submitButton {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+.importButton {
+  background: var(--info);
+}
+.exportButton {
+  background: var(--primary-light);
+}
+.cancelButton {
+  background: var(--gray-300);
+}
+.confirmButton {
+  background: var(--accent);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modalContent {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 400px;
+}
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modalCloseButton {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+.modalFooter {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Feedback */
+.errorMessage {
+  background: var(--danger);
+  color: var(--white);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.successMessage {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.highlight {
+  color: var(--primary-light);
+}
+
+/* Loading Overlay */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(3px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.spinner {
+  border: 4px solid var(--gray-200);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 0.5rem;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+/* Marks Table */
+.marksTableContainer {
+  overflow-x: auto;
+  margin-top: 2rem;
+}
+
+.marksTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.marksTable th, .marksTable td {
+  border: 1px solid var(--gray-200);
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.marksInputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.marksInput {
+  width: 60px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.25rem;
+  text-align: center;
+  background-color: var(--gray-50);
+}
+
+.maxMarks {
+  color: var(--gray-500);
+  font-size: 0.75rem;
+}
+
+.maxMarksLabel {
+  font-size: 0.7rem;
+  color: var(--gray-500);
+}
+
+.subjectCell {
+  background-color: var(--primary-light);
+  font-weight: bold;
+  color: white;
+  padding: 0.5rem;
+}
+
+.subjectName {
+  color: var(--white);
+  font-weight: bold;
+}
+
+.gradeA {
+  background-color: var(--green-500);
+  color: white;
+}
+
+.gradeB {
+  background-color: var(--blue-500);
+  color: white;
+}
+
+.gradeC {
+  background-color: var(--yellow-500);
+  color: black;
+}
+
+.gradeD {
+  background-color: #cd9335;
+  color: white;
+}
+
+.gradeF {
+  background-color: rgb(229, 5, 5);
+  color: white;
+}
+
+/* Dynamic Grade Color for Subject Input Cells */
+.marksInputContainer input:focus {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.marksTable th {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+
+
+
+
+
+.subjectsSeparator {
+  background-color: var(--primary);
+  height: 2px;
+  margin: 1rem 0;
+}
+
+.subjectColumnHeader {
+  background-color: var(--primary-light);
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: var(--white);
+  border-radius: 0.5rem;
+}

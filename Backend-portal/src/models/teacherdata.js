@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const Logindata = require("./loginsdata");
 
 const teacherSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, },
+  password: { type: String, required: true }, // Store teacher password here
   phone: { type: String, required: true },
   gender: { type: String, required: true },
   dob: { type: Date, required: true },
@@ -16,40 +15,17 @@ const teacherSchema = new mongoose.Schema({
   joiningDate: { type: Date, required: true },
   role: { type: String, required: true, default: "Teacher" },
   staffID: { type: String, unique: true }, // Auto-generated staff ID
+  ClassTeacher: { type: String }
 });
 
 // ✅ Auto-generate Staff ID before saving
 teacherSchema.pre("save", async function (next) {
   if (!this.staffID) {
-    this.staffID = `EMP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const randomNumber = Math.floor(1000 + Math.random() * 9000); // Ensures a 4-digit number
+    this.staffID = `EMP${randomNumber}`;
   }
   next();
 });
 
-// ✅ Post-save hook to create login details
-teacherSchema.post("save", async function (doc, next) {
-  try {
-    const existingUser = await Logindata.findOne({ email: doc.email });
-
-    if (!existingUser) {
-      const hashedPassword = await bcrypt.hash("Staff@123", 10);
-
-      await Logindata.create({
-        name: doc.name,
-        email: doc.email,
-        password: hashedPassword,
-        role: "Staff", // Default role for teachers
-      });
-
-      console.log("✅ Login details created for:", doc.email);
-    } else {
-      console.log("⚠️ Login already exists for:", doc.email);
-    }
-  } catch (error) {
-    console.error("❌ Error creating login details:", error);
-  }
-
-  next();
-});
 
 module.exports = mongoose.model("Teacher", teacherSchema);

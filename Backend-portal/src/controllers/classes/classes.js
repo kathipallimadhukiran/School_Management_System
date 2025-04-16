@@ -1,30 +1,30 @@
 const mongoose = require('mongoose');
-const Class = require('../../models/classes');
+const {Class} = require('../../models/classes');
 const Student = require('../../models/studentdata');
 const Teacher = require('../../models/teacherdata');
 const Subject = require('../../models/subjectdata');
 
-// ✅ Create a class
+
 const createClass = async (req, res) => {
   try {
-    const { name, teacherId } = req.body;
+    const { name, sections } = req.body;
 
-    if (!name || !teacherId) {
-      return res.status(400).json({ message: "Class name and teacher ID are required" });
+    if (!name || !sections || !Array.isArray(sections) || sections.length === 0) {
+      return res.status(400).json({ message: "Class name and at least one section are required." });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(teacherId)) {
-      return res.status(400).json({ message: "Invalid teacher ID format" });
-    }
+    const newClass = new Class({ name, sections });
 
-    const newClass = new Class({ name, teacherId, students: [] });
     await newClass.save();
-    
-    res.json(newClass);
+    res.status(201).json(newClass);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error creating class:", error);
+    res.status(500).json({ message: error.message });
   }
 };
+
+
+
 
 
 // ✅ Get class by ID (Fixed)
@@ -51,8 +51,10 @@ const getClassById = async (req, res) => {
 // ✅ Get students by IDs
 const getStudentsByIds = async (req, res) => {
   try {
-    const { studentIds } = req.body;
+    const {studentIds } = req.body;
     
+    console.log(studentIds)
+
     if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
       return res.status(400).json({ message: "Invalid student IDs provided" });
     }
@@ -99,19 +101,18 @@ const getTeachersByIds = async (req, res) => {
 };
 
 // ✅ Assign student to a class
-const assignStudentToClass = async (req, res) => {
+const assignStudentsToSection = async (req, res) => {
   try {
-    const { studentIds, classId } = req.body; // Accept studentIds as an array
+    const { studentIds, classId, sectionId } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(classId)) {
-      return res.status(400).json({ message: "Invalid class ID format" });
+    if (!mongoose.Types.ObjectId.isValid(classId) || !mongoose.Types.ObjectId.isValid(sectionId)) {
+      return res.status(400).json({ message: "Invalid class or section ID format" });
     }
 
     if (!Array.isArray(studentIds) || studentIds.length === 0) {
       return res.status(400).json({ message: "Invalid student IDs array" });
     }
 
-    // Validate each studentId
     for (const id of studentIds) {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: `Invalid student ID: ${id}` });
@@ -123,28 +124,37 @@ const assignStudentToClass = async (req, res) => {
       return res.status(404).json({ message: "Class not found" });
     }
 
-    // Find students by IDs
-    const students = await Student.find({ _id: { $in: studentIds } });
+    const section = classData.sections.id(sectionId);
+    if (!section) {
+      return res.status(404).json({ message: "Section not found in class" });
+    }
 
+    // Validate students
+    const students = await Student.find({ _id: { $in: studentIds } });
     if (students.length !== studentIds.length) {
       return res.status(404).json({ message: "Some students not found" });
     }
 
-    // Add only new students (avoid duplicates)
-    const newStudentIds = studentIds.filter((id) => !classData.students.includes(id));
-    classData.students.push(...newStudentIds);
+    // Filter out already assigned students
+    const newStudentIds = studentIds.filter((id) => !section.students.includes(id));
+    section.students.push(...newStudentIds);
 
-    // Update class and save
+    // Save updated class
     await classData.save();
 
-    // Update each student with classId
-    await Student.updateMany({ _id: { $in: studentIds } }, { classId });
+    // Update students' class assignment if needed
+    await Student.updateMany(
+      { _id: { $in: studentIds } },
+      { classId } // Optionally add sectionId if needed
+    );
 
-    res.json({ message: "Students assigned to class", classData });
+    res.status(200).json({ message: "Students assigned to section", section });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error assigning students:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 // ✅ Assign subject to a class
@@ -171,35 +181,44 @@ const assignSubjectToClass = async (req, res) => {
   }
 };
 
-// ✅ Assign teacher to a class
-const assignTeacherToClass = async (req, res) => {
+const assignTeacherToSection = async (req, res) => {
   try {
-    const { classId, teacherId } = req.body;
+    const { classId, sectionId, teacherId } = req.body;
 
-    if (![classId, teacherId].every(id => mongoose.Types.ObjectId.isValid(id))) {
-      return res.status(400).json({ message: "Invalid ID format" });
-    }
-
+    // Find the class
     const classData = await Class.findById(classId);
+    if (!classData) return res.status(404).json({ error: "Class not found" });
+
+    // Find section inside the class
+    const section = classData.sections.id(sectionId);
+    if (!section) return res.status(404).json({ error: "Section not found" });
+
+    // Validate teacher
     const teacher = await Teacher.findById(teacherId);
+    if (!teacher) return res.status(404).json({ error: "Teacher not found" });
 
-    if (!classData || !teacher) {
-      return res.status(404).json({ message: "Class or Teacher not found" });
-    }
+   
 
-    if (!classData.teachers.includes(teacherId)) {
-      classData.teachers.push(teacherId);
+    // Assign teacher to the section
+    section.teacherId = teacher._id;
+
+    try {
       await classData.save();
+    } catch (saveErr) {
+      console.error("Save error:", saveErr);
     }
+    
 
-    if (!teacher.classes.includes(classId)) {
-      teacher.classes.push(classId);
-      await teacher.save();
-    }
+    // Optionally update teacher info with reference to the class/section
+    teacher.classId = classId;
+    teacher.ClassTeacher = `${classData.name} - Section ${section.name}`;
+    await teacher.save();
 
-    res.json({ message: "Teacher assigned to class", classData, teacher });
+    res.status(200).json({ message: "Teacher assigned to section successfully", section });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error assigning teacher to section:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -240,6 +259,74 @@ const getAllClass = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+
+
+// controllers/classController.js
+
+
+const getSectionDetails = async (req, res) => {
+  const { sectionId } = req.params;
+
+  try {
+    const classData = await Class.findOne({ "sections._id": sectionId });
+
+    if (!classData) {
+      return res.status(404).json({ message: "Section not found" });
+    }
+
+    const section = classData.sections.id(sectionId);
+
+    if (!section) {
+      return res.status(404).json({ message: "Section not found in class" });
+    }
+
+    // Fetch teacher details if assigned
+    let teacherData = null;
+    if (section.teacherId) {
+      teacherData = await Teacher.findById(section.teacherId).select("name email phone ClassTeacher staffID");
+    }
+
+    const sectionData = {
+      sectionId: section._id,
+      sectionName: section.name,
+      gradeLevel: section.gradeLevel,
+      classID: classData.classID,
+      className: classData.name,
+      teacher: teacherData,
+      students: section.students || [],
+      subjects: section.subjects.map((subj) => ({
+        subject: subj.subjectId,
+        teacher: subj.teacherId,
+      })),
+    };
+
+    return res.json(sectionData);
+  } catch (error) {
+    console.error("Error fetching section:", error);
+    return res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ✅ Get all subjects
 const getAllSubjects = async (req, res) => {
   try {
@@ -252,29 +339,45 @@ const getAllSubjects = async (req, res) => {
 
 
 // ✅ Unassign student from a class
-const unassignStudentFromClass = async (req, res) => {
+const unassignStudentFromSection = async (req, res) => {
   try {
-    const { classId, studentId } = req.params;
+    const { classId, sectionId, studentId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(classId) || !mongoose.Types.ObjectId.isValid(studentId)) {
-      return res.status(400).json({ message: "Invalid class or student ID format" });
+    if (
+      !mongoose.Types.ObjectId.isValid(classId) ||
+      !mongoose.Types.ObjectId.isValid(sectionId) ||
+      !mongoose.Types.ObjectId.isValid(studentId)
+    ) {
+      return res.status(400).json({ message: "Invalid class, section or student ID format" });
     }
 
     const classData = await Class.findById(classId);
     if (!classData) return res.status(404).json({ message: "Class not found" });
 
-    // Remove student from class
-    classData.students = classData.students.filter(id => id.toString() !== studentId);
+    const section = classData.sections.id(sectionId);
+    if (!section) return res.status(404).json({ message: "Section not found" });
+
+    // Remove student from the section
+    section.students = section.students.filter(id => id.toString() !== studentId);
     await classData.save();
 
-    // Update student to remove classId
-    await Student.findByIdAndUpdate(studentId, { $unset: { classId: "" } });
+    // Optionally update student's classId (only if they no longer belong to any section)
+    const stillAssigned = classData.sections.some(sec => 
+      sec.students.some(sid => sid.toString() === studentId)
+    );
 
-    res.json({ message: "Student unassigned successfully", classData });
+    if (!stillAssigned) {
+      await Student.findByIdAndUpdate(studentId, { $unset: { classId: "" } });
+    }
+
+    res.json({ message: "Student unassigned from section successfully", section });
+
   } catch (error) {
+    console.error("Error unassigning student:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 
@@ -303,23 +406,22 @@ const updateStudentGrade = async (req, res) => {
 };
 
 
-const getStudents = async (req, res) => {
+const getStudentswhounassigned = async (req, res) => {
   try {
       const grade = req.query.grade;
-      console.log("Received grade filter:", grade);
+
 
       let filter = {};
 
       if (grade && grade !== "Unassigned") {
           filter.Grade_applying_for = grade;
       } else if (grade === "Unassigned") {
-          // Ensure only students with NO assigned grade are returned
           filter = {
               $or: [
-                  { Grade_applying_for: { $exists: false } }, // Field is missing
-                  { Grade_applying_for: null }, // Field is null
-                  { Grade_applying_for: "" }, // Empty string
-                  { Grade_applying_for: "Unassigned" } // Explicitly marked as "Unassigned"
+                  { Grade_applying_for: { $exists: false } },
+                  { Grade_applying_for: null },
+                  { Grade_applying_for: "" },
+                  { Grade_applying_for: { $regex: /^unassigned$/i } }, // Case-insensitive match
               ]
           };
       }
@@ -338,18 +440,135 @@ const getStudents = async (req, res) => {
 
 
 
+
+
+const deleteSubject = async (req, res) => {
+  try {
+    const subjectId = req.params.id;
+
+    const deletedSubject = await Subject.findByIdAndDelete(subjectId);
+    if (!deletedSubject) {
+      return res.status(404).json({ message: "Subject not found." });
+    }
+
+    res.json({ message: `Subject "${deletedSubject.name}" deleted successfully!` });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+const addSubject = async (req, res) => {
+  try {
+    const { name, code, teacherIds } = req.body; // Accept name, code, and optional teacherIds
+
+    if (!name || !code) {
+      return res.status(400).json({ message: "Subject name and code are required." });
+    }
+
+    // Validate teacher IDs (if provided)
+    if (teacherIds && !Array.isArray(teacherIds)) {
+      return res.status(400).json({ message: "Teacher IDs must be an array." });
+    }
+
+    if (teacherIds && !teacherIds.every(id => mongoose.Types.ObjectId.isValid(id))) {
+      return res.status(400).json({ message: "Invalid teacher ID format." });
+    }
+
+    // Create new subject
+    const newSubject = new Subject({
+      name,
+      code,
+      teachers: teacherIds || [], // Store teacher IDs if provided
+    });
+
+    await newSubject.save();
+
+    res.status(201).json({ message: "Subject added successfully!", subject: newSubject });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+
+
+
+
+
+
+const getsectionstudentlist= async (req, res) => {
+  try {
+    const sectionId = req.params.sectionId;
+
+    // Find the class and locate the section
+    const classDoc = await Class.findOne({ "sections._id": sectionId });
+
+    if (!classDoc) return res.status(404).json({ message: "Section not found" });
+
+    const section = classDoc.sections.id(sectionId);
+    const studentIds = section.students || [];
+
+    // Get student details
+    const students = await Student.find({ _id: { $in: studentIds } });
+
+    res.json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+
+
+
+const assignRollNumbersToStudents = async (req, res) => {
+  try {
+    const { sectionId, studentIds, startFrom } = req.body;
+
+    if (!sectionId || !studentIds || !Array.isArray(studentIds)) {
+      return res.status(400).json({ message: "Invalid input data" });
+    }
+
+    const bulkOps = studentIds.map((studentId, index) => ({
+      updateOne: {
+        filter: { _id: studentId },
+        update: { $set: { Roll_No: String(startFrom + index) } } // or remove `String()` if type is Number
+      }
+    }));
+
+    const result = await Student.bulkWrite(bulkOps);
+
+    res.status(200).json({ message: "Roll numbers assigned successfully", result });
+  } catch (error) {
+    console.error("Failed to assign roll numbers:", error);
+    res.status(500).json({ message: "Error assigning roll numbers" });
+  }
+};
+
+
+
+
+
+
+
 module.exports = {
   createClass,
-  assignStudentToClass,
+  getsectionstudentlist,
+  assignStudentsToSection,
   assignSubjectToClass,
-  assignTeacherToClass,
+  assignTeacherToSection,
   assignSubjectToTeacher,
   getAllClass,
+  getSectionDetails,
+  addSubject,
   getAllSubjects,
   getStudentsByIds,
   getTeachersByIds,
   getClassById,
-  unassignStudentFromClass,
+  unassignStudentFromSection,
   updateStudentGrade,
-  getStudents
+  deleteSubject,
+  getStudentswhounassigned,
+  assignRollNumbersToStudents
 };

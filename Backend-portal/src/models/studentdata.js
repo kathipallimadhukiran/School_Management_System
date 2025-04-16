@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
   Total_Fee_Paid: { type: Number, default: 0 },  // New field
   Number_of_terms: { type: Number, required: true },
   Registration_number: { type: String, required: true },
+  Roll_No:{type:String,unique: true},
   fees: [{
     FeeType: { type: String, required: true },
     FeeAmount: { type: Number, required: true },

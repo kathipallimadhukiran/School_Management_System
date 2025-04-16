@@ -14,12 +14,13 @@ const Teacher = () => {
   const [sortOrder, setSortOrder] = useState("");
   const [minRemainingFee, setMinRemainingFee] = useState("");
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://school-site-2e0d.onrender.com/gettingStudent");
+        const response = await fetch(`${API_URL}/gettingStudent`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -79,7 +80,7 @@ const Teacher = () => {
     }
 
     try {
-      const response = await fetch("https://school-site-2e0d.onrender.com/sendDueReminder", {
+      const response = await fetch(`${API_URL}/sendDueReminder`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -24,11 +24,12 @@ const Statistics = () => {
   const [totalFees, setTotalFee] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://school-site-2e0d.onrender.com/gettingStudent");
+        const response = await fetch(`${API_URL}/gettingStudent`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const result = await response.json();
         if (!result || !result.data) throw new Error("Empty data from server");

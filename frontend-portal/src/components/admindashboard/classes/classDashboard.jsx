@@ -1,188 +1,101 @@
 import { Link, useNavigate } from "react-router-dom";
-import styles from "./classDashboard.module.css"; // Import CSS Module
+import styles from "./classDashboard.module.css";
 import { useState, useEffect } from "react";
 
 const ClassManagement = () => {
   const [classes, setClasses] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [teacher, setTeacher] = useState(null);
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [showAddStudentPopup, setShowAddStudentPopup] = useState(false); // New state for Add Student Popup
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch all classes on component mount
   useEffect(() => {
-    fetch("http://localhost:3000/getAllClass")
-      .then((response) => response.json())
-      .then((data) => setClasses(data))
-      .catch((error) => console.error("Error fetching classes:", error));
-  }, []);
+    const fetchClasses = async () => {
+      try {
+        const res = await fetch(`${API_URL}/getAllClass`);
+        const data = await res.json();
+        console.log("📚 Classes:", data);
 
-  const handleNavigate = async (cls) => {
-    setLoading(true);
-    navigate("manageclass", { state: { classId: cls._id } });
-  }
+        if (!res.ok) throw new Error(data.message || "Unable to fetch classes");
 
+        const teacherIds = [...new Set(data.map(cls => cls.teacherId).filter(Boolean))];
+        console.log("🆔 Teacher IDs:", teacherIds);
 
-
-  // Fetch class details when a class is selected
-  const handleSelectClass = async (cls) => {
-    setLoading(true);
-    setSelectedClass(cls);
-
-    try {
-      const response = await fetch(`http://localhost:3000/getClassById/${cls._id}`);
-      if (!response.ok) throw new Error("Failed to fetch class details");
-
-      const data = await response.json();
-      setTeacher(data.teacherId || null);
-
-      if (data.students && data.students.length > 0) {
-        const studentResponse = await fetch("http://localhost:3000/getStudentsByIds", {
+        const teacherRes = await fetch(`${API_URL}/getTeachersByIds`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ studentIds: data.students }),
+          body: JSON.stringify({ teacherIds }),
         });
 
-        if (!studentResponse.ok) throw new Error("Failed to fetch students");
+        const teacherJson = await teacherRes.json();
+        console.log("👨‍🏫 Teacher API response:", teacherJson);
 
-        const studentData = await studentResponse.json();
-        setStudents(studentData);
-      } else {
-        setStudents([]);
+        // FIXED: Handle single teacher object or array
+        const teachers = Array.isArray(teacherJson)
+          ? teacherJson
+          : teacherJson.teachers
+          ? teacherJson.teachers
+          : [teacherJson]; // fallback if it's a single teacher object
+
+        const teacherMap = {};
+        teachers.forEach(t => {
+          teacherMap[t._id] = t.name;
+        });
+
+        const updatedClasses = data.map(cls => ({
+          ...cls,
+          teacherName: teacherMap[cls.teacherId] || "Unknown",
+        }));
+
+        console.log("🔁 Updated Classes:", updatedClasses);
+        setClasses(updatedClasses);
+      } catch (err) {
+        console.error("🚨 Error fetching classes:", err);
+        setClasses([]);
       }
+    };
 
+    fetchClasses();
+  }, []);
 
+  const handleSelectClass = (cls) => {
+    navigate("classcards", { state: { classId: cls._id } });
+  };
 
+  return (
+    <div className={styles.dashboard}>
+      <h1>Manage Classes</h1>
 
-
-      const TeacherResponse = await fetch("http://localhost:3000/getTeachersByIds", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ teacherIds: data.teacherId }),
-      });
-
-      if (!TeacherResponse.ok) throw new Error("Failed to fetch students");
-
-      const Teacherdata = await TeacherResponse.json();
-      setTeacher(Teacherdata);
-    
-
-
-
-
-
-
-
-    } catch (error) {
-    console.error("Error fetching class details:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-return (
-  <div className={styles.dashboard}>
-    <h1>Manage Classes</h1>
-    <div className={styles.cardContainer}>
-      <Link to="createclass" className={styles.card}>
-        📚 <h2>Create Class</h2>
-      </Link>
-      <Link to="/AdminDashboard/AddStaff" className={styles.card}>
-        👩‍🏫 <h2>Add Teacher</h2>
-      </Link>
-      <div className={styles.card} onClick={() => setShowAddStudentPopup(true)}>
-        🎓 <h2>Add Student</h2>
-      </div>
-      <Link to="createclass" className={styles.card}>
-        📖 <h2>Add Subject</h2>
-      </Link>
-      <Link to="createclass" className={styles.card}>
-        📅 <h2>Create Schedule</h2>
-      </Link>
-    </div>
-
-    <div className={styles.formContainer}>
-      <h2>Existing Classes</h2>
-      <div className={styles.classGrid}>
-        {classes.map((cls) => (
-          <div key={cls._id} className={styles.classCard} onClick={() => handleSelectClass(cls)}>
-            {cls.name}
-          </div>
-        ))}
+      <div className={styles.cardContainer}>
+        <Link to="createclass" className={styles.card}>
+          📚 <h2>Create Class</h2>
+        </Link>
+        <Link to="/AdminDashboard/AddStaff" className={styles.card}>
+          👩‍🏫 <h2>Add Teacher</h2>
+        </Link>
+        <Link to="/admissions" className={styles.card}>
+          🎓 <h2>Add Student</h2>
+        </Link>
+        <Link to="Addsubject" className={styles.card}>
+          📖 <h2>Add Subject</h2>
+        </Link>
       </div>
 
-      {/* Modal (Popup) for Class Details */}
-      {selectedClass && (
-        <div className={styles.modalOverlay} >
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h2>{selectedClass.name}</h2>
-
-            {/* Teacher Info */}
-            <h3>Teacher</h3>
-            {loading ? (
-              <p>Loading teacher...</p>
-            ) : teacher ? (
-              <div className={styles.teacherInfo}>
-                <p><strong>Class Teacher:</strong> {teacher.name} ({teacher.email})</p>
-              </div>
-            ) : (
-              <p>No teacher assigned.</p>
-            )}
-
-            {/* Students List */}
-            <h3>Students</h3>
-            {loading ? (
-              <p>Loading students...</p>
-            ) : (
-              <ul className={styles.studentList}>
-                {students.length > 0 ? (
-                  students.map((student) => (
-                    <li key={student._id} className={styles.studentItem}>
-                      {student.Student_name} ({student.Registration_number})
-                     
-                    </li>
-                  ))
-                ) : (
-                  <p>No students found.</p>
-                )}
-              </ul>
-            )}
-
-            {/* Add Student Button */}
-            <button className={styles.addButton} onClick={() => handleNavigate(selectedClass)}>
-              ✏️ Edit
-            </button>
-
-            <button className={styles.closeButton} onClick={() => setSelectedClass(null)}>
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 🔹 New Add Student Popup */}
-      {showAddStudentPopup && (
-        <div className={styles.modalOverlay} onClick={() => setShowAddStudentPopup(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h2>Select a Class</h2>
-            <div className={styles.classGrid}>
-              {classes.map((cls) => (
-                <div key={cls._id} className={styles.classCard} onClick={() => handleNavigate(cls)}>
-                  {cls.name}
-                </div>
-              ))}
+      <div className={styles.formContainer}>
+        <h2>Existing Classes</h2>
+        <div className={styles.classGrid}>
+          {classes.map(cls => (
+            <div
+              key={cls._id}
+              className={styles.classCard}
+              onClick={() => handleSelectClass(cls)}
+            >
+              <strong>{cls.name}</strong>
+              <div className={styles.teacherName}>👨‍🏫 {cls.teacherName}</div>
             </div>
-            <button className={styles.closeButton} onClick={() => setShowAddStudentPopup(false)}>
-              Close
-            </button>
-          </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default ClassManagement;

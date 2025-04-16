@@ -10,7 +10,7 @@ const Signup = async (req, res) => {
   session.startTransaction();
 
   try {
-    let { name, email, role, phone, gender, dob, address, subjectSpecialization, employmentType, experience, salary, joiningDate, department } = req.body;
+    let { name, email, role, phone, gender, dob, address, subjectSpecialization, experience, salary, joiningDate, department } = req.body;
 
     name = name?.trim();
     email = email?.trim().toLowerCase();
@@ -25,49 +25,51 @@ const Signup = async (req, res) => {
       return res.status(403).json({ message: "Invalid role! Only Staff, Admin, or Teacher can sign up." });
     }
 
-    const existingUser = await Logindata.findOne({ email }).session(session);
+    const existingUser = await Teacher.findOne({ email }).session(session);
     if (existingUser) {
       return res.status(400).json({ message: "User already exists with this email." });
     }
 
-    const defaultPassword = "EM@123";
+    const defaultPassword = "Password"; // Default password
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
-    if (role === "Teacher") {
-      if (!phone || !gender || !dob || !address || !subjectSpecialization || !employmentType || !experience || !salary || !joiningDate || !department) {
-        return res.status(400).json({ message: "All teacher fields are required!" });
-      }
+    // ✅ Create Teacher entry
+    const newTeacher = new Teacher({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      gender,
+      dob,
+      address,
+      subjectSpecialization,
+      experience,
+      salary,
+      joiningDate,
+      department,
+      role,
+    });
 
-      const newTeacher = new Teacher({
-        name,
-        email,
-        password: hashedPassword,
-        phone,
-        gender,
-        dob,
-        address,
-        subjectSpecialization,
-        employmentType,
-        experience,
-        salary,
-        joiningDate,
-        department,
-        role: "Teacher",
-      });
+    await newTeacher.save({ session });
 
-      await newTeacher.save({ session });
-    } else {
-      const newUser = new Logindata({ name, email, password: hashedPassword, role });
-      await newUser.save({ session });
-    }
+    // ✅ Add login details in Logindata
+    const newUser = new Logindata({
+      name,
+      email,
+      password: hashedPassword,
+      role, // Default role for teachers in Logindata
+    });
+
+    await newUser.save({ session });
 
     await session.commitTransaction();
     session.endSession();
 
-    // ✅ **Send Welcome Email**
+    // ✅ Send Welcome Email After Successful Transaction
     sendWelcomeEmail(email, name, role);
 
-    res.status(201).json({ message: `${role} registered successfully with default password EM@123!` });
+    res.status(201).json({ message: `Teacher registered successfully with default password "Password"!` });
+
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -75,6 +77,7 @@ const Signup = async (req, res) => {
     res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 };
+
 
 
 
@@ -134,7 +137,7 @@ const Login = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.json({ token, role: user.role,id: user._id });
+    res.json({ email: user.email, token, role: user.role, id: user._id ,Name:user.name});
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -153,7 +156,8 @@ const ForgotPassword = async (req, res) => {
 
     // Generate a secure reset token using JWT
     const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
+    const FRONTEND_URL =  process.env.FRONTEND_URL;
+    console.log(FRONTEND_URL)
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = Date.now() + 3600000; // Token valid for 1 hour
     await user.save();
@@ -167,7 +171,7 @@ const ForgotPassword = async (req, res) => {
       },
     });
 
-    const resetURL = `http://localhost:5173/reset-password?token=${resetToken}`;
+    const resetURL = `${FRONTEND_URL}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
       to: user.email,
@@ -186,16 +190,21 @@ const ForgotPassword = async (req, res) => {
 
 // ✅ Reset Password - Update Password
 const ResetPassword = async (req, res) => {
+  console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
   try {
     const { token, newPassword } = req.body;
 
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     } catch (error) {
       return res.status(400).json({ message: "Invalid or expired token!" });
     }
-
+    console.log("Token received:", token);
+    console.log("Decoded token:", decoded);
+    
     const user = await Logindata.findById(decoded.id);
 
     if (!user) {

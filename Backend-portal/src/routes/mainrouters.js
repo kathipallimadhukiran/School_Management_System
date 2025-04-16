@@ -6,14 +6,18 @@ const getfeedata = require("../controllers/feepayment/getfeedata");
 const { Duemailer } = require("../controllers/Duemailer"); // ✅ Ensure correct import
 const { Signup, Login, ForgotPassword, ResetPassword } = require("../controllers/Logincontroller");
 const { UpdateStudentDetails, DeleteStudentDetails, AddFee } = require('../controllers/UpdateStudentDetails');
-const {  assignStudentToClass, createClass, assignSubjectToClass, addTeacher, assignTeacherToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromClass, updateStudentGrade, getStudents } = require("../controllers/classes/classes");
+const {  assignStudentsToSection, createClass, assignSubjectToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromSection, updateStudentGrade, deleteSubject, getStudentswhounassigned, assignTeacherToSection, getSectionDetails, getsectionstudentlist, assignRollNumbersToStudents } = require("../controllers/classes/classes");
 const {  getAllTeachers } = require("../controllers/classes/teachers");
+const { delete_class } = require("../controllers/delete_class");
+const { enterMarks, getMarks, getSubjectDivisions } = require("../controllers/marks/entrymarks");
+const { authsessions } = require("../controllers/authsessions");
 
 
 
 const router = express.Router();
 
 router.post("/start", studentdata.studentdata);
+router.post("/auth/verify",authsessions);
 router.get("/gettingStudent", getStudentData.getStudentData);
 router.post("/EmergencyMailSending", EmergencyMailSending.emergencyMail);
 router.post("/getfeedata", getStudentData.getStudentData);
@@ -31,23 +35,37 @@ router.post('/AddFee', AddFee);
 router.delete('/deletestudentdetails/:id', DeleteStudentDetails);
 
 
-router.post('/assignStudentToClass', assignStudentToClass);
+router.post('/assignStudentsToSection', assignStudentsToSection);
 router.post('/createClass', createClass);
 router.post('/assignSubjectToClass', assignSubjectToClass);
-// router.post('/addTeacher', addTeacher);
-router.post('/assignTeacherToClass', assignTeacherToClass);
-// router.post('/addSubject', addSubject);
+router.post('/assignTeacherToSection', assignTeacherToSection);
+router.post('/addSubject', addSubject);
 router.get('/getAllSubjects', getAllSubjects);
 router.get('/getAllClass', getAllClass);
 router.post('/assignSubjectToTeacher', assignSubjectToTeacher);
 // router.post('/assignTeacherToSubject', assignTeacherToSubject);
 router.post('/getStudentsByIds', getStudentsByIds);
 router.post('/getTeachersByIds', getTeachersByIds);
+router.post('/assignRollNumbersToStudents', assignRollNumbersToStudents);
+// routes/classRoutes.js
+router.get("/getSectionDetails/:sectionId", getSectionDetails);
 router.get("/getAllTeachers",getAllTeachers)
 router.get("/getClassById/:classId", getClassById);
-router.delete("/unassignStudentFromClass/:classId/:studentId", unassignStudentFromClass);
+router.get("/:sectionId/students", getsectionstudentlist);
+router.delete("/unassignStudentFromSection/:classId/:sectionId/:studentId", unassignStudentFromSection);
+
 router.put("/updateStudentGrade/:studentId", updateStudentGrade);
-router.get("/getStudents", getStudents);
+router.get("/getStudents", getStudentswhounassigned);
+router.delete("/deleteClass/:classId", delete_class);
+router.delete("/deleteSubject/:id", deleteSubject);
+
+
+
+
+
+router.post("/marks", enterMarks);
+router.get("/getmarks", getMarks);
+router.get("/getSubjectDivisions", getSubjectDivisions);
 
 
 module.exports = router;

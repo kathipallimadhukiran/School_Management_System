@@ -4,358 +4,351 @@ import styles from "./manageclass.module.css";
 
 const Manageclass = () => {
     const location = useLocation();
+    const { classId, sectionId } = location.state || {};
+    const API_URL = import.meta.env.VITE_API_URL;
 
-    const [selectedClass, setSelectedClass] = useState(null);
-    const [students, setStudents] = useState([]); // Students already in the class
+    const [sectionDetails, setSectionDetails] = useState(null);
+    const [students, setStudents] = useState([]);
     const [teacher, setTeacher] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAddStudents, setShowAddStudents] = useState(false);
     const [showAddTeachers, setShowAddTeachers] = useState(false);
-    const [availableStudents, setAvailableStudents] = useState([]); 
+    const [availableStudents, setAvailableStudents] = useState([]);
     const [availableTeachers, setAvailableTeachers] = useState([]);
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
 
     useEffect(() => {
-        const classId = location.state?.classId;
-
-        const fetchClassDetails = async () => {
+        const fetchAvailableTeachers = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/getClassById/${classId}`);
-                if (!response.ok) throw new Error("Failed to fetch class details");
-
+                const response = await fetch(`${API_URL}/getAllTeachers`);
                 const data = await response.json();
-                setSelectedClass(data);
+                setAvailableTeachers(data);
+            } catch (err) {
+                console.error("Failed to fetch teachers:", err);
+            }
+        };
 
-                // Fetch Teacher Details
-                if (data.teacherId) {
-                    const teacherResponse = await fetch("http://localhost:3000/getTeachersByIds", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ teacherIds: [data.teacherId] }),
-                    });
-
-                    if (!teacherResponse.ok) throw new Error("Failed to fetch teacher details");
-
-                    const teacherData = await teacherResponse.json();
-                    setTeacher(teacherData);
-                }
-
-                // Fetch students currently in the class
-                if (data.students?.length > 0) {
-                    const studentResponse = await fetch("http://localhost:3000/getStudentsByIds", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ studentIds: data.students }),
-                    });
-
-                    if (!studentResponse.ok) throw new Error("Failed to fetch students");
-
-                    const studentData = await studentResponse.json();
-                    setStudents(studentData);
-                }
-            } catch (error) {
-                console.error("Error fetching class data:", error);
+        const fetchSectionDetails = async () => {
+            try {
+                const response = await fetch(`${API_URL}/getSectionDetails/${sectionId}`);
+                if (!response.ok) throw new Error("Failed to fetch section");
+                const data = await response.json();
+                setSectionDetails(data);
+                setTeacher(data.teacher || null);
+            } catch (err) {
+                console.error("Error:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchClassDetails();
+        fetchSectionDetails();
+        fetchAvailableTeachers();
+    }, [sectionId]);
 
-        // Fetch all students (excluding those already assigned)
-        const fetchStudents = async () => {
+    useEffect(() => {
+        const fetchStudentsNames = async () => {
+            if (!sectionDetails?.students?.length) return;
+
             try {
-                const response = await fetch("http://localhost:3000/getStudents?grade=Unassigned");
-                if (!response.ok) throw new Error("Failed to fetch students");
-        
-                const studentData = await response.json();
-                console.log("Filtered Students API Response:", studentData);
-        
-                const studentArray = Array.isArray(studentData.data) ? studentData.data : [];
-        
-                // Remove students already assigned to class
-                const assignedStudentIds = students.map((s) => s._id);
-                const filteredStudents = studentArray.filter(
-                    (student) => !assignedStudentIds.includes(student._id)
-                );
-        
-                setAvailableStudents(filteredStudents);
-            } catch (error) {
-                console.error("Error fetching students:", error);
+                const response = await fetch(`${API_URL}/getStudentsByIds`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ studentIds: sectionDetails.students }),
+                });
+
+                const data = await response.json();
+                setStudents(data);
+            } catch (err) {
+                console.error("Failed to fetch students:", err);
             }
         };
-        
 
-        fetchStudents();
+        fetchStudentsNames();
+    }, [sectionDetails]);
 
+    const fetchAvailableStudents = async () => {
+        try {
+            const response = await fetch(`${API_URL}/getStudents?grade=Unassigned`);
+            const data = await response.json();
+            const assignedIds = students.map((s) => s._id);
+            const unassigned = data.data?.filter((s) => !assignedIds.includes(s._id)) || [];
+            setAvailableStudents(unassigned);
+        } catch (err) {
+            console.error("Failed to fetch available students:", err);
+        }
+    };
 
-
-        const fetchTeachers = async () => {
-            try {
-                const response = await fetch("http://localhost:3000/getAllTeachers"); // Adjust API endpoint accordingly
-                if (!response.ok) throw new Error("Failed to fetch teachers");
-        
-                const teacherData = await response.json();
-                setAvailableTeachers(teacherData);  // Store available teachers in state
-            } catch (error) {
-                console.error("Error fetching teachers:", error);
-            }
-        };
-        
-        fetchTeachers();
-        
-
-    }, [location.state]);
-
+    useEffect(() => {
+        if (students.length >= 0) fetchAvailableStudents();
+    }, [students]);
 
     const handleAssignTeacher = async () => {
-        if (!selectedTeacher) return;
-    
         try {
-            const response = await fetch("http://localhost:3000/assignTeacherToClass", {
+            const response = await fetch(`${API_URL}/assignTeacherToSection`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    classId: selectedClass._id,
-                    teacherId: selectedTeacher,
-                }),
+                body: JSON.stringify({ classId, sectionId, teacherId: selectedTeacher }),
             });
-    
+
             if (!response.ok) throw new Error("Failed to assign teacher");
-    
-            const updatedClass = await response.json();
-            setTeacher(updatedClass.teacherData);  // Update UI with new teacher info
+
+            const updated = availableTeachers.find((t) => t._id === selectedTeacher);
+            setTeacher(updated);
             setShowAddTeachers(false);
-        } catch (error) {
-            console.error("Error assigning teacher:", error);
+        } catch (err) {
+            console.error("Error assigning teacher:", err);
         }
     };
-    
 
-    // Handle adding students
     const handleAddStudents = async () => {
-        if (selectedStudents.length === 0) return;
-    
+        if (!selectedStudents.length) return;
         try {
-            // Assign students to the class
-            const response = await fetch("http://localhost:3000/assignStudentToClass", {
+            const response = await fetch(`${API_URL}/assignStudentsToSection`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    classId: selectedClass._id,
-                    studentIds: selectedStudents,
-                }),
+                body: JSON.stringify({ classId, sectionId, studentIds: selectedStudents }),
             });
-    
+
             if (!response.ok) throw new Error("Failed to add students");
-    
-            const updatedClass = await response.json();
-    
-            // Fetch full student details again
-            const studentResponse = await fetch("http://localhost:3000/getStudentsByIds", {
+
+            const studentResponse = await fetch(`${API_URL}/getStudentsByIds`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ studentIds: updatedClass.classData.students }),
+                body: JSON.stringify({ studentIds: selectedStudents }),
             });
-    
-            if (!studentResponse.ok) throw new Error("Failed to fetch students");
-    
+
             const studentData = await studentResponse.json();
-            setStudents(studentData);
-    
-            // Remove assigned students from availableStudents list
-            setAvailableStudents((prev) => prev.filter(student => !selectedStudents.includes(student._id)));
-    
-            // Update student grade in the database
-            await Promise.all(selectedStudents.map(async (studentId) => {
-                await fetch(`http://localhost:3000/updateStudentGrade/${studentId}`, {
+
+            console.log("🎓 Added Students:");
+            studentData.forEach((s) =>
+                console.log(`${s.Student_name} → New Grade: ${sectionDetails.sectionName}`)
+            );
+
+            setStudents((prev) => [...prev, ...studentData]);
+
+            await Promise.all(selectedStudents.map((id) =>
+                fetch(`${API_URL}/updateStudentGrade/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ newGrade: selectedClass.name }), // Update grade
-                });
-                console.log(selectedClass.name)
-            }));
-    
-            setShowAddStudents(false);
+                    body: JSON.stringify({ newGrade: sectionDetails.sectionName }),
+                })
+            ));
+
             setSelectedStudents([]);
-        } catch (error) {
-            console.error("Error adding students:", error);
+            setShowAddStudents(false);
+            await fetchAvailableStudents();
+        } catch (err) {
+            console.error("Error adding students:", err);
+        }
+    };
+
+
+    const handleAssignRollNumbers = async () => {
+        if (!students.length) return alert("No students to assign roll numbers.");
+    
+        const startFrom = prompt("Enter starting roll number:", "1");
+        if (!startFrom || !startFrom.trim()) return alert("Invalid roll number format.");
+    
+        try {
+            const response = await fetch(`${API_URL}/assignRollNumbersToStudents`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    sectionId,
+                    studentIds: students.map((s) => s._id),
+                    startFrom: startFrom.trim()
+                }),
+            });
+    
+            if (!response.ok) throw new Error("Backend failed to assign roll numbers");
+    
+            const updatedStudents = await response.json();
+            setStudents(updatedStudents);
+    
+            alert("✅ Roll numbers assigned successfully.");
+            window.location.reload();
+        } catch (err) {
+            console.error("Error assigning roll numbers:", err);
+            alert("Failed to assign roll numbers.");
         }
     };
     
-    // Handle removing students
-    const handleRemoveStudent = async (studentId,Student_name) => {
+    
+    const handleViewMarksReport = (studentId, name) => {
+        // You can either show a modal or navigate to another route with studentId
+        // Example: navigate to /studentMarksReport
+        window.open(`/studentMarksReport/${studentId}`, "_blank");
+      };
       
-        if (!confirm(`Are you sure deleting ${Student_name}?    `)) return;
 
+    const handleRemoveStudent = async (studentId, name) => {
+        if (!confirm(`Are you sure you want to remove ${name}?`)) return;
+    
         try {
-          
-            // Unassign the student from the class
-            const response = await fetch(`http://localhost:3000/unassignStudentFromClass/${selectedClass._id}/${studentId}`, {
+            const response = await fetch(`${API_URL}/unassignStudentFromSection/${classId}/${sectionId}/${studentId}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
     
             if (!response.ok) throw new Error("Failed to remove student");
     
-            // Update UI: Remove the student from the current class list
-            setStudents(prev => prev.filter(student => student._id !== studentId));
+            // Update student list locally
+            const updatedStudents = students.filter((s) => s._id !== studentId);
+            setStudents(updatedStudents);
     
-            // Fetch details of the removed student using getStudentsByIds
-            const studentResponse = await fetch(`http://localhost:3000/getStudentsByIds`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ studentIds: [studentId] }),
-            });
-    
-            if (studentResponse.ok) {
-                const studentData = await studentResponse.json();
-                if (studentData.length > 0) {
-                    setAvailableStudents(prev => [...prev, studentData[0]]);
-                }
-            } else {
-                console.warn(`Student ${studentId} not found in database.`);
-            }
-    
-            // Update student's grade to "Unassigned"
-            await fetch(`http://localhost:3000/updateStudentGrade/${studentId}`, {
+            // Reset grade
+            await fetch(`${API_URL}/updateStudentGrade/${studentId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ newGrade: "Unassigned" }),
             });
     
-        } catch (error) {
-            console.error("Error removing student:", error);
-        
+            // Now fetch available students using updated list
+            const res = await fetch(`${API_URL}/getStudents?grade=Unassigned`);
+            const data = await res.json();
+            const assignedIds = updatedStudents.map((s) => s._id);
+            const unassigned = data.data?.filter((s) => !assignedIds.includes(s._id)) || [];
+            setAvailableStudents(unassigned);
+    
+        } catch (err) {
+            console.error("Error removing student:", err);
         }
-      
     };
     
-    
-    return selectedClass ? (
-        <div className={styles.manageClassContainer}>
-            {/* Header */}
-            <div className={styles.header}>
-                <h2 className={styles.className}>{selectedClass.name}</h2><div style={{width:"30%",display:"flex",justifyContent:"space-evenly"}}>
-                <button className={styles.addButton} onClick={() => setShowAddStudents(true)}>➕ Add Students</button>
-                <button className={styles.addButton} onClick={() => setShowAddTeachers(true)}>➕ Add Teachers</button>
-           
-                </div> </div>
+    if (loading || !sectionDetails) return <p>Loading...</p>;
 
-            {/* Main Content */}
+    return (
+        <div className={styles.manageClassContainer}>
+            <div className={styles.header}>
+                <h2>{sectionDetails.sectionName}</h2>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                <button className={styles.addButton} onClick={handleAssignRollNumbers}>🔢 Assign Roll Numbers</button>
+
+                    <button className={styles.addButton} onClick={() => setShowAddStudents(true)}>➕ Add Students</button>
+                    <button className={styles.addButton} onClick={() => setShowAddTeachers(true)}>✏️ Change Teacher</button>
+                </div>
+            </div>
+
             <div className={styles.content}>
-                {/* Teacher Section */}
                 <div className={styles.teacherSection}>
                     <h3>Teacher</h3>
-                    {loading ? <p>Loading teacher...</p> : teacher ? (
-                        <div className={styles.teacherInfo}>
-                            <p><strong>{teacher.name}</strong> ({teacher.email})</p>
-                        </div>
-                    ) : <p>No teacher assigned.</p>}
+                    {teacher ? (
+                        <p><strong>{teacher.name}</strong> ({teacher.staffID})</p>
+                    ) : (
+                        <p>No teacher assigned.</p>
+                    )}
                 </div>
 
-                {/* Students Section */}
                 <div className={styles.studentsSection}>
                     <h3>Students</h3>
-                    {loading ? <p>Loading students...</p> : students.length > 0 ? (
-                        <ul className={styles.studentList}>
-                            {students.map((student) => (
-                                <li key={student._id} className={styles.studentItem}>
-                                    {student.Student_name} ({student.Registration_number})
-                                    <button className={styles.deleteButton} onClick={() => handleRemoveStudent(student._id,student.Student_name)}>❌</button>
+                    {students.length ? (
+                       <table className={styles.studentTable}>
+                       <thead>
+                         <tr>
+                           <th>S.No</th>
+                           <th>Roll No</th>
+                           <th>Name</th>
+                           <th>Registration Number</th>
+                           <th>Action</th>
+                         </tr>
+                       </thead>
+                       <tbody>
+                         {students.map((student, index) => (
+                           <tr key={student._id}>
+                             <td>{index + 1}</td>
+                             <td>{student.Roll_No || "—"}</td>
+                             <td>{student.Student_name}</td>
+                             <td>{student.Registration_number}</td>
+                             <td>
+                             <button
+  className={styles.MarksButton}
+  onClick={() => handleViewMarksReport(student._id, student.Student_name)}
+>
+  🪪
+</button>
+
+                               <button
+                                 className={styles.deleteButton}
+                                 onClick={() => handleRemoveStudent(student._id, student.Student_name)}
+                               >
+                                 ❌
+                               </button>
+                             </td>
+                           </tr>
+                         ))}
+                       </tbody>
+                     </table>
+                     
+                    ) : (
+                        <p>No students assigned.</p>
+                    )}
+                </div>
+            </div>
+
+            {showAddStudents && (
+                <div className={styles.popupOverlay}>
+                    <div className={styles.popupContent}>
+                        <h3>Select Students</h3>
+                        <ul className={styles.availableStudentsList}>
+                            {availableStudents.length ? availableStudents.map((s) => (
+                                <li key={s._id}>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value={s._id}
+                                            onChange={(e) => {
+                                                const { value, checked } = e.target;
+                                                setSelectedStudents((prev) =>
+                                                    checked ? [...prev, value] : prev.filter((id) => id !== value)
+                                                );
+                                            }}
+                                        />
+                                        {s.Student_name} ({s.Registration_number})
+                                    </label>
+                                </li>
+                            )) : <p>No unassigned students.</p>}
+                        </ul>
+                        <div className={styles.popupButtons}>
+                            <button onClick={handleAddStudents}>Add Selected</button>
+                            <button onClick={() => {
+                                setSelectedStudents([]);
+                                setShowAddStudents(false);
+                            }}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showAddTeachers && (
+                <div className={styles.popupOverlay}>
+                    <div className={styles.popupContent}>
+                        <h3>Select Teacher</h3>
+                        <ul>
+                            {availableTeachers.map((t) => (
+                                <li key={t._id}>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="teacher"
+                                            value={t._id}
+                                            onChange={() => setSelectedTeacher(t._id)}
+                                        />
+                                        {t.name} ({t.staffID})
+                                    </label>
                                 </li>
                             ))}
                         </ul>
-                    ) : <p>No students found.</p>}
+                        <div className={styles.popupButtons}>
+                            <button onClick={handleAssignTeacher}>Assign</button>
+                            <button onClick={() => setShowAddTeachers(false)}>Cancel</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            {/* Add Students Popup */}
-            {/* Add Students Popup */}
-           {/* Add Students Popup */}
-{showAddStudents && (
-    <div className={styles.popupOverlay}>
-        <div className={styles.popupContent}>
-            <h3>Select Students to Add</h3>
-
-            {/* Sort students by the numeric part of Registration_number */}
-            <ul className={styles.availableStudentsList}>
-                {availableStudents.length > 0 ? (
-                    [...availableStudents]
-                        .sort((a, b) => {
-                            const numA = parseInt(a.Registration_number.match(/\d+$/)?.[0] || "0", 10);
-                            const numB = parseInt(b.Registration_number.match(/\d+$/)?.[0] || "0", 10);
-                            return numA - numB;
-                        })
-                        .map((student) => (
-                            <li key={student._id}>
-                                <label>
-                                    <input 
-                                        type="checkbox" 
-                                        value={student._id} 
-                                        onChange={(e) => {
-                                            const { value, checked } = e.target;
-                                            setSelectedStudents((prev) => 
-                                                checked 
-                                                    ? [...prev, value] 
-                                                    : prev.filter((id) => id !== value)
-                                            );
-                                        }} 
-                                    />
-                                    {student.Student_name} ({student.Registration_number})
-                                </label>
-                            </li>
-                        ))
-                ) : <p>No available students to add.</p>}
-            </ul>
-
-            <div className={styles.popupButtons}>
-                <button className={styles.addButton} onClick={handleAddStudents}>Add Selected</button>
-                <button className={styles.cancelButton} onClick={() => {setShowAddStudents(false)
-                    setSelectedStudents([])
-                }}>Cancel</button>
-            </div>
+            )}
         </div>
-    </div>
-)}
-
-
-
-
-{showAddTeachers && (
-    <div className={styles.popupOverlay}>
-        <div className={styles.popupContent}>
-            <h3>Select Teacher to Assign</h3>
-            <ul className={styles.availableTeachersList}>
-                {availableTeachers.length > 0 ? (
-                    availableTeachers.map((teacher) => (
-                        <li key={teacher._id}>
-                            <label>
-                                <input 
-                                    type="radio" 
-                                    name="selectedTeacher"
-                                    value={teacher._id} 
-                                    onChange={(e) => setSelectedTeacher(e.target.value)} // ✅ FIXED
-                                />
-                                {teacher.name} ({teacher.email})
-                            </label>
-                        </li>
-                    ))
-                ) : <p>No available teachers to assign.</p>}
-            </ul>
-            <div className={styles.popupButtons}>
-                <button className={styles.addButton} onClick={handleAssignTeacher}>Assign Teacher</button>
-                <button className={styles.cancelButton} onClick={() => setShowAddTeachers(false)}>Cancel</button>
-            </div>
-        </div>
-    </div>
-)}
-
-
-
-        </div>
-    ) : null;
+    );
 };
 
 export default Manageclass;

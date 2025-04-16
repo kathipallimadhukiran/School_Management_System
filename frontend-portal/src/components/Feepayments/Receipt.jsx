@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoSchool } from "react-icons/io5";
 import styles from "./Receipt.module.css"; // Import CSS Module
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Receipt = () => {
   const location = useLocation();
@@ -157,7 +158,7 @@ const Receipt = () => {
         <button onClick={printReceipt} className={styles.printButton}>
           Print Receipt
         </button>
-        <button onClick={() => navigate("/Dashboard")} className={styles.cancelButton}>
+        <button onClick={() => navigate("/")} className={styles.cancelButton}>
           Cancel
         </button>
       </div>

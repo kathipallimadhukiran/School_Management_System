@@ -15,6 +15,7 @@ const AdminDashboard = () => {
   const [unpaidStudents, setUnpaidStudents] = useState([]);
   const [totalDues, setTotalDues] = useState(0);
   const [totalDueAmount, setTotalDueAmount] = useState(0);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const displayedStudents = showAll ? totalStudents : totalStudents.slice(0, 10);
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const AdminDashboard = () => {
     console.log(mail, subject, studentname);
     try {
       const response = await fetch(
-        "https://school-site-2e0d.onrender.com/EmergencyMailSending",
+        `${API_URL}/EmergencyMailSending`,
         {
           method: "POST",
           headers: {
@@ -75,7 +76,7 @@ const AdminDashboard = () => {
 useEffect(() => {
   const fetchTeacherCount = async () => {
     try {
-      const response = await fetch("http://localhost:3000/aggregate/getTeachercount");
+      const response = await fetch(`${API_URL}/aggregate/getTeachercount`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -92,7 +93,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchClassCount = async () => {
     try {
-      const response = await fetch("http://localhost:3000/aggregate/getClasscount");
+      const response = await fetch(`${API_URL}/aggregate/getClasscount`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -112,7 +113,7 @@ useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://school-site-2e0d.onrender.com/gettingStudent"
+          `${API_URL}/gettingStudent`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -144,7 +145,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchTotalDueAmounts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/aggregate/totalDueAmounts");
+        const response = await fetch(`${API_URL}/aggregate/totalDueAmounts`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -182,29 +183,35 @@ useEffect(() => {
       <p>Manage staff, students, and administrative tasks here.</p>
 
       {/* ✅ Admin Summary Cards */}
-      <div className={stylesadmin.adminCards}>
-        <div className={stylesadmin.card}>
-          <FaUsers className={stylesadmin.icon} />
-          <h3>Total Students</h3>
-          {loading ? <p>Loading...</p> : <p>{totalStudents.length}</p>}
-        </div>
-        <div className={stylesadmin.card}>
-  <FaChalkboardTeacher className={stylesadmin.icon} />
-  <h3>Total Staff</h3>
-  {loading ? <p>Loading...</p> : <p>{teacherCount}</p>}
-</div>
+      <div className={stylesadmin.adminCards}>  
+      {/* Student Management */}
+      <div className={stylesadmin.card} onClick={() => navigate("/Students")}>  
+        <FaUsers className={stylesadmin.icon} />  
+        <h3>Total Students</h3>  
+        {loading ? <p>Loading...</p> : <p>{totalStudents.length}</p>}  
+      </div>  
 
-        <div className={stylesadmin.card}>
-          <MdClass className={stylesadmin.icon} />
-          <h3>Total Classes</h3>
-          {loading ? <p>Loading...</p> : <p>{totalClasses}</p>}
-        </div>
-        <div className={stylesadmin.card}>
-          <MdPayments className={stylesadmin.icon} />
-          <h3>Fees Collected</h3>
-          {loading ? <p>Loading...</p> : <p>₹{totalDueAmount}</p>}
-        </div>
-      </div>
+      {/* Teacher Management */}
+      <div className={stylesadmin.card} onClick={() => navigate("/AdminDashboard/TeachersList")}>  
+        <FaChalkboardTeacher className={stylesadmin.icon} />  
+        <h3>Total Staff</h3>  
+        {loading ? <p>Loading...</p> : <p>{teacherCount}</p>}  
+      </div>  
+
+      {/* Class Management */}
+      <div className={stylesadmin.card} onClick={() => navigate("/AdminDashboard/ClassList")}>  
+        <MdClass className={stylesadmin.icon} />  
+        <h3>Total Classes</h3>  
+        {loading ? <p>Loading...</p> : <p>{totalClasses}</p>}  
+      </div>  
+
+      {/* Fee Management */}
+      <div className={stylesadmin.card} onClick={() => navigate("/FeeManagement")}>  
+        <MdPayments className={stylesadmin.icon} />  
+        <h3>Fees Collected</h3>  
+        {loading ? <p>Loading...</p> : <p>₹{totalDueAmount}</p>}  
+      </div>  
+    </div>  
 
       {/* ✅ Quick Actions */}
       <div className={stylesadmin.actions}>
@@ -213,7 +220,7 @@ useEffect(() => {
           <button onClick={() => navigate("/AdminDashboard/AddStaff")}>
             <MdPersonAdd /> Add Staff
           </button>
-          <button onClick={() => navigate("/AdminDashboard/StudentManagement")}>
+          <button onClick={() => navigate("/StudentManagement")}>
             <MdSchool /> Manage Students
           </button>
           <button onClick={() => navigate("/AdminDashboard/ClassManagement")}>

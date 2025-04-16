@@ -1,0 +1,130 @@
+.addSubjectContainer {
+    width: 600px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1, h2 {
+    margin-bottom: 20px;
+  }
+  
+  .subjectForm {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .inputField {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .errorMessage {
+    color: red;
+    font-size: 14px;
+  }
+  
+  .successMessage {
+    color: green;
+    font-size: 14px;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .submitBtn, .cancelBtn {
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .submitBtn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .cancelBtn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* ✅ Table Styles */
+  .subjectTable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .subjectTable th, .subjectTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .subjectTable th {
+    background-color: #f4f4f4;
+  }
+/* ✅ Add styles for delete button and modal */
+.deleteBtn {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .passwordInput {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+  }
+  
+  .modalButtons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .deleteButton {
+    background: red;
+    color: white;
+  }
+  
+  .cancelButton {
+    background: gray;
+    color: white;
+  }
+    

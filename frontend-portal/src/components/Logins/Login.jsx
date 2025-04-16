@@ -16,7 +16,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "https://school-site-2e0d.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,10 +42,11 @@ const Login = () => {
       console.log(result);
 
       if (response.ok) {
+        localStorage.setItem("email", result.email);
         localStorage.setItem("authToken", result.token);
         localStorage.setItem("userRole", result.role);
         localStorage.setItem("userid", result.id);
-        console.log(result.role);
+        localStorage.setItem("userName", result.Name);
           
         toast.success(`Login successful! Welcome ${result.role}`);
   
@@ -61,9 +63,7 @@ const Login = () => {
           } 
 
 
-          // window.location.reload();
-         // Delay to allow the toast message to be visible
-
+       
 
 
       } else {
