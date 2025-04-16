@@ -6,13 +6,22 @@ const logger = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require('dotenv').config();
+const fs = require('fs');
 
 // Initialize the express app
 const app = express();
 
-// Middleware to serve uploaded files
 
-// Set up view engine (if needed)
+
+// Serve static files - only ONE declaration needed
+app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
+
+// Then use it in your static file middlew
+
+// Remove the duplicate static file declaration later in the file
+// Keep only one declaration of the uploads static route
+
+// Rest of your configuration...
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
@@ -25,32 +34,28 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // MongoDB connection
-
-
-// Use the MONGO_URI from the environment variables
-mongoose
-  .connect(process.env.MONGO_URI, {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+// Your routes...
+const Feerouter = require("./src/routes/feerouters");
+app.use("/feepayments", Feerouter);
 
-const Feerouter=require("./src/routes/feerouters");
-app.use("/feepayments",Feerouter);
-// Import main router
 const mainRouter = require("./src/routes/mainrouters");
 app.use("/", mainRouter);
-const aggregations =require("./src/routes/aggregations");
-app.use("/aggregate",aggregations)
 
-// 404 Error handler
+const aggregations = require("./src/routes/aggregations");
+app.use("/aggregate", aggregations);
+
+// Error handlers
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// Error handler for development and production environments
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -59,7 +64,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-// Set the port and start the server
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

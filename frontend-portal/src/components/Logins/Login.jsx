@@ -47,7 +47,11 @@ const Login = () => {
         localStorage.setItem("userRole", result.role);
         localStorage.setItem("userid", result.id);
         localStorage.setItem("userName", result.Name);
-          
+          // After successful login
+
+if (result.role === 'Staff') {
+  localStorage.setItem("teacherClassIds", JSON.stringify(result.assignedClasses));
+}
         toast.success(`Login successful! Welcome ${result.role}`);
   
        

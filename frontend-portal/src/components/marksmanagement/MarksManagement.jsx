@@ -33,6 +33,7 @@ const MarksManagement = () => {
     csvFile: null,
     isFetchingMarks: false
   });
+  const UserRole=localStorage.getItem("userRole");
 
   // Destructure state
   const {
@@ -73,14 +74,88 @@ const MarksManagement = () => {
     }
   };
 
-  // Fetch classes on component mount
+  
+
+
+
+
   useEffect(() => {
     const loadClasses = async () => {
-      const data = await fetchData("getAllClass", "Failed to load classes. Please try again.");
-      if (data) updateState({ classes: data });
+      updateState({ isLoading: true, error: "" });
+  
+      try {
+        const endpoint = UserRole === "Admin" 
+          ? `${API_URL}/getallclass` 
+          : `${API_URL}/teachers/${localStorage.getItem("userid")}/assigned-classes`;
+  
+        const response = await fetch(endpoint, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json'
+          }
+        });
+  
+        // Check for HTTP errors
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || 
+            `HTTP ${response.status}: ${response.statusText}`
+          );
+        }
+  
+        const result = await response.json();
+        const data = UserRole === "Admin" ? result : result.data;
+  
+        // Validate data structure
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data format received from server");
+        }
+  
+        // Debug log the structure
+        console.log("Received data structure:", {
+          dataType: typeof data,
+          isArray: Array.isArray(data),
+          firstItem: data[0],
+          sectionsInFirstItem: data[0]?.sections
+        });
+  
+        // Verify section names exist
+        data.forEach(classItem => {
+          if (!classItem.sections || !Array.isArray(classItem.sections)) {
+            console.warn(`Class ${classItem.name} has invalid sections data`);
+            return;
+          }
+          
+          classItem.sections.forEach(section => {
+            if (!section.name) {
+              console.warn(`Section ${section._id} in class ${classItem.name} has no name`);
+            }
+          });
+        });
+  
+        updateState({ 
+          classes: data,
+          isLoading: false
+        });
+  
+      } catch (error) {
+        console.error("Data loading failed:", {
+          error: error.message,
+          stack: error.stack,
+          role: UserRole,
+          time: new Date().toISOString()
+        });
+        
+        updateState({
+          isLoading: false,
+          error: `Failed to load classes: ${error.message}`
+        });
+      }
     };
+  
     loadClasses();
-  }, []);
+  }, [UserRole, API_URL]);
 
   // Update sections when class changes
   useEffect(() => {

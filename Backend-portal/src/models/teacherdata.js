@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const teacherSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }, // Store teacher password here
+  password: { type: String, required: true },
   phone: { type: String, required: true },
   gender: { type: String, required: true },
   dob: { type: Date, required: true },
@@ -14,18 +14,25 @@ const teacherSchema = new mongoose.Schema({
   salary: { type: Number },
   joiningDate: { type: Date, required: true },
   role: { type: String, required: true, default: "Teacher" },
-  staffID: { type: String, unique: true }, // Auto-generated staff ID
-  ClassTeacher: { type: String }
+  staffID: { type: String, unique: true },
+  ClassTeacher: { type: String },
+  profileImage: { type: String, default: "" }, // New field
+
+  assignedClasses: [
+    {
+      classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class' },
+      sectionId: { type: mongoose.Schema.Types.ObjectId }
+    }
+  ]
+  
 });
 
-// ✅ Auto-generate Staff ID before saving
 teacherSchema.pre("save", async function (next) {
   if (!this.staffID) {
-    const randomNumber = Math.floor(1000 + Math.random() * 9000); // Ensures a 4-digit number
+    const randomNumber = Math.floor(1000 + Math.random() * 9000);
     this.staffID = `EMP${randomNumber}`;
   }
   next();
 });
-
 
 module.exports = mongoose.model("Teacher", teacherSchema);

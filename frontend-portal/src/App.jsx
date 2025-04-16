@@ -7,8 +7,8 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Feepayments from "./components/Feepayments/Feepayments";
 import Dummypayments from "./components/Feepayments/PaymentPage";
 import Receipt from "./components/Feepayments/Receipt";
-import Students from "./components/Dashboard/students";
-import Teacher from "./components/Dashboard/Teachers";
+import Students from "./components/admindashboard/students";
+import Teacher from "./components/admindashboard/Teachers";
 import Login from "./components/Logins/Login";
 import ProtectedRoute from "./components/Logins/ProtectedRoute";
 import styles from "./App.module.css"; // Import CSS Module
@@ -22,6 +22,7 @@ import ClassList from "./components/admindashboard/classlist";
 import MarksManagement from "./components/marksmanagement/MarksManagement";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import StaffProfile from "./components/Dashboard/StaffProfile";
 
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
                 {userRole=="Admin"?<Route path="/" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />:<Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 }
                 <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/StaffProfile" element={<ProtectedRoute><StaffProfile/></ProtectedRoute>} />
                 <Route path="/Teachers" element={<ProtectedRoute><Teacher /></ProtectedRoute>} />
                 <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
                 <Route path="/StudentManagement" element={<ProtectedRoute><StudentManagement /></ProtectedRoute>} />

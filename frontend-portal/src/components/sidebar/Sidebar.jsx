@@ -4,19 +4,51 @@ import {
   TbLayoutSidebarLeftExpandFilled,
   TbLayoutSidebarLeftCollapseFilled,
 } from "react-icons/tb";
-import { MdDashboard, MdOutlinePayments, MdAddChart, MdSystemSecurityUpdateGood } from "react-icons/md";
+import {
+  MdDashboard,
+  MdOutlinePayments,
+  MdAddChart,
+  MdSystemSecurityUpdateGood,
+  MdOutlineLibraryBooks,
+  MdOutlineClass,
+  MdOutlineCheckCircle,
+  MdPerson,
+} from "react-icons/md";
 import { IoPersonAddSharp } from "react-icons/io5";
 
-import styles from "./sidebar.module.css"; // Using CSS Modules
+import styles from "./sidebar.module.css"; // CSS Modules
 
 const Sidebar = ({ width, isMobile, toggleSidebar }) => {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    // Retrieve user role from localStorage
     const storedUserRole = localStorage.getItem("userRole");
     setUserRole(storedUserRole);
   }, []);
+
+  const renderMenuItem = (to, icon, label) => (
+    <li className={styles.menuItem} key={to}> {/* Added key here */}
+      <Link to={to} className={styles.menuLink} onClick={toggleSidebar}>
+        {icon}
+        {width > 70 && <span>{label}</span>}
+      </Link>
+    </li>
+  );
+
+  const adminLinks = [
+    { to: "/AdminDashboard", icon: <MdDashboard />, label: "Admin Dashboard" },
+    { to: "/admissions", icon: <IoPersonAddSharp />, label: "New Admission" },
+    { to: "/Feepayments", icon: <MdOutlinePayments />, label: "Fee Payments" },
+    { to: "/StudentManagement", icon: <MdSystemSecurityUpdateGood />, label: "Update Student Data" },
+  ];
+
+  const teacherLinks = [
+    { to: "/Dashboard", icon: <MdDashboard />, label: "Dashboard" },
+    { to: "/Attendance", icon: <MdOutlineCheckCircle />, label: "Attendance" },
+    { to: "/ClassOverview", icon: <MdOutlineClass />, label: "Class Overview" },
+    { to: "/StaffProfile", icon: <MdPerson />, label: "My Profile" },
+  ];
+
   return (
     <div
       className={`${styles.sidebar} ${width > 70 ? styles.expanded : styles.compressed} ${isMobile ? styles.mobile : ""}`}
@@ -25,53 +57,16 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
       <div className={styles.barIcon} onClick={toggleSidebar}>
         {width > 70 ? <TbLayoutSidebarLeftCollapseFilled /> : <TbLayoutSidebarLeftExpandFilled />}
       </div>
+
       <nav className={styles.menu}>
         <ul className={styles.menuList}>
+          {userRole === "Admin"
+            ? adminLinks.map(item => renderMenuItem(item.to, item.icon, item.label))
+            : teacherLinks.map(item => renderMenuItem(item.to, item.icon, item.label))
+          }
 
-
-             {/* Show Admin Dashboard only for Admins */}
-             {userRole === "Admin"? (
-            <li className={styles.menuItem}>
-              <Link to="/AdminDashboard" className={styles.menuLink} onClick={toggleSidebar}>
-                <MdDashboard />
-                {width > 70 && <span>Admin Dashboard</span>}
-              </Link>
-            </li>
-          ):(
-            <li className={styles.menuItem}>
-            <Link to="/Dashboard" className={styles.menuLink} onClick={toggleSidebar}>
-              <MdDashboard />
-              {width > 70 && <span>Dashboard</span>}
-            </Link>
-          </li>
-          )}
-         
-          <li className={styles.menuItem}>
-            <Link to="/admissions" className={styles.menuLink} onClick={toggleSidebar}>
-              <IoPersonAddSharp />
-              {width > 70 && <span>New Admission</span>}
-            </Link>
-          </li>
-          <li className={styles.menuItem}>
-            <Link to="/Feepayments" className={styles.menuLink} onClick={toggleSidebar}>
-              <MdOutlinePayments />
-              {width > 70 && <span>Fee Payments</span>}
-            </Link>
-          </li>
-          <li className={styles.menuItem}>
-            <Link to="/MarksManagement" className={styles.menuLink} onClick={toggleSidebar}>
-              <MdAddChart />
-              {width > 70 && <span>Marks Entry</span>}
-            </Link>
-          </li>
-          <li className={styles.menuItem}>
-            <Link to="/StudentManagement" className={styles.menuLink} onClick={toggleSidebar}>
-              <MdSystemSecurityUpdateGood />
-              {width > 70 && <span>Update Student Data</span>}
-            </Link>
-          </li>
-
-       
+          {/* Common to both roles */}
+          {renderMenuItem("/MarksManagement", <MdAddChart />, "Marks Entry")}
         </ul>
       </nav>
     </div>

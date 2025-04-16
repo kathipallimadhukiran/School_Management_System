@@ -5,12 +5,30 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const Logindata = require("../models/loginsdata"); // Import User model  const mongoose = require("mongoose");
 const Teacher = require("../models/teacherdata");
+
+
+
+
+
 const Signup = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    let { name, email, role, phone, gender, dob, address, subjectSpecialization, experience, salary, joiningDate, department } = req.body;
+    let {
+      name,
+      email,
+      role,
+      phone,
+      gender,
+      dob,
+      address,
+      subjectSpecialization,
+      experience,
+      salary,
+      joiningDate,
+      department,
+    } = req.body;
 
     name = name?.trim();
     email = email?.trim().toLowerCase();
@@ -22,7 +40,9 @@ const Signup = async (req, res) => {
 
     const allowedRoles = ["Staff", "Admin", "Teacher"];
     if (!allowedRoles.includes(role)) {
-      return res.status(403).json({ message: "Invalid role! Only Staff, Admin, or Teacher can sign up." });
+      return res
+        .status(403)
+        .json({ message: "Invalid role! Only Staff, Admin, or Teacher can sign up." });
     }
 
     const existingUser = await Teacher.findOne({ email }).session(session);
@@ -30,7 +50,7 @@ const Signup = async (req, res) => {
       return res.status(400).json({ message: "User already exists with this email." });
     }
 
-    const defaultPassword = "Password"; // Default password
+    const defaultPassword = "Password";
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
     // ✅ Create Teacher entry
@@ -52,12 +72,13 @@ const Signup = async (req, res) => {
 
     await newTeacher.save({ session });
 
-    // ✅ Add login details in Logindata
+    // ✅ Add login details in Logindata, including the teacher's ObjectId
     const newUser = new Logindata({
       name,
       email,
       password: hashedPassword,
-      role, // Default role for teachers in Logindata
+      role,
+      teacherId: newTeacher._id, // <- 👈 Include reference to Teacher model
     });
 
     await newUser.save({ session });
@@ -65,11 +86,11 @@ const Signup = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    // ✅ Send Welcome Email After Successful Transaction
     sendWelcomeEmail(email, name, role);
 
-    res.status(201).json({ message: `Teacher registered successfully with default password "Password"!` });
-
+    res
+      .status(201)
+      .json({ message: `Teacher registered successfully with default password "Password"!` });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -77,6 +98,7 @@ const Signup = async (req, res) => {
     res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 };
+
 
 
 
@@ -137,7 +159,7 @@ const Login = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.json({ email: user.email, token, role: user.role, id: user._id ,Name:user.name});
+    res.json({ email: user.email, token, role: user.role, id: user.teacherId,Name:user.name});
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error" });

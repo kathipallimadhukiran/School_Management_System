@@ -1,0 +1,125 @@
+.container {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .detailList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: #374151;
+  }
+  
+  .messageLoading {
+    text-align: center;
+    color: #2563eb;
+    font-weight: 500;
+    padding: 1rem;
+  }
+  
+  .messageError {
+    text-align: center;
+    color: #dc2626;
+    font-weight: 500;
+    padding: 1rem;
+  }
+  
+  .messageNeutral {
+    text-align: center;
+    color: #6b7280;
+    font-weight: 500;
+    padding: 1rem;
+  }
+  .container {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .detailList {
+    text-align: left;
+    margin-top: 1.5rem;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
+  }
+  
+  .uploadInput {
+    margin-top: 1rem;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+  
+  .messageLoading,
+  .messageError,
+  .messageNeutral {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .messageLoading {
+    color: #2563eb;
+  }
+  
+  .messageError {
+    color: #dc2626;
+  }
+  
+  .messageNeutral {
+    color: #6b7280;
+  }
+  

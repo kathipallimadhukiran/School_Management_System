@@ -6,11 +6,13 @@ const getfeedata = require("../controllers/feepayment/getfeedata");
 const { Duemailer } = require("../controllers/Duemailer"); // ✅ Ensure correct import
 const { Signup, Login, ForgotPassword, ResetPassword } = require("../controllers/Logincontroller");
 const { UpdateStudentDetails, DeleteStudentDetails, AddFee } = require('../controllers/UpdateStudentDetails');
-const {  assignStudentsToSection, createClass, assignSubjectToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromSection, updateStudentGrade, deleteSubject, getStudentswhounassigned, assignTeacherToSection, getSectionDetails, getsectionstudentlist, assignRollNumbersToStudents } = require("../controllers/classes/classes");
+const {  assignStudentsToSection, createClass, assignSubjectToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromSection, updateStudentGrade, deleteSubject, getStudentswhounassigned, assignTeacherToSection, getSectionDetails, getsectionstudentlist, assignRollNumbersToStudents, getAssignedClasses } = require("../controllers/classes/classes");
 const {  getAllTeachers } = require("../controllers/classes/teachers");
 const { delete_class } = require("../controllers/delete_class");
 const { enterMarks, getMarks, getSubjectDivisions } = require("../controllers/marks/entrymarks");
 const { authsessions } = require("../controllers/authsessions");
+const upload = require("../middlewares/uploadImage");
+const { uploadImage } = require("../controllers/uploadTeacherImage");
 
 
 
@@ -56,6 +58,7 @@ router.delete("/unassignStudentFromSection/:classId/:sectionId/:studentId", unas
 
 router.put("/updateStudentGrade/:studentId", updateStudentGrade);
 router.get("/getStudents", getStudentswhounassigned);
+router.get("/teachers/:teacherId/assigned-classes", getAssignedClasses);
 router.delete("/deleteClass/:classId", delete_class);
 router.delete("/deleteSubject/:id", deleteSubject);
 
@@ -66,6 +69,9 @@ router.delete("/deleteSubject/:id", deleteSubject);
 router.post("/marks", enterMarks);
 router.get("/getmarks", getMarks);
 router.get("/getSubjectDivisions", getSubjectDivisions);
+
+
+router.patch("/uploadTeacherImage/:id", upload.single("profileImage"), uploadImage);
 
 
 module.exports = router;

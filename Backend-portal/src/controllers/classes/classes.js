@@ -72,9 +72,10 @@ const getStudentsByIds = async (req, res) => {
 };
 
 // ✅ Get teacher(s) by ID(s)
-const getTeachersByIds = async (req, res) => {
+const  getTeachersByIds = async (req, res) => {
   try {
     let { teacherIds } = req.body;
+    console.log(teacherIds);
 
     if (!teacherIds) {
       return res.status(400).json({ message: "Teacher ID(s) required" });
@@ -99,6 +100,74 @@ const getTeachersByIds = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+// Get assigned classes for a specific teacher
+const getAssignedClasses = async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(teacherId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Teacher ID format"
+      });
+    }
+
+    // Find the teacher
+    const teacher = await Teacher.findById(teacherId).lean();
+    if (!teacher) {
+      return res.status(404).json({
+        success: false,
+        message: "Teacher not found"
+      });
+    }
+
+    const result = [];
+
+    for (const assignment of teacher.assignedClasses) {
+      const classDoc = await Class.findById(assignment.classId).lean();
+      if (!classDoc) continue;
+
+      const section = classDoc.sections.find(
+        (sec) => sec._id.toString() === assignment.sectionId.toString()
+      );
+
+      if (!section) continue;
+
+      // Check if class already exists in result
+      let existingClass = result.find((c) => c._id.toString() === classDoc._id.toString());
+
+      const sectionData = {
+        _id: section._id,
+        name: section.name
+      };
+
+      if (existingClass) {
+        existingClass.sections.push(sectionData);
+      } else {
+        result.push({
+          _id: classDoc._id,
+          name: classDoc.name,
+          sections: [sectionData]
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    console.error("Error in getAssignedClasses:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching assigned classes",
+      error: error.message
+    });
+  }
+};
+
 
 // ✅ Assign student to a class
 const assignStudentsToSection = async (req, res) => {
@@ -185,19 +254,14 @@ const assignTeacherToSection = async (req, res) => {
   try {
     const { classId, sectionId, teacherId } = req.body;
 
-    // Find the class
     const classData = await Class.findById(classId);
     if (!classData) return res.status(404).json({ error: "Class not found" });
 
-    // Find section inside the class
     const section = classData.sections.id(sectionId);
     if (!section) return res.status(404).json({ error: "Section not found" });
 
-    // Validate teacher
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) return res.status(404).json({ error: "Teacher not found" });
-
-   
 
     // Assign teacher to the section
     section.teacherId = teacher._id;
@@ -207,11 +271,20 @@ const assignTeacherToSection = async (req, res) => {
     } catch (saveErr) {
       console.error("Save error:", saveErr);
     }
-    
 
-    // Optionally update teacher info with reference to the class/section
+    // Push class-section pair if not already assigned
+    const alreadyAssigned = teacher.assignedClasses.some(assignment =>
+      assignment.classId.toString() === classId.toString() &&
+      assignment.sectionId.toString() === sectionId.toString()
+    );
+
+    if (!alreadyAssigned) {
+      teacher.assignedClasses.push({ classId, sectionId });
+    }
+
     teacher.classId = classId;
     teacher.ClassTeacher = `${classData.name} - Section ${section.name}`;
+
     await teacher.save();
 
     res.status(200).json({ message: "Teacher assigned to section successfully", section });
@@ -221,6 +294,7 @@ const assignTeacherToSection = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 // ✅ Assign subject to teacher
 const assignSubjectToTeacher = async (req, res) => {
@@ -570,5 +644,6 @@ module.exports = {
   updateStudentGrade,
   deleteSubject,
   getStudentswhounassigned,
-  assignRollNumbersToStudents
+  assignRollNumbersToStudents,
+  getAssignedClasses
 };
