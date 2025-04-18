@@ -24,6 +24,8 @@ const userSchema = new mongoose.Schema({
   Number_of_terms: { type: Number, required: true },
   Registration_number: { type: String, required: true },
   Roll_No:{type:String,unique: true},
+  classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class' },
+  sectionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Section' },
   fees: [{
     FeeType: { type: String, required: true },
     FeeAmount: { type: Number, required: true },

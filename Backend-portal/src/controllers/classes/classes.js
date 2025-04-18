@@ -31,9 +31,6 @@ const createClass = async (req, res) => {
 const getClassById = async (req, res) => {
   try {
       const { classId } = req.params; // Use req.params instead of req.body
-
-    console.log(classId)
-
       const classData = await Class.findById(classId)
          
       if (!classData) {
@@ -229,26 +226,148 @@ const assignStudentsToSection = async (req, res) => {
 // ✅ Assign subject to a class
 const assignSubjectToClass = async (req, res) => {
   try {
-    const { classId, subjectId, teacherId } = req.body;
+    const assignments = Array.isArray(req.body) ? req.body : [req.body];
 
-    if (![classId, subjectId, teacherId].every(id => mongoose.Types.ObjectId.isValid(id))) {
-      return res.status(400).json({ message: "Invalid ID format" });
+    for (const { classId, sectionId, subjectId, teacherId } of assignments) {
+      if (![classId, sectionId, subjectId, teacherId].every(id => mongoose.Types.ObjectId.isValid(id))) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+
+      const classData = await Class.findById(classId);
+      if (!classData) return res.status(404).json({ message: "Class not found" });
+
+      const section = classData.sections.id(sectionId);
+      if (!section) return res.status(404).json({ message: "Section not found" });
+
+      const subject = await Subject.findById(subjectId);
+      if (!subject) return res.status(404).json({ message: "Subject not found" });
+
+      const subjectAlreadyExists = section.subjects.some(
+        (s) => s.subjectId.toString() === subjectId
+      );
+
+      if (subjectAlreadyExists) {
+        return res.status(400).json({
+          message: `Subject '${subject.name}' is already assigned to this section.`,
+        });
+      }
+
+      section.subjects.push({ subjectId, teacherId });
+      await classData.save();
     }
 
-    const classData = await Class.findById(classId);
-    const subject = await Subject.findById(subjectId);
-
-    if (!classData) return res.status(404).json({ message: "Class not found" });
-    if (!subject) return res.status(404).json({ message: "Subject not found" });
-
-    classData.subjects.push({ subjectId, teacherId });
-    await classData.save();
-
-    res.json({ message: "Subject assigned to class", classData });
+    res.json({ message: "Subjects assigned successfully" });
   } catch (error) {
+    console.error("Error assigning subjects:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
+// controllers/sectionController.js
+
+const updateSubjectTeacher = async (req, res) => {
+  try {
+    const { classId, sectionId, subjectId, newTeacherId } = req.body;
+
+    // 1. Validate inputs
+    if (!mongoose.Types.ObjectId.isValid(classId) || 
+        !mongoose.Types.ObjectId.isValid(sectionId) || 
+        !mongoose.Types.ObjectId.isValid(subjectId) || 
+        !mongoose.Types.ObjectId.isValid(newTeacherId)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
+    // 2. Verify the teacher exists
+    const teacher = await Teacher.findById(newTeacherId);
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    // 3. Find and update the class with nested section and subject
+    const updatedClass = await Class.findOneAndUpdate(
+      {
+        _id: classId,
+        'sections._id': sectionId,
+        'sections.subjects.subjectId': subjectId
+      },
+      {
+        $set: { 'sections.$[section].subjects.$[subject].teacherId': newTeacherId }
+      },
+      {
+        new: true,
+        arrayFilters: [
+          { 'section._id': sectionId },
+          { 'subject.subjectId': subjectId }
+        ]
+      }
+    ).populate('sections.teacherId')
+     .populate('sections.subjects.subjectId')
+     .populate('sections.subjects.teacherId');
+
+    if (!updatedClass) {
+      return res.status(404).json({ message: "Class, section, or subject not found" });
+    }
+
+    // 4. Find the updated section to return
+    const updatedSection = updatedClass.sections.id(sectionId);
+
+    res.status(200).json({
+      message: "Teacher updated successfully",
+      updatedSection: updatedSection
+    });
+
+  } catch (error) {
+    console.error("Error updating subject teacher:", error);
+    res.status(500).json({ 
+      message: error.message || "Failed to update subject teacher" 
+    });
+  }
+};
+
+const removeSubjectFromSection = async (req, res) => {
+  try {
+    const { classId, sectionId, subjectId } = req.body;
+
+    // Validate inputs
+    if (!classId || !sectionId || !subjectId) {
+      return res.status(400).json({ message: "Class ID, Section ID, and Subject ID are required" });
+    }
+
+    // Find and update the class document
+    const updatedClass = await Class.findOneAndUpdate(
+      {
+        _id: classId,
+        'sections._id': sectionId
+      },
+      {
+        $pull: {
+          'sections.$.subjects': { subjectId: subjectId }
+        }
+      },
+      { new: true }
+    ).populate('sections.subjects.subjectId');
+
+    if (!updatedClass) {
+      return res.status(404).json({ message: "Class or section not found" });
+    }
+
+    // Find the updated section
+    const updatedSection = updatedClass.sections.id(sectionId);
+
+    res.status(200).json({
+      message: "Subject removed successfully",
+      updatedSection: updatedSection
+    });
+
+  } catch (error) {
+    console.error("Error removing subject:", error);
+    res.status(500).json({ 
+      message: error.message || "Failed to remove subject" 
+    });
+  }
+};
+
 
 const assignTeacherToSection = async (req, res) => {
   try {
@@ -343,7 +462,6 @@ const getAllClass = async (req, res) => {
 
 
 // controllers/classController.js
-
 
 const getSectionDetails = async (req, res) => {
   const { sectionId } = req.params;
@@ -631,6 +749,8 @@ module.exports = {
   getsectionstudentlist,
   assignStudentsToSection,
   assignSubjectToClass,
+  updateSubjectTeacher,
+  removeSubjectFromSection,
   assignTeacherToSection,
   assignSubjectToTeacher,
   getAllClass,

@@ -16,10 +16,11 @@ const sectionSchema = new mongoose.Schema({
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
   subjects: [
     {
-      subjectId: { type: mongoose.Schema.Types.ObjectId, ref: "Subject" },
-      teacherId: { type: mongoose.Schema.Types.ObjectId, ref: "Teacher" },
-    },
+      subjectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject' },
+      teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' },
+    }
   ],
+  
 });
 
 // Main Class Schema

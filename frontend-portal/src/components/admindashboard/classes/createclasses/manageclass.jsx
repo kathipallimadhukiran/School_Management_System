@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import styles from "./manageclass.module.css";
 
 const Manageclass = () => {
@@ -12,76 +12,82 @@ const Manageclass = () => {
     const [teacher, setTeacher] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAddStudents, setShowAddStudents] = useState(false);
+    const [showAssignSubjects, setShowAssignSubjects] = useState(false);
     const [showAddTeachers, setShowAddTeachers] = useState(false);
     const [availableStudents, setAvailableStudents] = useState([]);
     const [availableTeachers, setAvailableTeachers] = useState([]);
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [subjects, setSubjects] = useState([]);
+    const [selectedSubjects, setSelectedSubjects] = useState([]);
+    const [showChangeTeacherPopup, setShowChangeTeacherPopup] = useState(false);
+    const [currentSubjectForTeacherChange, setCurrentSubjectForTeacherChange] = useState(null);
+    const [newTeacherId, setNewTeacherId] = useState("");
 
+    // Memoized unassigned subjects
+    const unassignedSubjects = useMemo(() => {
+        if (!sectionDetails?.subjects || !subjects.length) return subjects;
+        const assignedSubjectIds = new Set(sectionDetails.subjects.map(s => s.subject));
+        return subjects.filter(subject => !assignedSubjectIds.has(subject._id));
+    }, [sectionDetails, subjects]);
+
+    // Fetch all required data
     useEffect(() => {
-        const fetchAvailableTeachers = async () => {
+        const fetchInitialData = async () => {
             try {
-                const response = await fetch(`${API_URL}/getAllTeachers`);
-                const data = await response.json();
-                setAvailableTeachers(data);
-            } catch (err) {
-                console.error("Failed to fetch teachers:", err);
-            }
-        };
+                setLoading(true);
+                const [subjectsRes, sectionRes, teachersRes] = await Promise.all([
+                    fetch(`${API_URL}/getAllSubjects`),
+                    fetch(`${API_URL}/getSectionDetails/${sectionId}`),
+                    fetch(`${API_URL}/getAllTeachers`)
+                ]);
 
-        const fetchSectionDetails = async () => {
-            try {
-                const response = await fetch(`${API_URL}/getSectionDetails/${sectionId}`);
-                if (!response.ok) throw new Error("Failed to fetch section");
-                const data = await response.json();
-                setSectionDetails(data);
-                setTeacher(data.teacher || null);
+                const [subjectsData, sectionData, teachersData] = await Promise.all([
+                    subjectsRes.json(),
+                    sectionRes.json(),
+                    teachersRes.json()
+                ]);
+
+                setSubjects(subjectsData);
+                setSectionDetails(sectionData);
+                setTeacher(sectionData.teacher || null);
+                setAvailableTeachers(teachersData);
+
+                // Fetch students if they exist
+                if (sectionData.students?.length) {
+                    const studentsRes = await fetch(`${API_URL}/getStudentsByIds`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ studentIds: sectionData.students }),
+                    });
+                    const studentsData = await studentsRes.json();
+                    setStudents(studentsData);
+                }
             } catch (err) {
-                console.error("Error:", err);
+                console.error("Initial data fetch error:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchSectionDetails();
-        fetchAvailableTeachers();
+        if (sectionId) fetchInitialData();
     }, [sectionId]);
 
+    // Fetch available students when students list changes
     useEffect(() => {
-        const fetchStudentsNames = async () => {
-            if (!sectionDetails?.students?.length) return;
-
+        const fetchAvailableStudents = async () => {
             try {
-                const response = await fetch(`${API_URL}/getStudentsByIds`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ studentIds: sectionDetails.students }),
-                });
-
+                const response = await fetch(`${API_URL}/getStudents?grade=Unassigned`);
                 const data = await response.json();
-                setStudents(data);
+                const assignedIds = new Set(students.map(s => s._id));
+                const unassigned = data.data?.filter(s => !assignedIds.has(s._id)) || [];
+                setAvailableStudents(unassigned);
             } catch (err) {
-                console.error("Failed to fetch students:", err);
+                console.error("Failed to fetch available students:", err);
             }
         };
 
-        fetchStudentsNames();
-    }, [sectionDetails]);
-
-    const fetchAvailableStudents = async () => {
-        try {
-            const response = await fetch(`${API_URL}/getStudents?grade=Unassigned`);
-            const data = await response.json();
-            const assignedIds = students.map((s) => s._id);
-            const unassigned = data.data?.filter((s) => !assignedIds.includes(s._id)) || [];
-            setAvailableStudents(unassigned);
-        } catch (err) {
-            console.error("Failed to fetch available students:", err);
-        }
-    };
-
-    useEffect(() => {
-        if (students.length >= 0) fetchAvailableStudents();
+        fetchAvailableStudents();
     }, [students]);
 
     const handleAssignTeacher = async () => {
@@ -93,9 +99,9 @@ const Manageclass = () => {
             });
 
             if (!response.ok) throw new Error("Failed to assign teacher");
-
-            const updated = availableTeachers.find((t) => t._id === selectedTeacher);
-            setTeacher(updated);
+            
+            const updatedTeacher = availableTeachers.find(t => t._id === selectedTeacher);
+            setTeacher(updatedTeacher);
             setShowAddTeachers(false);
         } catch (err) {
             console.error("Error assigning teacher:", err);
@@ -104,69 +110,111 @@ const Manageclass = () => {
 
     const handleAddStudents = async () => {
         if (!selectedStudents.length) return;
+        
         try {
-            const response = await fetch(`${API_URL}/assignStudentsToSection`, {
+            // Assign students to section
+            await fetch(`${API_URL}/assignStudentsToSection`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ classId, sectionId, studentIds: selectedStudents }),
             });
 
-            if (!response.ok) throw new Error("Failed to add students");
-
+            // Get updated student data
             const studentResponse = await fetch(`${API_URL}/getStudentsByIds`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ studentIds: selectedStudents }),
             });
-
             const studentData = await studentResponse.json();
 
-            console.log("🎓 Added Students:");
-            studentData.forEach((s) =>
-                console.log(`${s.Student_name} → New Grade: ${sectionDetails.sectionName}`)
+            // Update students list
+            setStudents(prev => [...prev, ...studentData]);
+
+            // Update student grades in parallel
+            await Promise.all(
+                selectedStudents.map(id => 
+                    fetch(`${API_URL}/updateStudentGrade/${id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ newGrade: sectionDetails.sectionName }),
+                    })
+                )
             );
 
-            setStudents((prev) => [...prev, ...studentData]);
-
-            await Promise.all(selectedStudents.map((id) =>
-                fetch(`${API_URL}/updateStudentGrade/${id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ newGrade: sectionDetails.sectionName }),
-                })
-            ));
-
+            // Reset and refresh
             setSelectedStudents([]);
             setShowAddStudents(false);
-            await fetchAvailableStudents();
+            window.location.reload();
         } catch (err) {
             console.error("Error adding students:", err);
         }
     };
 
+    const handleAssignSubjects = async () => {
+        try {
+            setLoading(true);
+            
+            // Process all subject assignments in parallel
+            const responses = await Promise.all(
+                selectedSubjects.map(s => 
+                    fetch(`${API_URL}/assignSubjectToClass`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            classId,
+                            sectionId: sectionDetails.sectionId,
+                            subjectId: s.subjectId,
+                            teacherId: s.teacherId,
+                        }),
+                    })
+                )
+            );
+
+            // Check for any failed assignments
+            const failedResponse = responses.find(res => !res.ok);
+            if (failedResponse) {
+                const errorData = await failedResponse.json();
+                throw new Error(errorData.message || "Failed to assign subjects");
+            }
+
+            // Refresh section data
+            const refreshResponse = await fetch(`${API_URL}/getSectionDetails/${sectionId}`);
+            const updatedSection = await refreshResponse.json();
+            setSectionDetails(updatedSection);
+            
+            // Reset state
+            setSelectedSubjects([]);
+            setShowAssignSubjects(false);
+            alert("Subjects assigned successfully!");
+        } catch (error) {
+            console.error("Assignment error:", error);
+            alert(error.message || "Failed to assign subjects");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleAssignRollNumbers = async () => {
         if (!students.length) return alert("No students to assign roll numbers.");
-    
+
         const startFrom = prompt("Enter starting roll number:", "1");
-        if (!startFrom || !startFrom.trim()) return alert("Invalid roll number format.");
-    
+        if (!startFrom?.trim()) return alert("Invalid roll number format.");
+
         try {
             const response = await fetch(`${API_URL}/assignRollNumbersToStudents`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     sectionId,
-                    studentIds: students.map((s) => s._id),
-                    startFrom: startFrom.trim()
+                    studentIds: students.map(s => s._id),
+                    startFrom: startFrom.trim(),
                 }),
             });
-    
-            if (!response.ok) throw new Error("Backend failed to assign roll numbers");
-    
+
+            if (!response.ok) throw new Error("Failed to assign roll numbers");
+            
             const updatedStudents = await response.json();
             setStudents(updatedStudents);
-    
             alert("✅ Roll numbers assigned successfully.");
             window.location.reload();
         } catch (err) {
@@ -174,175 +222,421 @@ const Manageclass = () => {
             alert("Failed to assign roll numbers.");
         }
     };
-    
-    
-    const handleViewMarksReport = (studentId, name) => {
-        // You can either show a modal or navigate to another route with studentId
-        // Example: navigate to /studentMarksReport
+
+    const handleViewMarksReport = (studentId) => {
         window.open(`/studentMarksReport/${studentId}`, "_blank");
-      };
-      
+    };
 
     const handleRemoveStudent = async (studentId, name) => {
-        if (!confirm(`Are you sure you want to remove ${name}?`)) return;
-    
+        if (!confirm(`Remove ${name} from this section?`)) return;
+
         try {
-            const response = await fetch(`${API_URL}/unassignStudentFromSection/${classId}/${sectionId}/${studentId}`, {
+            // Remove student from section
+            await fetch(`${API_URL}/unassignStudentFromSection/${classId}/${sectionId}/${studentId}`, {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json" },
             });
-    
-            if (!response.ok) throw new Error("Failed to remove student");
-    
-            // Update student list locally
-            const updatedStudents = students.filter((s) => s._id !== studentId);
-            setStudents(updatedStudents);
-    
-            // Reset grade
+
+            // Update student grade
             await fetch(`${API_URL}/updateStudentGrade/${studentId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ newGrade: "Unassigned" }),
             });
-    
-            // Now fetch available students using updated list
+
+            // Update local state
+            setStudents(prev => prev.filter(s => s._id !== studentId));
+            
+            // Refresh available students
             const res = await fetch(`${API_URL}/getStudents?grade=Unassigned`);
             const data = await res.json();
-            const assignedIds = updatedStudents.map((s) => s._id);
-            const unassigned = data.data?.filter((s) => !assignedIds.includes(s._id)) || [];
-            setAvailableStudents(unassigned);
-    
+            setAvailableStudents(data.data || []);
         } catch (err) {
             console.error("Error removing student:", err);
         }
     };
-    
-    if (loading || !sectionDetails) return <p>Loading...</p>;
+
+    const handleChangeTeacher = (subjectId) => {
+        setCurrentSubjectForTeacherChange(subjectId);
+        setShowChangeTeacherPopup(true);
+    };
+
+    const handleConfirmTeacherChange = async () => {
+        if (!newTeacherId || !currentSubjectForTeacherChange) return;
+
+        try {
+            setLoading(true);
+            const response = await fetch(`${API_URL}/updateSubjectTeacher`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    classId,
+                    sectionId,
+                    subjectId: currentSubjectForTeacherChange,
+                    newTeacherId
+                })
+            });
+
+            if (!response.ok) throw new Error("Failed to update teacher");
+
+            // Optimistic UI update
+            setSectionDetails(prev => ({
+                ...prev,
+                subjects: prev.subjects.map(subject =>
+                    subject.subject === currentSubjectForTeacherChange
+                        ? { ...subject, teacher: newTeacherId }
+                        : subject
+                )
+            }));
+
+            // Close popup and reset
+            setShowChangeTeacherPopup(false);
+            setNewTeacherId("");
+            setCurrentSubjectForTeacherChange(null);
+            alert("Teacher updated successfully!");
+        } catch (error) {
+            console.error("Error updating teacher:", error);
+            alert(error.message || "Failed to update teacher");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRemoveSubject = async (subjectId) => {
+        if (!confirm("Remove this subject from the section?")) return;
+
+        try {
+            const response = await fetch(`${API_URL}/removeSubjectFromSection`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ classId, sectionId, subjectId })
+            });
+
+            if (!response.ok) throw new Error("Failed to remove subject");
+
+            // Update local state
+            setSectionDetails(prev => ({
+                ...prev,
+                subjects: prev.subjects.filter(s => s.subject !== subjectId)
+            }));
+            
+            alert("Subject removed successfully!");
+        } catch (error) {
+            console.error("Error removing subject:", error);
+            alert(error.message || "Failed to remove subject");
+        }
+    };
+
+    if (loading || !sectionDetails) return <div className={styles.loadingIndicator}>Loading...</div>;
 
     return (
         <div className={styles.manageClassContainer}>
             <div className={styles.header}>
-                <h2>{sectionDetails.sectionName}</h2>
-                <div style={{ display: "flex", gap: "1rem" }}>
-                <button className={styles.addButton} onClick={handleAssignRollNumbers}>🔢 Assign Roll Numbers</button>
-
+                <h2 className={styles.className}>{sectionDetails.sectionName}</h2>
+                <div className={styles.actionButtons}>
+                    <button className={styles.addButton} onClick={handleAssignRollNumbers}>🔢 Assign Roll Numbers</button>
                     <button className={styles.addButton} onClick={() => setShowAddStudents(true)}>➕ Add Students</button>
+                    <button className={styles.addButton} onClick={() => setShowAssignSubjects(true)}>➕ Assign Subjects</button>
                     <button className={styles.addButton} onClick={() => setShowAddTeachers(true)}>✏️ Change Teacher</button>
                 </div>
             </div>
 
             <div className={styles.content}>
                 <div className={styles.teacherSection}>
-                    <h3>Teacher</h3>
+                    <h3>Class Teacher</h3>
                     {teacher ? (
-                        <p><strong>{teacher.name}</strong> ({teacher.staffID})</p>
+                        <div className={styles.teacherInfo}>
+                            <strong>{teacher.name}</strong> ({teacher.staffID})
+                        </div>
                     ) : (
                         <p>No teacher assigned.</p>
+                    )}
+
+                    <h3>Subject Teachers</h3>
+                    {sectionDetails.subjects?.length > 0 ? (
+                        <table className={styles.subjectTable}>
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sectionDetails.subjects.map((subjectObj) => {
+                                    const subject = subjects.find(s => s._id === subjectObj.subject);
+                                    const teacher = availableTeachers.find(t => t._id === subjectObj.teacher);
+                                    
+                                    return (
+                                        <tr key={subjectObj.subject}>
+                                            <td>{subject?.name || 'Unknown Subject'}</td>
+                                            <td>
+                                                {teacher 
+                                                    ? `${teacher.name} (${teacher.staffID})` 
+                                                    : 'No teacher assigned'}
+                                            </td>
+                                            <td className={styles.actionButtons}>
+                                                <button 
+                                                    className={styles.changeTeacherButton}
+                                                    onClick={() => handleChangeTeacher(subjectObj.subject)}
+                                                    disabled={loading}
+                                                >
+                                                    Change Teacher
+                                                </button>
+                                                <button 
+                                                    className={styles.removeSubjectButton}
+                                                    onClick={() => handleRemoveSubject(subjectObj.subject)}
+                                                    disabled={loading}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p>No subjects assigned.</p>
                     )}
                 </div>
 
                 <div className={styles.studentsSection}>
-                    <h3>Students</h3>
-                    {students.length ? (
-                       <table className={styles.studentTable}>
-                       <thead>
-                         <tr>
-                           <th>S.No</th>
-                           <th>Roll No</th>
-                           <th>Name</th>
-                           <th>Registration Number</th>
-                           <th>Action</th>
-                         </tr>
-                       </thead>
-                       <tbody>
-                         {students.map((student, index) => (
-                           <tr key={student._id}>
-                             <td>{index + 1}</td>
-                             <td>{student.Roll_No || "—"}</td>
-                             <td>{student.Student_name}</td>
-                             <td>{student.Registration_number}</td>
-                             <td>
-                             <button
-  className={styles.MarksButton}
-  onClick={() => handleViewMarksReport(student._id, student.Student_name)}
->
-  🪪
-</button>
-
-                               <button
-                                 className={styles.deleteButton}
-                                 onClick={() => handleRemoveStudent(student._id, student.Student_name)}
-                               >
-                                 ❌
-                               </button>
-                             </td>
-                           </tr>
-                         ))}
-                       </tbody>
-                     </table>
-                     
+                    <h3>Students ({students.length})</h3>
+                    {students.length > 0 ? (
+                        <table className={styles.studentTable}>
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Roll No</th>
+                                    <th>Name</th>
+                                    <th>Reg No</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {students.map((student, index) => (
+                                    <tr key={student._id}>
+                                        <td>{index + 1}</td>
+                                        <td>{student.Roll_No || "—"}</td>
+                                        <td>{student.Student_name}</td>
+                                        <td>{student.Registration_number}</td>
+                                        <td>
+                                            <button 
+                                                className={styles.MarksButton}
+                                                onClick={() => handleViewMarksReport(student._id)}
+                                            >
+                                                🪪 Marks
+                                            </button>
+                                            <button 
+                                                className={styles.deleteButton}
+                                                onClick={() => handleRemoveStudent(student._id, student.Student_name)}
+                                                disabled={loading}
+                                            >
+                                                ❌ Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     ) : (
-                        <p>No students assigned.</p>
+                        <p>No students assigned to this section.</p>
                     )}
                 </div>
             </div>
 
+            {/* Add Students Popup */}
             {showAddStudents && (
                 <div className={styles.popupOverlay}>
                     <div className={styles.popupContent}>
-                        <h3>Select Students</h3>
+                        <h3>Add Students ({availableStudents.length} available)</h3>
                         <ul className={styles.availableStudentsList}>
-                            {availableStudents.length ? availableStudents.map((s) => (
-                                <li key={s._id}>
-                                    <label>
-                                        <input
-                                            type="checkbox"
-                                            value={s._id}
-                                            onChange={(e) => {
-                                                const { value, checked } = e.target;
-                                                setSelectedStudents((prev) =>
-                                                    checked ? [...prev, value] : prev.filter((id) => id !== value)
-                                                );
-                                            }}
-                                        />
-                                        {s.Student_name} ({s.Registration_number})
-                                    </label>
-                                </li>
-                            )) : <p>No unassigned students.</p>}
+                            {availableStudents.length > 0 ? (
+                                availableStudents.map(student => (
+                                    <li key={student._id} className={styles.studentItem}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedStudents.includes(student._id)}
+                                                onChange={(e) => {
+                                                    const { checked } = e.target;
+                                                    setSelectedStudents(prev =>
+                                                        checked
+                                                            ? [...prev, student._id]
+                                                            : prev.filter(id => id !== student._id)
+                                                    );
+                                                }}
+                                            />
+                                            {student.Student_name} ({student.Registration_number})
+                                        </label>
+                                    </li>
+                                ))
+                            ) : (
+                                <p>No unassigned students available.</p>
+                            )}
                         </ul>
                         <div className={styles.popupButtons}>
-                            <button onClick={handleAddStudents}>Add Selected</button>
-                            <button onClick={() => {
-                                setSelectedStudents([]);
-                                setShowAddStudents(false);
-                            }}>Cancel</button>
+                            <button 
+                                className={styles.addButton}
+                                onClick={handleAddStudents} 
+                                disabled={!selectedStudents.length || loading}
+                            >
+                                {loading ? 'Adding...' : 'Add Selected'}
+                            </button>
+                            <button 
+                                className={styles.cancelButton}
+                                onClick={() => setShowAddStudents(false)}
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* Assign Subjects Popup */}
+            {showAssignSubjects && (
+                <div className={styles.popupOverlay}>
+                    <div className={styles.popupContent}>
+                        <h3>Assign Subjects ({unassignedSubjects.length} available)</h3>
+                        <div className={styles.subjectList}>
+                            {unassignedSubjects.length > 0 ? (
+                                unassignedSubjects.map(subject => {
+                                    const selected = selectedSubjects.find(s => s.subjectId === subject._id);
+                                    return (
+                                        <div key={subject._id} className={styles.subjectItem}>
+                                            <label>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={!!selected}
+                                                    onChange={(e) => {
+                                                        const { checked } = e.target;
+                                                        setSelectedSubjects(prev =>
+                                                            checked
+                                                                ? [...prev, { subjectId: subject._id, teacherId: "" }]
+                                                                : prev.filter(s => s.subjectId !== subject._id)
+                                                        );
+                                                    }}
+                                                />
+                                                {subject.name}
+                                            </label>
+                                            {selected && (
+                                                <select
+                                                    className={styles.teacherSelect}
+                                                    value={selected.teacherId}
+                                                    onChange={(e) => {
+                                                        setSelectedSubjects(prev =>
+                                                            prev.map(s =>
+                                                                s.subjectId === subject._id
+                                                                    ? { ...s, teacherId: e.target.value }
+                                                                    : s
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    <option value="">Select Teacher</option>
+                                                    {availableTeachers.map(teacher => (
+                                                        <option key={teacher._id} value={teacher._id}>
+                                                            {teacher.name} ({teacher.staffID})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            )}
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p>All subjects are already assigned.</p>
+                            )}
+                        </div>
+                        <div className={styles.popupButtons}>
+                            <button
+                                className={styles.addButton}
+                                onClick={handleAssignSubjects}
+                                disabled={!selectedSubjects.length || loading}
+                            >
+                                {loading ? 'Assigning...' : 'Assign Subjects'}
+                            </button>
+                            <button 
+                                className={styles.cancelButton}
+                                onClick={() => setShowAssignSubjects(false)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Change Teacher Popup */}
+            {showChangeTeacherPopup && (
+                <div className={styles.popupOverlay}>
+                    <div className={styles.popupContent}>
+                        <h3>Change Teacher for Subject</h3>
+                        <select
+                            className={styles.teacherSelect}
+                            value={newTeacherId}
+                            onChange={(e) => setNewTeacherId(e.target.value)}
+                            disabled={loading}
+                        >
+                            <option value="">Select Teacher</option>
+                            {availableTeachers.map(teacher => (
+                                <option key={teacher._id} value={teacher._id}>
+                                    {teacher.name} ({teacher.staffID})
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.popupButtons}>
+                            <button
+                                className={styles.addButton}
+                                onClick={handleConfirmTeacherChange}
+                                disabled={!newTeacherId || loading}
+                            >
+                                {loading ? 'Updating...' : 'Confirm Change'}
+                            </button>
+                            <button 
+                                className={styles.cancelButton}
+                                onClick={() => setShowChangeTeacherPopup(false)}
+                                disabled={loading}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Assign Class Teacher Popup */}
             {showAddTeachers && (
                 <div className={styles.popupOverlay}>
                     <div className={styles.popupContent}>
-                        <h3>Select Teacher</h3>
-                        <ul>
-                            {availableTeachers.map((t) => (
-                                <li key={t._id}>
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            name="teacher"
-                                            value={t._id}
-                                            onChange={() => setSelectedTeacher(t._id)}
-                                        />
-                                        {t.name} ({t.staffID})
-                                    </label>
-                                </li>
+                        <h3>Assign Class Teacher</h3>
+                        <select
+                            className={styles.teacherSelect}
+                            value={selectedTeacher}
+                            onChange={(e) => setSelectedTeacher(e.target.value)}
+                        >
+                            <option value="">Select Teacher</option>
+                            {availableTeachers.map(teacher => (
+                                <option key={teacher._id} value={teacher._id}>
+                                    {teacher.name} ({teacher.staffID})
+                                </option>
                             ))}
-                        </ul>
+                        </select>
                         <div className={styles.popupButtons}>
-                            <button onClick={handleAssignTeacher}>Assign</button>
-                            <button onClick={() => setShowAddTeachers(false)}>Cancel</button>
+                            <button
+                                className={styles.addButton}
+                                onClick={handleAssignTeacher}
+                                disabled={!selectedTeacher}
+                            >
+                                Assign Teacher
+                            </button>
+                            <button 
+                                className={styles.cancelButton}
+                                onClick={() => setShowAddTeachers(false)}
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>

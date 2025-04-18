@@ -44,7 +44,7 @@ const Sidebar = ({ width, isMobile, toggleSidebar }) => {
 
   const teacherLinks = [
     { to: "/Dashboard", icon: <MdDashboard />, label: "Dashboard" },
-    { to: "/Attendance", icon: <MdOutlineCheckCircle />, label: "Attendance" },
+    { to: "/PostAttendance", icon: <MdOutlineCheckCircle />, label: "Attendance" },
     { to: "/ClassOverview", icon: <MdOutlineClass />, label: "Class Overview" },
     { to: "/StaffProfile", icon: <MdPerson />, label: "My Profile" },
   ];

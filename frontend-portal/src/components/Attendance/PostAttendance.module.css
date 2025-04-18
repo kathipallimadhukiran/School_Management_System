@@ -1,0 +1,916 @@
+/* Base Styles */
+.container {
+  padding: 1rem;
+  max-width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #3498db;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #c62828;
+}
+
+/* Form Sections */
+.formSection {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionTitle::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  background-color: #3498db;
+  border-radius: 4px;
+}
+
+/* Controls */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Period Controls */
+.periodControls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.periodSelectAll {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.periodList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.periodItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.periodItem input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
+}
+
+/* Bulk Actions */
+.bulkActions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.bulkButton {
+  padding: 0.75rem 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+}
+
+.bulkButton:hover {
+  background-color: #e9ecef;
+}
+
+/* Student Cards (Mobile) */
+.studentListMobile {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.studentCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+}
+
+.studentInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.studentNumber {
+  font-weight: bold;
+  min-width: 28px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.studentRoll {
+  background: #f5f5f5;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.studentName {
+  font-weight: 500;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+}
+
+.periodHeader {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding: 1rem 0;
+  margin-bottom: 0.5rem;
+}
+
+.bulkActionsMobile {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.periodGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.periodItemMobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.periodLabel {
+  font-size: 0.8rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.attendanceToggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ddd;
+  background: white;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.attendanceToggle.present {
+  border-color: #2ecc71;
+  background-color: #e8f5e9;
+  color: #2ecc71;
+}
+
+.attendanceToggle.absent {
+  border-color: #e74c3c;
+  background-color: #ffebee;
+  color: #e74c3c;
+}
+
+.studentActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.actionButton {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.presentAll {
+  background-color: #e8f5e9;
+  color: #2ecc71;
+}
+
+.presentAll:hover {
+  background-color: #d4edda;
+}
+
+.absentAll {
+  background-color: #ffebee;
+  color: #e74c3c;
+}
+
+.absentAll:hover {
+  background-color: #f8d7da;
+}
+
+/* Desktop Table */
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.studentTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.studentTable th {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #eee;
+  position: sticky;
+  top: 0;
+}
+
+.studentTable td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.studentTable tr:hover {
+  background-color: #f8f9fa;
+}
+
+.attendanceCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #2ecc71;
+  cursor: pointer;
+}
+
+.statusButton {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.presentButton {
+  background-color: #e8f5e9;
+  color: #2ecc71;
+}
+
+.presentButton:hover {
+  background-color: #d4edda;
+}
+
+.absentButton {
+  background-color: #ffebee;
+  color: #e74c3c;
+}
+
+.absentButton:hover {
+  background-color: #f8d7da;
+}
+
+/* Form Actions */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.submitButton {
+  padding: 0.75rem 2rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+  background-color: #2980b9;
+}
+
+.submitButton:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* Summary Modal */
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.summaryHeader {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.summaryHeader h4 {
+  margin: 0;
+  font-weight: 600;
+  color: #555;
+  font-size: 1rem;
+}
+
+.summaryStats {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.statCard {
+  flex: 1;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 0.5rem;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.presentCard {
+  background-color: #e8f5e9;
+  color: #2ecc71;
+}
+
+.absentCard {
+  background-color: #ffebee;
+  color: #e74c3c;
+}
+
+.summaryLists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.listTitle {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.scrollableList {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summaryTable th {
+  background-color: #f8f9fa;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  position: sticky;
+  top: 0;
+}
+
+.summaryTable td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.summaryConfirmation {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.confirmationButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.cancelButton:hover {
+  background-color: #e9ecef;
+}
+
+.confirmButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.confirmButton:hover {
+  background-color: #2980b9;
+}
+
+/* Password Modal */
+.passwordModalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.submissionDetails {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.submissionDetails li {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.passwordInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.passwordInput {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.passwordInput:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.modalError {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border-left: 4px solid #c62828;
+}
+
+.passwordModalActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.postButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.postButton:hover {
+  background-color: #2980b9;
+}
+
+.postButton:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+
+
+
+
+/* Summary Modal Styles */
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.summaryHeader {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.summaryHeaderItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryLabel {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.summaryValue {
+  font-weight: 600;
+  color: #333;
+}
+
+.summaryStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.statCard {
+  padding: 1.5rem 1rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statPercentage {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.presentCard {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #dcfce7;
+}
+
+.absentCard {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+}
+
+.summaryTabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+}
+
+.tabButton {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tabButton.activeTab {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.summaryLists {
+  position: relative;
+  min-height: 200px;
+}
+
+.scrollableList {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summaryTable th {
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #64748b;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summaryTable td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.presentBadge {
+  background-color: #dcfce7;
+  color: #16a34a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.absentBadge {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.summaryConfirmation {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.confirmationText {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #475569;
+}
+
+.confirmationText p {
+  margin: 0.5rem 0;
+}
+
+.confirmationButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cancelButton:hover {
+  background-color: #f1f5f9;
+}
+
+.confirmButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirmButton:hover {
+  background-color: #1d4ed8;
+}
+
+.buttonIcon {
+  font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summaryHeader {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .summaryStats {
+    grid-template-columns: 1fr;
+  }
+  
+  .confirmationButtons {
+    flex-direction: column;
+  }
+  
+  .cancelButton,
+  .confirmButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .periodGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .summaryLists {
+    grid-template-columns: 1fr;
+  }
+  
+  .controls {
+    grid-template-columns: 1fr;
+  }
+  
+  .bulkActions {
+    flex-direction: column;
+  }
+  
+  .confirmationButtons {
+    flex-direction: column;
+  }
+  
+  .passwordModalActions {
+    justify-content: stretch;
+  }
+  
+  .postButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .studentListMobile {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .studentTable {
+    display: none;
+  }
+}

@@ -23,16 +23,17 @@ import MarksManagement from "./components/marksmanagement/MarksManagement";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import StaffProfile from "./components/Dashboard/StaffProfile";
+import PostAttendance from "./components/Attendance/Attendancepost";
 
 
 function App() {
 
-    const [userRole, setUserRole] = useState(null);
-  
-    useEffect(() => {
-      const storedUserRole = localStorage.getItem("userRole");
-      setUserRole(storedUserRole);
-    }, []);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const storedUserRole = localStorage.getItem("userRole");
+    setUserRole(storedUserRole);
+  }, []);
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const location = useLocation(); // Get the current route
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Track screen size
@@ -68,7 +69,7 @@ function App() {
 
   return (
     <div className={styles.mainApp}>
-<ToastContainer />
+      <ToastContainer />
       {isAuthPage ? (
         <Routes>
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -97,19 +98,19 @@ function App() {
             )}
 
 
-           
+
 
             <div className={styles.contentArea}>
-            {!shouldHideBackButton && (
-             
+              {!shouldHideBackButton && (
+
                 <button className={styles.backButton} onClick={() => navigate(-1)}> ← Back</button>
-             
-            )}
+
+              )}
               <Routes>
-                {userRole=="Admin"?<Route path="/" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />:<Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                }
+                {/* Common Routes for Both Roles */}
+                <Route path="/" element={<ProtectedRoute>{userRole === "Admin" ? <AdminDashboard /> : <Dashboard />}</ProtectedRoute>} />
                 <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/StaffProfile" element={<ProtectedRoute><StaffProfile/></ProtectedRoute>} />
+                <Route path="/StaffProfile" element={<ProtectedRoute><StaffProfile /></ProtectedRoute>} />
                 <Route path="/Teachers" element={<ProtectedRoute><Teacher /></ProtectedRoute>} />
                 <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
                 <Route path="/StudentManagement" element={<ProtectedRoute><StudentManagement /></ProtectedRoute>} />
@@ -117,14 +118,25 @@ function App() {
                 <Route path="/Feepayments" element={<ProtectedRoute><Feepayments /></ProtectedRoute>} />
                 <Route path="/feePayments/payments" element={<ProtectedRoute><Dummypayments /></ProtectedRoute>} />
                 <Route path="/feePayments/payments/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
-                <Route path="/MarksManagement" element={<ProtectedRoute><MarksManagement/></ProtectedRoute>} />
-                <Route path="/AdminDashboard" element={<AdminDashboard />} />
-                <Route path="/AdminDashboard/AddStaff" element={<AddStaff />} />
-                <Route path="/AdminDashboard/TeachersList" element={<TeachersList />} />
-                <Route path="/AdminDashboard/ClassList" element={<ClassList/>} />
-                <Route path="/AdminDashboard/ClassManagement/*" element={<ClassApp />} />
+                <Route path="/MarksManagement" element={<ProtectedRoute><MarksManagement /></ProtectedRoute>} />
+                <Route path="/PostAttendance" element={<ProtectedRoute><PostAttendance /></ProtectedRoute>} />
 
+
+                {/* Admin-Only Routes */}
+                {userRole === "Admin" && (
+                  <>
+                    <Route path="/AdminDashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                    <Route path="/AdminDashboard/AddStaff" element={<ProtectedRoute><AddStaff /></ProtectedRoute>} />
+                    <Route path="/AdminDashboard/TeachersList" element={<ProtectedRoute><TeachersList /></ProtectedRoute>} />
+                    <Route path="/AdminDashboard/ClassList" element={<ProtectedRoute><ClassList /></ProtectedRoute>} />
+                    <Route path="/AdminDashboard/ClassManagement/*" element={<ProtectedRoute><ClassApp /></ProtectedRoute>} />
+                  </>
+                )}
+
+                {/* Fallback for unauthorized access */}
+                <Route path="*" element={<div className={styles.messageError}>404 | Page Not Found</div>} />
               </Routes>
+
             </div>
           </div>
         </>
