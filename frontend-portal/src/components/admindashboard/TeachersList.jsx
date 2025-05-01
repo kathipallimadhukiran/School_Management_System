@@ -155,16 +155,13 @@ const TeachersList = () => {
                     <tr key={teacher._id}>
                         <td>{index + 1}</td>
                         <td>
-                            {teacher.profileImage ? (
-                                <img
-                                    src={getFullImageUrl(teacher.profileImage)}
-                                    alt="Profile"
-                                    className={styles.profileImage}
-                                />
-                            ) : (
-                                "No Image"
-                            )}
-                        </td>
+    <img
+        src={teacher.profileImage ? getFullImageUrl(teacher.profileImage) : `${API_URL}/images/default.png`}
+        alt="Profile"
+        className={styles.profileImage}
+    />
+</td>
+
                         <td>{teacher.staffID}</td>
                         <td>{teacher.name}</td>
                         <td>{teacher.email}</td>
