@@ -72,33 +72,41 @@ const Login = () => {
     setMessage("");
     setError("");
     setLoading(true);
-
-    if (!resetEmail) {
+  
+    const email = resetEmail.trim().toLowerCase();
+  
+    if (!email) {
       setError("Please enter your email.");
       setLoading(false);
       return;
     }
-
+  
     try {
       const response = await fetch(`${API_URL}/ForgotPassword`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: resetEmail.toLowerCase() }),
+        body: JSON.stringify({
+          email,
+          FRONTEND_URL: window.location.origin, // Dynamically uses current frontend URL
+        }),
       });
-
+  console.log(    {email,
+    FRONTEND_URL: window.location.origin,})
       const result = await response.json();
-
+  
       if (response.ok) {
         setMessage("Password reset link sent! Check your email.");
       } else {
         setError(result.message || "Failed to send reset link.");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Forgot password error:", error);
       setError("Server error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className={styles.loginPage}>
