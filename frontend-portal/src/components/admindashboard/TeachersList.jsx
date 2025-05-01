@@ -17,7 +17,7 @@ const TeachersList = () => {
             try {
                 const response = await fetch(`${API_URL}/getAllTeachers`);
                 if (!response.ok) throw new Error("Failed to fetch teachers");
-        
+
                 const teacherData = await response.json();
                 console.log(teacherData); // Check if profileImage is correct
                 setAvailableTeachers(teacherData);
@@ -27,7 +27,7 @@ const TeachersList = () => {
                 setLoading(false);
             }
         };
-        
+
 
         const fetchSubjects = async () => {
             try {
@@ -132,59 +132,57 @@ const TeachersList = () => {
     return (
         <div className={styles.container}>
             <h2 className={styles.heading}>All Teachers</h2>
-
             {loading && <p className={styles.loading}>Loading...</p>}
-            {error && <p className={styles.error}>Error: {error}</p>}
+{error && <p className={styles.error}>Error: {error}</p>}
 
-            {!loading && !error && availableTeachers.length > 0 ? (
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>S. No.</th>
-                            <th>Image</th>
-
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Subject</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {availableTeachers.map((teacher, index) => (
-                            <tr key={teacher._id}>
-                                <td>{index + 1}</td>
-                                
-<td>
-    {teacher.profileImage ? (
-        <img
-            src={getFullImageUrl(teacher.profileImage)} // Get the full image URL
-            alt="Profile"
-            className={styles.profileImage}
-        />
+{!loading && !error && (
+    availableTeachers.length > 0 ? (
+        <table className={styles.table}>
+            <thead>
+                <tr>
+                    <th>S. No.</th>
+                    <th>Image</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {availableTeachers.map((teacher, index) => (
+                    <tr key={teacher._id}>
+                        <td>{index + 1}</td>
+                        <td>
+                            {teacher.profileImage ? (
+                                <img
+                                    src={getFullImageUrl(teacher.profileImage)}
+                                    alt="Profile"
+                                    className={styles.profileImage}
+                                />
+                            ) : (
+                                "No Image"
+                            )}
+                        </td>
+                        <td>{teacher.staffID}</td>
+                        <td>{teacher.name}</td>
+                        <td>{teacher.email}</td>
+                        <td>{teacher.phone}</td>
+                        <td>{getSubjectNames(teacher.subjectSpecialization || [])}</td>
+                        <td className={styles.actions}>
+                            <button className={styles.delete} onClick={() => handleDelete(teacher._id)}>Delete</button>
+                            <button className={styles.update} onClick={() => handleUpdate(teacher)}>Update</button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     ) : (
-        "No Image"
-    )}
-</td>
+        <p className={styles.noData}>No teachers found.</p>
+    )
+)}
 
-
-                                <td>{teacher.staffID}</td>
-                                <td>{teacher.name}</td>
-                                <td>{teacher.email}</td>
-                                <td>{teacher.phone}</td>
-                                <td>{getSubjectNames(teacher.subjectSpecialization || [])}</td> {/* Fixed line */}
-                                <td className={styles.actions}>
-                                    <button className={styles.delete} onClick={() => handleDelete(teacher._id)}>Delete</button>
-                                    <button className={styles.update} onClick={() => handleUpdate(teacher)}>Update</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                !loading && <p className={styles.noData}>No teachers found.</p>
-            )}
 
             {/* Update Popup */}
             {update_popup && selectedTeacher && (
@@ -196,7 +194,7 @@ const TeachersList = () => {
                                 <div className={styles.imagePreview}>
                                     <p>Current Profile Image:</p>
                                     <img
-                                        src={selectedTeacher.profileImage}
+                                        src={getFullImageUrl(selectedTeacher.profileImage)}
                                         alt="Profile Preview"
                                         className={styles.profileImage}
                                     />
