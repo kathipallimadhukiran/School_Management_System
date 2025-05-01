@@ -741,6 +741,42 @@ const assignRollNumbersToStudents = async (req, res) => {
 
 
 
+// routes/teacher.js or controller
+const update_teacher=async (req, res) => {
+  const { id } = req.params;
+  const updateFields = {};
+
+  const allowedFields = [
+    "phone",
+    "gender",
+    "dob",
+    "address",
+    "subjectSpecialization",
+    "experience",
+    "salary",
+  ];
+
+  for (const field of allowedFields) {
+    if (req.body[field] !== undefined) {
+      updateFields[field] = req.body[field];
+    }
+  }
+
+  try {
+    const updatedTeacher = await Teacher.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+    res.status(200).json(updatedTeacher);
+  } catch (error) {
+    console.error("Error updating teacher:", error);
+    res.status(500).json({ message: "Failed to update teacher" });
+  }
+}
+
+
+
+
+
 
 
 
@@ -765,5 +801,6 @@ module.exports = {
   deleteSubject,
   getStudentswhounassigned,
   assignRollNumbersToStudents,
-  getAssignedClasses
+  getAssignedClasses,
+  update_teacher
 };

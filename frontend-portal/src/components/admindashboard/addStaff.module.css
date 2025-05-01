@@ -10,6 +10,19 @@
 
 }
 
+.checkboxContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 /* Title */
 .addStaffContainer h2 {
   color: #343a40;

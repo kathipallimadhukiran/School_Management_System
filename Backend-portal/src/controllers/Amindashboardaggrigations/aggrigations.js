@@ -1,6 +1,6 @@
 const User = require("../../models/studentdata");
 const Teacher = require("../../models/teacherdata");
-const Class = require("../../models/classes");
+const {Class} = require("../../models/classes");
 
 
 const getTotalDueAmounts = async (req, res) => {
@@ -43,17 +43,16 @@ const getTeachercount = async (req, res) => {
 };
 const getClasscount = async (req, res) => {
   try {
-    const result = await Class.aggregate([
-      {
-        $count: "totalClasses" // This will return an object with { totalClasses: <count> }
-      }
-    ]);
-
-    res.status(200).json({ result });
+    const count = await Class.countDocuments();
+    console.log("Total classes:", count);
+    res.status(200).json({ totalClasses: count });
   } catch (error) {
-    res.status(500).json({ message: "Error calculating teacher count", error });
+    console.error("Error getting class count:", error);
+    res.status(500).json({ message: "Error calculating class count", error: error.message });
   }
 };
+
+
 
 
 

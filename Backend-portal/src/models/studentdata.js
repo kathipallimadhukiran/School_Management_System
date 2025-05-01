@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   Student_age: { type: Number, required: true },
   Student_gender: { type: String, required: true },
   classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class' },
-  password: String, // Hashed
+  password: String, 
   Grade_applying_for: { type: String, required: true },
   Date_of_birth: { type: String, required: true },
   Address: { type: String, required: true },
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   Student_mother_number: { type: String, required: true },
   Fathers_mail: { type: String, required: true },
   Total_fee: { type: Number, required: true },
-  Total_Fee_Paid: { type: Number, default: 0 },  // New field
+  Total_Fee_Paid: { type: Number, default: 0 },  
   Number_of_terms: { type: Number, required: true },
   Registration_number: { type: String, required: true },
   Roll_No:{type:String,unique: true},

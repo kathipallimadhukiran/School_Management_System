@@ -100,7 +100,7 @@ const AddStaff = () => {
           gender: "",
           dob: "",
           address: "",
-          subjectSpecialization: "",
+          subjectSpecialization: [],
           experience: "",
           salary: "",
           joiningDate: "",
@@ -166,22 +166,33 @@ const AddStaff = () => {
 
         {/* Address & Subject Specialization */}
         <div className={styles.inputRow}>
-          <div className={styles.inputGroup}>
-            <label>Address *</label>
-            <input type="text" name="address" placeholder="Enter address" value={formData.address} onChange={handleChange} />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Subject Specialization *</label>
-            <select name="subjectSpecialization" value={formData.subjectSpecialization} onChange={handleChange}>
-              <option value="">Select Subject</option>
-              {subjects.map((subject) => (
-                <option key={subject._id} value={subject.name}>
-                  {subject.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+  <div className={styles.inputGroup}>
+    <label>Subject Specialization *</label>
+    <div className={styles.checkboxContainer}>
+      {subjects.map((subject) => (
+        <label key={subject._id} className={styles.checkboxLabel}>
+          <input
+            type="checkbox"
+            value={subject._id}
+            checked={formData.subjectSpecialization.includes(subject._id)}
+            onChange={(e) => {
+              const selected = [...formData.subjectSpecialization];
+              if (e.target.checked) {
+                selected.push(subject._id);
+              } else {
+                const index = selected.indexOf(subject._id);
+                if (index > -1) selected.splice(index, 1);
+              }
+              setFormData({ ...formData, subjectSpecialization: selected });
+            }}
+          />
+          {subject.name}
+        </label>
+      ))}
+    </div>
+  </div>
+</div>
+
 
         {/* Experience & Salary */}
         <div className={styles.inputRow}>

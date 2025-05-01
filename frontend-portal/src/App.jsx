@@ -28,14 +28,11 @@ import PostAttendance from "./components/Attendance/Attendancepost";
 
 function App() {
 
-  const [userRole, setUserRole] = useState(null);
 
-  useEffect(() => {
-    const storedUserRole = localStorage.getItem("userRole");
-    setUserRole(storedUserRole);
-  }, []);
+  const location = useLocation();
+  const userRole = localStorage.getItem("userRole") || "Guest";
+  console.log(userRole)
   const [sidebarWidth, setSidebarWidth] = useState(250);
-  const location = useLocation(); // Get the current route
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Track screen size
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -107,7 +104,6 @@ function App() {
 
               )}
               <Routes>
-                {/* Common Routes for Both Roles */}
                 <Route path="/" element={<ProtectedRoute>{userRole === "Admin" ? <AdminDashboard /> : <Dashboard />}</ProtectedRoute>} />
                 <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/StaffProfile" element={<ProtectedRoute><StaffProfile /></ProtectedRoute>} />
@@ -122,7 +118,6 @@ function App() {
                 <Route path="/PostAttendance" element={<ProtectedRoute><PostAttendance /></ProtectedRoute>} />
 
 
-                {/* Admin-Only Routes */}
                 {userRole === "Admin" && (
                   <>
                     <Route path="/AdminDashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
@@ -133,7 +128,6 @@ function App() {
                   </>
                 )}
 
-                {/* Fallback for unauthorized access */}
                 <Route path="*" element={<div className={styles.messageError}>404 | Page Not Found</div>} />
               </Routes>
 

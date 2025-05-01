@@ -24,53 +24,39 @@ const Login = () => {
     setError("");
     setMessage("");
     setLoading(true);
-  
+
     if (!email || !password) {
       setError("Please enter email and password.");
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await fetch(`${API_URL}/Login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.toLowerCase(), password }),
       });
-  
+
       const result = await response.json();
       console.log(result);
 
       if (response.ok) {
         localStorage.setItem("email", result.email);
         localStorage.setItem("authToken", result.token);
-        localStorage.setItem("userRole", result.role);
         localStorage.setItem("userid", result.id);
         localStorage.setItem("userName", result.Name);
-          // After successful login
-
-if (result.role === 'Staff') {
-  localStorage.setItem("teacherClassIds", JSON.stringify(result.assignedClasses));
-}
-        toast.success(`Login successful! Welcome ${result.role}`);
-  
-       
-        
-        
-        if (result.role === "Admin") {
-            navigate("/AdminDashboard");
-
-          } 
-        
+      
         if (result.role === "Staff") {
-            navigate("/Dashboard");
-          } 
-
-
-       
-
-
-      } else {
+          localStorage.setItem("teacherClassIds", JSON.stringify(result.assignedClasses));
+        }
+      
+        toast.success(`Login successful! Welcome ${result.role}`);
+        localStorage.setItem("userRole", result.role); // Add this line
+        navigate("/"); 
+        
+      }
+       else {
         setError(result.message || "Invalid credentials!");
       }
     } catch (err) {
@@ -79,7 +65,7 @@ if (result.role === 'Staff') {
       setLoading(false);
     }
   };
-  
+
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -198,7 +184,3 @@ export default Login;
 
 
 
-
-//1 st comoferinjbg
-
-// dhani puku dengu

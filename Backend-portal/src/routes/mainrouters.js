@@ -6,9 +6,9 @@ const getfeedata = require("../controllers/feepayment/getfeedata");
 const { Duemailer } = require("../controllers/Duemailer"); // ✅ Ensure correct import
 const { Signup, Login, ForgotPassword, ResetPassword } = require("../controllers/Logincontroller");
 const { UpdateStudentDetails, DeleteStudentDetails, AddFee } = require('../controllers/UpdateStudentDetails');
-const {  assignStudentsToSection, createClass, assignSubjectToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromSection, updateStudentGrade, deleteSubject, getStudentswhounassigned, assignTeacherToSection, getSectionDetails, getsectionstudentlist, assignRollNumbersToStudents, getAssignedClasses, updateSubjectTeacher, removeSubjectFromSection } = require("../controllers/classes/classes");
+const {  assignStudentsToSection, createClass, assignSubjectToClass, addSubject, getAllSubjects, assignSubjectToTeacher, assignTeacherToSubject, getAllClass, getStudentsByIds, getTeachersByIds, getClassById, unassignStudentFromSection, updateStudentGrade, deleteSubject, getStudentswhounassigned, assignTeacherToSection, getSectionDetails, getsectionstudentlist, assignRollNumbersToStudents, getAssignedClasses, updateSubjectTeacher, removeSubjectFromSection, update_teacher } = require("../controllers/classes/classes");
 const {  getAllTeachers } = require("../controllers/classes/teachers");
-const { delete_class } = require("../controllers/delete_class");
+const { delete_class, delete_staff } = require("../controllers/delete_class");
 const { enterMarks, getMarks, getSubjectDivisions } = require("../controllers/marks/entrymarks");
 const { authsessions } = require("../controllers/authsessions");
 const upload = require("../middlewares/uploadImage");
@@ -79,6 +79,28 @@ router.patch("/uploadTeacherImage/:id", upload.single("profileImage"), uploadIma
 router.post("/mark-Attendance",Attendance.markAttendance);
 router.post("/get-bydate-Attendance",Attendance.getAttendanceByDate);
 
+
+
+
+
+
+router.delete("/delete_staff/:TeacherId", delete_staff);
+
+
+
+
+
+
+
+
+
+// updates
+
+router.put("/update_teacher/:id", update_teacher);
+
+
+
+// staff router
 
 
 module.exports = router;

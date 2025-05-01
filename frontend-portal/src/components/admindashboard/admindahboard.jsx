@@ -19,7 +19,6 @@ const AdminDashboard = () => {
 
   const displayedStudents = showAll ? totalStudents : totalStudents.slice(0, 10);
   const navigate = useNavigate();
-
   const handlePayFee = (
     studentName,
     studentNumber,
@@ -90,6 +89,8 @@ useEffect(() => {
   fetchTeacherCount();
 }, []);
 
+
+
 useEffect(() => {
   const fetchClassCount = async () => {
     try {
@@ -98,8 +99,7 @@ useEffect(() => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-
-      setTotalClasses(data.result[0].totalClasses); // Extract the number correctly
+      setTotalClasses(data.totalClasses);
     } catch (err) {
       setError(err.message);
     }
@@ -107,6 +107,7 @@ useEffect(() => {
 
   fetchClassCount();
 }, []);
+
 
 
   useEffect(() => {
@@ -174,7 +175,7 @@ useEffect(() => {
   }, [navigate]);
 
   if (userRole !== "Admin") {
-    return null; // Prevent rendering if user is not an Admin
+    return null; 
   }
 
   return (
@@ -182,30 +183,25 @@ useEffect(() => {
       <h2>Welcome, Admin</h2>
       <p>Manage staff, students, and administrative tasks here.</p>
 
-      {/* ✅ Admin Summary Cards */}
       <div className={stylesadmin.adminCards}>  
-      {/* Student Management */}
       <div className={stylesadmin.card} onClick={() => navigate("/Students")}>  
         <FaUsers className={stylesadmin.icon} />  
         <h3>Total Students</h3>  
         {loading ? <p>Loading...</p> : <p>{totalStudents.length}</p>}  
       </div>  
 
-      {/* Teacher Management */}
       <div className={stylesadmin.card} onClick={() => navigate("/AdminDashboard/TeachersList")}>  
         <FaChalkboardTeacher className={stylesadmin.icon} />  
         <h3>Total Staff</h3>  
         {loading ? <p>Loading...</p> : <p>{teacherCount}</p>}  
       </div>  
 
-      {/* Class Management */}
       <div className={stylesadmin.card} onClick={() => navigate("/AdminDashboard/ClassList")}>  
         <MdClass className={stylesadmin.icon} />  
         <h3>Total Classes</h3>  
         {loading ? <p>Loading...</p> : <p>{totalClasses}</p>}  
       </div>  
 
-      {/* Fee Management */}
       <div className={stylesadmin.card} onClick={() => navigate("/FeeManagement")}>  
         <MdPayments className={stylesadmin.icon} />  
         <h3>Fees Collected</h3>  
@@ -213,7 +209,6 @@ useEffect(() => {
       </div>  
     </div>  
 
-      {/* ✅ Quick Actions */}
       <div className={stylesadmin.actions}>
         <h3>Quick Actions</h3>
         <div className={stylesadmin.actionButtons}>

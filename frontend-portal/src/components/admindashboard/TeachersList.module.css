@@ -1,102 +1,191 @@
+/* TeachersList.module.css */
+
 .container {
-    padding: 20px;
-    max-width: 90%;
-    margin: auto;
-}
-
-.heading {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .heading {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #333;
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.loading {
+  }
+  
+  .loading,
+  .error,
+  .noData {
     text-align: center;
-    font-size: 18px;
-}
-
-.error {
-    color: red;
-    text-align: center;
-    font-size: 18px;
-}
-
-.table {
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  .table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    background: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.table th, .table td {
-    padding: 12px;
+    background-color: white;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.9rem 1rem;
     text-align: left;
-    border: 1px solid #ddd;
-}
-
-.table th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-.table tr:nth-child(even) {
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .table th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    color: #444;
+  }
+  
+  .table tr:hover {
     background-color: #f9f9f9;
-}
-
-.actions {
+  }
+  
+  .actions {
     display: flex;
-    gap: 5px;
-}
-
-button {
-    padding: 8px 12px;
+    gap: 0.5rem;
+  }
+  
+  .delete,
+  .update {
+    padding: 0.4rem 0.8rem;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
-    transition: 0.3s;
-}
-
-.delete {
-    background-color: red;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .delete {
+    background-color: #ff4d4f;
     color: white;
-}
-
-.delete:hover {
-    background-color: darkred;
-}
-
-.pay {
-    background-color: green;
+  }
+  
+  .delete:hover {
+    background-color: #e03b3e;
+  }
+  
+  .update {
+    background-color: #1890ff;
     color: white;
+  }
+  
+  .update:hover {
+    background-color: #1073d6;
+  }
+  /* TeachersList.module.css */
+.profileImage {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-.pay:hover {
-    background-color: darkgreen;
-}
-
-.update {
-    background-color: orange;
-    color: white;
-}
-
-.update:hover {
-    background-color: darkorange;
-}
-
-.notify {
-    background-color: blue;
-    color: white;
-}
-
-.notify:hover {
-    background-color: darkblue;
-}
-
-.noData {
+  /* Popup styles */
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  
+  .popupContent {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .popupContent h3 {
+    margin-bottom: 1.2rem;
+    font-size: 1.5rem;
+    color: #333;
     text-align: center;
-    font-size: 18px;
-    color: gray;
-}
+  }
+  
+  .popupContent label {
+    display: block;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .popupContent input,
+  .popupContent select,
+  .popupContent textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 0.4rem;
+    font-size: 1rem;
+  }
+  
+  .multiSelect {
+    height: 120px;
+  }
+  
+  .popupActions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+  }
+  
+  .popupActions button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .popupActions button[type="submit"] {
+    background-color: #52c41a;
+    color: white;
+  }
+  
+  .popupActions button[type="submit"]:hover {
+    background-color: #3da813;
+  }
+  
+  .popupActions button[type="button"] {
+    background-color: #aaa;
+    color: white;
+  }
+  
+  .popupActions button[type="button"]:hover {
+    background-color: #888;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
