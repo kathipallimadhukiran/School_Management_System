@@ -187,16 +187,16 @@ const TeachersList = () => {
                     <div className={styles.popupContent}>
                         <h3>Edit Teacher</h3>
                         <form onSubmit={handleUpdateSubmit}>
-                            {selectedTeacher.profileImage && (
-                                <div className={styles.imagePreview}>
-                                    <p>Current Profile Image:</p>
-                                    <img
-                                        src={getFullImageUrl(selectedTeacher.profileImage)}
-                                        alt="Profile Preview"
-                                        className={styles.profileImage}
-                                    />
-                                </div>
-                            )}
+                          
+                        <div className={styles.imagePreview}>
+    <p>Current Profile Image:</p>
+    <img
+        src={selectedTeacher.profileImage ? getFullImageUrl(selectedTeacher.profileImage) : `${API_URL}/images/default.png`}
+        alt="Profile Preview"
+        className={styles.profileImage}
+    />
+</div>
+
 
 
                             <label>
