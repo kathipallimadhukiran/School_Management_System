@@ -17,8 +17,9 @@ const TeachersList = () => {
             try {
                 const response = await fetch(`${API_URL}/getAllTeachers`);
                 if (!response.ok) throw new Error("Failed to fetch teachers");
-
+        
                 const teacherData = await response.json();
+                console.log(teacherData); // Check if profileImage is correct
                 setAvailableTeachers(teacherData);
             } catch (error) {
                 setError(error.message);
@@ -26,6 +27,7 @@ const TeachersList = () => {
                 setLoading(false);
             }
         };
+        
 
         const fetchSubjects = async () => {
             try {
@@ -44,6 +46,13 @@ const TeachersList = () => {
         fetchTeachers();
         fetchSubjects();
     }, []);
+
+    const getFullImageUrl = (relativePath) => {
+        if (relativePath) {
+            return `${API_URL}${relativePath}`;
+        }
+        return ""; // Return an empty string if no profile image
+    };
 
     const getSubjectNames = (subjectIds) => {
         if (!Array.isArray(subjectIds)) return "No subjects"; // Check if subjectIds is an array
@@ -146,10 +155,11 @@ const TeachersList = () => {
                         {availableTeachers.map((teacher, index) => (
                             <tr key={teacher._id}>
                                 <td>{index + 1}</td>
-                                <td>
+                                
+<td>
     {teacher.profileImage ? (
         <img
-            src={teacher.profileImage}
+            src={getFullImageUrl(teacher.profileImage)} // Get the full image URL
             alt="Profile"
             className={styles.profileImage}
         />
