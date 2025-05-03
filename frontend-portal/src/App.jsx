@@ -31,7 +31,6 @@ function App() {
 
   const location = useLocation();
   const userRole = localStorage.getItem("userRole") || "Guest";
-  console.log(userRole)
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Track screen size
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
