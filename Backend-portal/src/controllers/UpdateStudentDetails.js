@@ -1,8 +1,8 @@
 var express = require('express');
 var Student = require('../models/studentdata');
-const Class = require('../models/classes'); // Class Model
+const {Class} = require('../models/classes'); // Class Model
 const UpdateStudentDetails = async (req, res) => {
-    console.log("Received Update Request:", req.body); // Debugging
+    console.log("Received Update Request:", req.body);
 
     const {
         id,
@@ -31,66 +31,69 @@ const UpdateStudentDetails = async (req, res) => {
     }
 
     try {
-        const existingStudent = await Student.findById(id);
-        if (!existingStudent) {
+        const student = await Student.findById(id);
+        if (!student) {
             return res.status(404).json({ message: "Student not found." });
         }
 
-        // 🏫 Find Class based on "Grade_applying_for"
-        const matchedClass = await Class.findOne({ name: Grade_applying_for });
+        // Find the new class by grade
+        const newClass = await Class.findOne({ name: Grade_applying_for });
 
-        // Update student details
-        const updatedStudent = await Student.findByIdAndUpdate(
-            id,
-            {
-                Student_name,
-                Grade_applying_for,
-                Date_of_birth,
-                Address,
-                City,
-                State,
-                District,
-                ZIP_code,
-                Emergency_contact_number,
-                Student_father_name,
-                Student_father_number,
-                Student_mother_name,
-                Student_mother_number,
-                Fathers_mail,
-                Student_gender,
-                Student_age,
-                Number_of_terms,
-                Total_fee,
-                classId: matchedClass ? matchedClass._id : null, // Assign class if found
-            },
-            { new: true }
-        );
+        // Update student fields
+        const updateFields = {
+            Student_name,
+            Grade_applying_for,
+            Date_of_birth,
+            Address,
+            City,
+            State,
+            District,
+            ZIP_code,
+            Emergency_contact_number,
+            Student_father_name,
+            Student_father_number,
+            Student_mother_name,
+            Student_mother_number,
+            Fathers_mail,
+            Student_gender,
+            Student_age,
+            Number_of_terms,
+            Total_fee,
+            classId: newClass ? newClass._id : null,
+        };
 
-        // If the student has been assigned to a class, update the class's student list
-        if (matchedClass) {
-            // Remove the student from any previously assigned class
+        const updatedStudent = await Student.findByIdAndUpdate(id, updateFields, { new: true });
+
+        // If a valid class is found, update class-student references
+        if (newClass) {
+            // Remove student from any class that previously contained them
             await Class.updateMany(
                 { students: id },
                 { $pull: { students: id } }
             );
 
-            // Add student to the matched class
-            if (!matchedClass.students.includes(id)) {
-                matchedClass.students.push(id);
-                await matchedClass.save();
+            // Add to new class if not already present
+            if (!newClass.students.includes(id)) {
+                newClass.students.push(id);
+                await newClass.save();
             }
         }
 
-        res.status(200).json({
-            message: "Student details updated successfully",
+        return res.status(200).json({
+            message: "Student details updated successfully.",
             student: updatedStudent,
-            classAssigned: matchedClass ? matchedClass.name : "No class assigned",
+            classAssigned: newClass ? newClass.name : "Not assigned to any class",
         });
+
     } catch (error) {
         console.error("Error updating student:", error);
-        res.status(500).json({ message: "An error occurred while updating student details." });
+        return res.status(500).json({
+            message: "An error occurred while updating student details.",
+            error: error.message
+        });
     }
 };
+
 
 
 

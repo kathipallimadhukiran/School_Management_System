@@ -73,7 +73,6 @@ const StudentManagement = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
   const handleUpdateClick = (student) => {
     setSelectedStudent(student);
     setFormData({
@@ -89,15 +88,20 @@ const StudentManagement = () => {
       fatherNumber: student.Student_father_number,
       motherNumber: student.Student_mother_number,
       numberOfTerms: student.Number_of_terms,
+      totalFee: student.Total_fee,
+      fathersMail: student.Fathers_mail,
+      motherName: student.Student_mother_name,
+      fatherName: student.Student_father_name,
+      gender: student.Student_gender,
+      dateOfBirth: student.Date_of_birth,
     });
     setIsUpdateModalOpen(true);
   };
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-
     const updateData = {
-      id: selectedStudent._id,  // Ensure this is defined
+      id: selectedStudent._id,
       Student_name: formData.name,
       Student_age: formData.age,
       Grade_applying_for: formData.grade,
@@ -118,19 +122,16 @@ const StudentManagement = () => {
       Student_father_name: formData.fatherName,
     };
 
-    console.log("Sending update request with data:", updateData);
-
     try {
       await axios.put(`${API_URL}/updatestudentdetails`, updateData);
       fetchStudents();
       setIsUpdateModalOpen(false);
       toast.success("Student updated successfully.");
     } catch (error) {
-      console.error("Error updating student:", error.response ? error.response.data : error);
+      console.error("Error updating student:", error);
       toast.error("Error updating student. Please try again.");
     }
   };
-
 
 
   const handleAddFeeClick = (student) => {
@@ -256,135 +257,39 @@ const StudentManagement = () => {
               <div className={styles.modalContent}>
                 <h3>Update {formData.name} Details</h3>
                 <form onSubmit={handleUpdateSubmit}>
-                  <label>
-                    Age:
-                    <input
-                      type="number"
-                      name="age"
-                      value={formData.age}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  <label>Age:<input type="number" name="age" value={formData.age} onChange={handleInputChange} required /></label>
+                  <label>Grade:
+                    <select name="grade" value={formData.grade} onChange={handleInputChange} required>
+                      <option value={formData.grade} disabled>{formData.grade} (Current)</option>
+                      {classes.map((cls) => (
+                        <option key={cls._id} value={cls.name}>{cls.name}</option>
+                      ))}
+                    </select>
                   </label>
-                  <label>
-  Grade:
-  <select
-    name="grade"
-    value={formData.grade}
-    onChange={handleInputChange}
-    required
-  >
-    {/* Show student's past grade first */}
-    <option value={formData.grade} disabled>
-      {formData.grade} (Current)
-    </option>
-
-    {/* Render all available classes */}
-    {classes.map((cls) => (
-      <option key={cls._id} value={cls.name}>
-        {cls.name}
-      </option>
-    ))}
-  </select>
-</label>
-
-                  <label>
-                    Address:
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  <label>Gender:
+                    <select name="gender" value={formData.gender} onChange={handleInputChange} required>
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </label>
-                  <label>
-                    City:
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    State:
-                    <input
-                      type="text"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    District:
-                    <input
-                      type="text"
-                      name="district"
-                      value={formData.district}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    ZIP Code:
-                    <input
-                      type="text"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    Emergency Contact Number:
-                    <input
-                      type="text"
-                      name="emergencyContactNumber"
-                      value={formData.emergencyContactNumber}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    Father's Mobile Number:
-                    <input
-                      type="text"
-                      name="fatherNumber"
-                      value={formData.fatherNumber}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    Mother's Mobile Number:
-                    <input
-                      type="text"
-                      name="motherNumber"
-                      value={formData.motherNumber}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
-                  <label>
-                    Number of Terms:
-                    <input
-                      type="text"
-                      name="numberOfTerms"
-                      value={formData.numberOfTerms}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
+                  <label>Date of Birth:<input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} required /></label>
+                  <label>Father's Name:<input type="text" name="fatherName" value={formData.fatherName} onChange={handleInputChange} required /></label>
+                  <label>Mother's Name:<input type="text" name="motherName" value={formData.motherName} onChange={handleInputChange} required /></label>
+                  <label>Father's Email:<input type="email" name="fathersMail" value={formData.fathersMail} onChange={handleInputChange} required /></label>
+                  <label>Address:<input type="text" name="address" value={formData.address} onChange={handleInputChange} required /></label>
+                  <label>City:<input type="text" name="city" value={formData.city} onChange={handleInputChange} required /></label>
+                  <label>State:<input type="text" name="state" value={formData.state} onChange={handleInputChange} required /></label>
+                  <label>District:<input type="text" name="district" value={formData.district} onChange={handleInputChange} required /></label>
+                  <label>ZIP Code:<input type="text" name="zipCode" value={formData.zipCode} onChange={handleInputChange} required /></label>
+                  <label>Emergency Contact Number:<input type="text" name="emergencyContactNumber" value={formData.emergencyContactNumber} onChange={handleInputChange} required /></label>
+                  <label>Father's Mobile Number:<input type="text" name="fatherNumber" value={formData.fatherNumber} onChange={handleInputChange} required /></label>
+                  <label>Mother's Mobile Number:<input type="text" name="motherNumber" value={formData.motherNumber} onChange={handleInputChange} required /></label>
+                  <label>Number of Terms:<input type="text" name="numberOfTerms" value={formData.numberOfTerms} onChange={handleInputChange} required /></label>
+                  <label>Total Fee:<input type="number" name="totalFee" value={formData.totalFee} onChange={handleInputChange} required /></label>
                   <button type="submit">Update</button>
-                  <button
-                    type="button"
-                    onClick={() => setIsUpdateModalOpen(false)}
-                  >
-                    Cancel
-                  </button>
+                  <button type="button" onClick={() => setIsUpdateModalOpen(false)}>Cancel</button>
                 </form>
               </div>
             </div>
@@ -445,7 +350,8 @@ const StudentManagement = () => {
                   Are you sure you want to delete {selectedStudent?.Student_name}?
                 </p>
                 <button onClick={handleDeleteSubmit}>Yes, Delete</button>
-                <button onClick={() => {setIsDeleteModalOpen(false)
+                <button onClick={() => {
+                  setIsDeleteModalOpen(false)
                   setFormData(null)
                 }}>
                   Cancel

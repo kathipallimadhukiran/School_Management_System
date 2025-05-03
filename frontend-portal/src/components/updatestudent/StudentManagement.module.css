@@ -1,8 +1,7 @@
 /* ✅ Container */
 .container {
-  width: 100%;
-  padding: 20px;
-  background: white;
+  width: 98%;
+  padding: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
