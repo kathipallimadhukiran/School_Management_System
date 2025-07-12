@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./ClassList.module.css"; // Import CSS module
+import styles from "./classlist.module.css"; // Import CSS module
 
 const ClassList = () => {
     const [classes, setClasses] = useState([]);
